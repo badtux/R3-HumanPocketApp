@@ -65,15 +65,9 @@ public class HalfDayActivity extends Activity {
                 WeekStringArray = getResources().getStringArray(R.array.s_week_day);
 
                 btn_next.setText(getString(R.string.s_next));
-                btn_next.setTextSize(35);
-
                 btn_back.setText(getString(R.string.s_back));
-                btn_back.setTextSize(35);
-
                 tv_to.setText(getString(R.string.s_date));
-
                 btn_exit.setText(getString(R.string.s_exit));
-                btn_exit.setTextSize(35);
                 break;
 
             case "t":
@@ -218,7 +212,7 @@ public class HalfDayActivity extends Activity {
             }
             if (v == btn_back){
                 if (playSound(1)) {
-                    intent = new Intent(HalfDayActivity.this, FromDateActivity.class);
+                    intent = new Intent(HalfDayActivity.this, ApplicationActivity.class);
                     intent.putExtra("json" ,jsonResult);
                     startActivity(intent);
                     finish();

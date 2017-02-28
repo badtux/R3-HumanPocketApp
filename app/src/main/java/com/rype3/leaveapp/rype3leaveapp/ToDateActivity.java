@@ -66,15 +66,11 @@ public class ToDateActivity extends Activity {
                 MonthStringArray = getResources().getStringArray(R.array.s_month);
                 WeekStringArray = getResources().getStringArray(R.array.s_week_day);
                 tv_to.setText(getString(R.string.s_to));
-
                 btn_next.setText(getString(R.string.s_next));
-                btn_next.setTextSize(35);
 
                 btn_back.setText(getString(R.string.s_back));
-                btn_back.setTextSize(35);
 
                 btn_exit.setText(getString(R.string.s_exit));
-                btn_exit.setTextSize(35);
                 break;
 
             case "t":

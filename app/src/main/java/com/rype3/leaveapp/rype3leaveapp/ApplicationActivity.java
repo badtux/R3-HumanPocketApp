@@ -322,10 +322,10 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                 btn_full_day.setText(getString(R.string.s_full_day));
                 btn_half_day_morning.setText(getString(R.string.s_m_half_day));
                 btn_half_day_evening.setText(getString(R.string.s_e_half_day));
-//                casual.setText(getString(R.string.s_leave_casual) +" (" +utils.getSharedPreference(context,Constants.CASUAL_LEAVE_COUNT)+")");
-//                annual.setText(getString(R.string.s_leave_annual) +" (" +utils.getSharedPreference(context,Constants.ANUAL_LEAVE_COUNT)+")");
-//                medical.setText(getString(R.string.s_leave_medical) +" (" +utils.getSharedPreference(context,Constants.MEDICAL_LEAVE_COUNT)+")");
-//                no_pay.setText(getString(R.string.s_leave_no_pay) +" (" +utils.getSharedPreference(context,Constants.NOPAY_LEAVE_COUNT)+")");
+                casual.setText(getString(R.string.s_leave_casual) +" (" +utils.getSharedPreference(context,Constants.CASUAL_LEAVE_COUNT)+")");
+                annual.setText(getString(R.string.s_leave_annual) +" (" +utils.getSharedPreference(context,Constants.ANUAL_LEAVE_COUNT)+")");
+                medical.setText(getString(R.string.s_leave_medical) +" (" +utils.getSharedPreference(context,Constants.MEDICAL_LEAVE_COUNT)+")");
+                no_pay.setText(getString(R.string.s_leave_no_pay) +" (" +utils.getSharedPreference(context,Constants.NOPAY_LEAVE_COUNT)+")");
                 leave_reason.setText(getString(R.string.s_leave_reason));
                 next.setText(getString(R.string.s_next));
                 help.setText(getString(R.string.s_help));
@@ -339,10 +339,10 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                 btn_half_day_morning.setText(getString(R.string.e_m_half_day));
                 btn_half_day_evening.setText(getString(R.string.e_e_half_day));
 
-//                casual.setText(getString(R.string.e_leave_casual) +" (" +utils.getSharedPreference(context,Constants.CASUAL_LEAVE_COUNT)+")");
-//                annual.setText(getString(R.string.e_leave_annual) +" (" +utils.getSharedPreference(context,Constants.ANUAL_LEAVE_COUNT)+")");
-//                medical.setText(getString(R.string.e_leave_medical) +" (" +utils.getSharedPreference(context,Constants.MEDICAL_LEAVE_COUNT)+")");
-//                no_pay.setText(getString(R.string.e_leave_no_pay) +" (" +utils.getSharedPreference(context,Constants.NOPAY_LEAVE_COUNT)+")");
+                casual.setText(getString(R.string.e_leave_casual) +" (" +utils.getSharedPreference(context,Constants.CASUAL_LEAVE_COUNT)+")");
+                annual.setText(getString(R.string.e_leave_annual) +" (" +utils.getSharedPreference(context,Constants.ANUAL_LEAVE_COUNT)+")");
+                medical.setText(getString(R.string.e_leave_medical) +" (" +utils.getSharedPreference(context,Constants.MEDICAL_LEAVE_COUNT)+")");
+                no_pay.setText(getString(R.string.e_leave_no_pay) +" (" +utils.getSharedPreference(context,Constants.NOPAY_LEAVE_COUNT)+")");
 
                 leave_reason.setText(getString(R.string.e_leave_reason));
 
@@ -358,10 +358,10 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                 btn_half_day_morning.setText(getString(R.string.t_m_half_day));
                 btn_half_day_evening.setText(getString(R.string.t_e_half_day));
 
-//                casual.setText(getString(R.string.t_leave_casual) +" (" +utils.getSharedPreference(context,Constants.CASUAL_LEAVE_COUNT)+")");
-//                annual.setText(getString(R.string.t_leave_annual) +" (" +utils.getSharedPreference(context,Constants.ANUAL_LEAVE_COUNT)+")");
-//                medical.setText(getString(R.string.t_leave_medical) +"(" +utils.getSharedPreference(context,Constants.MEDICAL_LEAVE_COUNT)+")");
-//                no_pay.setText(getString(R.string.t_leave_no_pay) +" (" +utils.getSharedPreference(context,Constants.NOPAY_LEAVE_COUNT)+")");
+                casual.setText(getString(R.string.t_leave_casual) +" (" +utils.getSharedPreference(context,Constants.CASUAL_LEAVE_COUNT)+")");
+                annual.setText(getString(R.string.t_leave_annual) +" (" +utils.getSharedPreference(context,Constants.ANUAL_LEAVE_COUNT)+")");
+                medical.setText(getString(R.string.t_leave_medical) +"(" +utils.getSharedPreference(context,Constants.MEDICAL_LEAVE_COUNT)+")");
+                no_pay.setText(getString(R.string.t_leave_no_pay) +" (" +utils.getSharedPreference(context,Constants.NOPAY_LEAVE_COUNT)+")");
 
                 leave_reason.setText(getString(R.string.t_leave_reason));
 
@@ -387,7 +387,8 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                         }
                         intent.putExtra("json", String.valueOf(SaveJson(
                                 ts,
-                                utils.getSharedPreference(context, Constants.TOKEN),
+                               // utils.getSharedPreference(context, Constants.TOKEN),
+                                "token",
                                 leaveTypeArray[leaveTypePosition],
                                 leaveCategoryArray[leavecategoryPosition],
                                 "",
