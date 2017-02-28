@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.rype3.leaveapp.rype3leaveapp.LanguageActivity">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/gray_800"
+        tools:context="com.rype3.leaveapp.rype3leaveapp.LanguageActivity">
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true">
+
+            <Button
+                android:theme="@style/button_them"
+                android:text="SINHALA"
+                android:layout_gravity="center"
+                android:id="@+id/btn_sinhala"
+                android:layout_margin="15dp"
+                android:layout_width="300dp"
+                android:background="@drawable/button_click"
+                android:layout_height="75dp" />
+
+            <Button
+                android:layout_width="300dp"
+                android:layout_height="75dp"
+                android:theme="@style/button_them"
+                android:layout_margin="15dp"
+                android:text="ENGLISH"
+                android:background="@drawable/button_click"
+                android:id="@+id/btn_english" />
+
+            <Button
+                android:layout_width="300dp"
+                android:layout_height="75dp"
+                android:theme="@style/button_them"
+                android:text="TAMIL"
+                android:layout_margin="15dp"
+                android:background="@drawable/button_click"
+                android:id="@+id/btn_tamil" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="NEXT"
+            android:drawablePadding="-5dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:drawableRight="@drawable/ic_next"
+            android:background="@drawable/button_click"
+            android:layout_margin="15dp"
+            android:id="@+id/button_next"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+
+        <!--<Button-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:text="EXIT"-->
+        <!--android:drawablePadding="-5dp"-->
+        <!--android:padding="10dp"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:drawableLeft="@drawable/ic_arrow_back"-->
+        <!--android:background="@drawable/button_click"-->
+        <!--android:layout_margin="15dp"-->
+        <!--android:id="@+id/button_exit"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true" />-->
+
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

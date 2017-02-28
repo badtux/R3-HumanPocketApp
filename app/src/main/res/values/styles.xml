@@ -1,0 +1,87 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/gray_800</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="button_them" >
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="number_button_them" >
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="keyboard_row">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:divider">@drawable/keyboard_divider</item>
+        <item name="android:gravity">center</item>
+        <item name="android:showDividers">beginning|middle|end</item>
+    </style>
+
+    <style name="keyboard_button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:background">@drawable/button_bg</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+
+    <style name="keyboard_number_button" parent="keyboard_button">
+        <item name="android:tag">number_button</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="n_keyboard_number_button" parent="keyboard_button">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:tag">number_button</item>
+        <item name="android:layout_margin">15dp</item>
+        <item name="android:textSize">50sp</item>
+        <item name="android:background">@drawable/button_click</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="n_keyboard_number_button_1" parent="keyboard_button">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:layout_margin">15dp</item>
+        <item name="android:textSize">60sp</item>
+        <item name="android:background">@drawable/button_click</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MyDatePicker" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+    <style name="MyTabLayout" parent="Base.Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MyTabTextAppearance</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="MyTabTextAppearance" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/gray_500</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
+</resources>
