@@ -59,7 +59,7 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
     private int leavecategoryPosition = 0;
     ArrayList<String> leaveReasonStringList;
 
-    int tabPosition = 0 ;
+    int tabPosition = 0;
 
     private Button left_btn,right_btn;
     private TabLayout tabLayout;
@@ -70,6 +70,7 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
 
         context = this.getApplication();
         utils = new Utils(context);
+
         widget(utils.getSharedPreference(context,Constants.LANGUAGE_TYPE));
 
         switch (utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)){
@@ -153,7 +154,7 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                 jsonObject2 = new JSONObject(jsonResult);
                 int leaveCategoryPosition1 = Integer.parseInt(jsonObject2.getString("leaveCategoryPosition"));
                 int leaveTypePosition1 = Integer.parseInt(jsonObject2.getString("leaveTypePosition"));
-                final                                                                                                                                                   int reasonPosition1 = Integer.parseInt(jsonObject2.getString("reasonPosition"));
+                final int reasonPosition1 = Integer.parseInt(jsonObject2.getString("reasonPosition"));
 
                 if (leaveTypePosition1 ==1){
                     leaveTypePosition = leaveTypePosition1;
@@ -449,7 +450,12 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                         new Runnable(){
                             @Override
                             public void run() {
-                                tabLayout.getTabAt(tabPosition-1).select();
+                                try {
+                                    tabLayout.getTabAt(tabPosition - 1).select();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    left_btn.setVisibility(View.INVISIBLE);
+                                }
                             }
                         }, 100);
             }
@@ -459,13 +465,17 @@ public class ApplicationActivity extends AppCompatActivity implements Connectivi
                         new Runnable(){
                             @Override
                             public void run() {
-                                tabLayout.getTabAt(tabPosition+1).select();
+                                try {
+                                    tabLayout.getTabAt(tabPosition + 1).select();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    right_btn.setVisibility(View.INVISIBLE);
+                                }
                             }
                         }, 100);
             }
         }
     };
-
 
     public boolean validation(String language){
 

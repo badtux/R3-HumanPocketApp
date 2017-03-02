@@ -178,21 +178,12 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
                 tittle_leave_type.setText(getString(R.string.s_leave_type));
                 tittle_leave_category.setText(getString(R.string.s_leave_category));
                 leave_period.setText(getString(R.string.s_period));
-
-            //    tittle_leave_day.setText(getString(R.string.s_leave_count));
                 tittle_leave_reson.setText(getString(R.string.s_leave_reason));
 
                 confirm.setText(getString(R.string.s_ok));
-
-
                 help.setText(getString(R.string.s_help));
-                help.setTextSize(35);
                 back.setText(getString(R.string.s_back));
-                back.setTextSize(35);
-
-
                 exit.setText(getString(R.string.s_exit));
-                exit.setTextSize(35);
                 break;
 
             case "e":
@@ -202,8 +193,6 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
                 tittle_leave_type.setText(getString(R.string.e_leave_type));
                 tittle_leave_category.setText(getString(R.string.e_leave_category));
                 leave_period.setText(getString(R.string.e_period));
-
-                //tittle_leave_day.setText(getString(R.string.e_leave_count));
                 tittle_leave_reson.setText(getString(R.string.e_leave_reason));
 
                 confirm.setText(getString(R.string.e_ok));
@@ -242,19 +231,19 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
 
                         Log.e("TAG Reason: ",jsonObject.getString("reason"));
 
-                        new ProcressAsyncTask(
-                                ConfarmActivity.this,
-                                constants.urls(1),
-                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
-                                null,
-                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
-                                "POST",1,"1.0",null,
-                                leaveTypeArray[leaveTypePosition],
-                                leaveCategoryArray[leavecategoryPosition],
-                                from_date,
-                                to_date,
-                                utils.getSharedPreference(context,Constants.TOKEN),
-                                leaveReasonStringArray[leavereasonPosition],utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)).execute();
+//                        new ProcressAsyncTask(
+//                                ConfarmActivity.this,
+//                                constants.urls(1),
+//                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
+//                                null,
+//                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
+//                                "POST",1,"1.0",null,
+//                                leaveTypeArray[leaveTypePosition],
+//                                leaveCategoryArray[leavecategoryPosition],
+//                                from_date,
+//                                to_date,
+//                                utils.getSharedPreference(context,Constants.TOKEN),
+//                                leaveReasonStringArray[leavereasonPosition],utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)).execute();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

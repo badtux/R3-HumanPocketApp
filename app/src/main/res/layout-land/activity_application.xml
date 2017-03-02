@@ -319,7 +319,7 @@
                     android:layout_weight="1"
                     android:text="EXIT"
                     android:background="@drawable/button_click03"
-                    android:textColor="@color/white"
+                    android:textColor="@color/red"
                     android:id="@+id/button_exit" />
 
                 <Button

@@ -1,14 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_900"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context="com.rype3.leaveapp.rype3leaveapp.ApplicationActivity">
+    tools:context=".FromDateActivity" >
+
 
     <LinearLayout
         android:id="@+id/linearLayout_leave_category"
@@ -18,331 +15,300 @@
         android:background="@color/gray_900"
         android:layout_height="fill_parent">
 
-    <LinearLayout
-        android:id="@+id/linearLayout_01_0"
-        android:orientation="horizontal"
-        android:layout_weight="0.6"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
+        <LinearLayout
+            android:id="@+id/linearLayout_01_0"
+            android:orientation="horizontal"
+            android:layout_weight="0.6"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:text="NAME"
-        android:layout_marginLeft="5dp"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:id="@+id/title_name"
-        android:textSize="25sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout_01"
-        android:orientation="horizontal"
-        android:layout_weight="1.24"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
-
-    <RelativeLayout
-        android:id="@+id/relative_layout_01"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="MR. INDIKA GUNASEKARA"
-        android:textSize="60sp"
-        android:layout_marginLeft="5dp"
-        android:textColor="@color/white"
-        android:id="@+id/title_userName"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    </RelativeLayout></LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout_01_1"
-        android:orientation="horizontal"
-        android:layout_weight="0.6"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:text="SELECT LEAVE TYPE"
-        android:layout_marginLeft="5dp"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:id="@+id/title_leave_type"
-        android:textSize="25sp" />
         </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout_02"
-        android:orientation="horizontal"
-        android:layout_weight="1.34"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
+        <LinearLayout
+            android:id="@+id/linearLayout_01"
+            android:orientation="horizontal"
+            android:layout_weight="1.24"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
 
-    <LinearLayout
-        android:id="@+id/linearLayout_leave_type"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:weightSum="3">
+            <RelativeLayout
+                android:id="@+id/relative_layout_01"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
-    <Button
-        android:text="HALF DAY MORNING"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:layout_margin="5dp"
-        android:gravity="center"
-        android:padding="10dp"
-        android:layout_width="0dp"
-        android:background="@drawable/button_click03"
-        android:layout_height="fill_parent"
-        android:id="@+id/btn_half_day_morning"
-        android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/textFrom"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:textSize="50sp"
+                    android:textColor="@color/white"
+                    android:text="FROM"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"/>
+            </RelativeLayout></LinearLayout>
 
-    <Button
-        android:text="HALF DAY EVENING"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:layout_margin="5dp"
-        android:gravity="center"
-        android:padding="10dp"
-        android:layout_width="0dp"
-        android:background="@drawable/button_click03"
-        android:layout_height="fill_parent"
-        android:id="@+id/btn_half_day_evening"
-        android:layout_weight="1" />
-
-    <Button
-        android:text="FULL DAY"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:layout_margin="5dp"
-        android:gravity="center"
-        android:padding="10dp"
-        android:background="@drawable/button_click03"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:id="@+id/btn_full_day"
-        android:layout_weight="1" />
-
-    </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout_01_2"
-        android:orientation="horizontal"
-        android:layout_weight="0.6"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
+        <LinearLayout
+            android:id="@+id/linearLayout_02"
+            android:orientation="horizontal"
+            android:layout_weight="1.32"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:text="LEAVE CATEGORY"
-        android:layout_marginLeft="5dp"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:id="@+id/title_leave_category"
-        android:textSize="25sp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:weightSum="7"
+                android:gravity="center"
+                android:layout_height="fill_parent">
 
-    </LinearLayout>
+                <TextView
+                    android:text="2017"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.6"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_year" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout_03"
-        android:orientation="horizontal"
-        android:layout_weight="1.34"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
+                <TextView
+                    android:text="/"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_1" />
 
-    <LinearLayout
-        android:id="@+id/leave_category"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:weightSum="4"
-        android:layout_height="fill_parent">
+                <TextView
+                    android:text="MARCH"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_month" />
 
-    <RadioGroup
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="horizontal"
-        android:id="@+id/myRadioGroup">
+                <TextView
+                    android:text=""
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.1"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_0" />
 
-    <RadioButton
-        android:text="CASUAL"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:layout_width="wrap_content"
-        android:padding="2.5dp"
-        android:layout_height="fill_parent"
-        android:id="@+id/radio_casual"
-        android:layout_weight="1" />
+                <TextView
+                    android:text="/"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_2" />
 
+                <TextView
+                    android:text="26"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_day" />
 
-    <RadioButton
-        android:text="ANNUAL"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:padding="2.5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:id="@+id/radio_annual"
-        android:layout_weight="1" />
-
-    <RadioButton
-        android:text="MEDICAL"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:layout_width="wrap_content"
-        android:padding="2.5dp"
-        android:layout_height="fill_parent"
-        android:id="@+id/radio_medical"
-        android:layout_weight="1" />
-
-    <RadioButton
-        android:text="NO PAY"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:padding="2.5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:id="@+id/radio_no_pay"
-        android:layout_weight="1" />
-    </RadioGroup>
-    </LinearLayout>
+                <TextView
+                    android:text="WENDESDAY"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.8"
+                    android:textSize="50sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:id="@+id/textView_weekday" />
+            </LinearLayout>
         </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout_01_3"
-        android:orientation="horizontal"
-        android:layout_weight="0.6"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
+        <LinearLayout
+            android:id="@+id/linearLayout_003"
+            android:orientation="horizontal"
+            android:layout_weight="0.2"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
+        </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="LEAVE TYPE"
-        android:textSize="25sp"
-        android:layout_marginLeft="5dp"
-        android:gravity="center|bottom"
-        android:textColor="@color/white"
-        android:id="@+id/textView_leave_reason" />
+        <LinearLayout
+            android:id="@+id/linearLayout_0003"
+            android:orientation="horizontal"
+            android:layout_weight="1.8"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/ic_left"
+                    android:id="@+id/button_left" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/ic_right"
+                    android:id="@+id/button_right" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tab_layout_weekday"
+                    style="@style/MyTabLayout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    app:tabMaxWidth="0dp"
+                    app:tabGravity="fill"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="#76FF03"
+                    android:background="@drawable/button_background_03"
+                    android:minHeight="?attr/actionBarSize"
+                    android:layout_toRightOf="@+id/button_left"
+                    android:layout_toLeftOf="@+id/button_right"
+                    android:layout_toStartOf="@+id/button_right"
+                    android:layout_toEndOf="@+id/button_left" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_00003"
+            android:orientation="horizontal"
+            android:layout_weight="0.2"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_03"
+            android:orientation="horizontal"
+            android:layout_weight="1.8"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/ic_left"
+                    android:id="@+id/btn_left" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/ic_right"
+                    android:id="@+id/btn_right" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tab_layout_day"
+                    style="@style/MyTabLayout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    app:tabMaxWidth="0dp"
+                    app:tabGravity="fill"
+                    app:tabMode="scrollable"
+                    app:tabSelectedTextColor="#76FF03"
+                    android:background="@drawable/button_background_03"
+                    android:minHeight="?attr/actionBarSize"
+                    android:layout_toRightOf="@+id/btn_left"
+                    android:layout_toLeftOf="@+id/btn_right"
+                    android:layout_toStartOf="@+id/btn_right"
+                    android:layout_toEndOf="@+id/btn_left" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_000003"
+            android:orientation="horizontal"
+            android:layout_weight="0.6"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_05"
+            android:orientation="horizontal"
+            android:layout_weight="1.14"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayout_footer"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:textSize="40sp"
+                    android:layout_weight="1"
+                    android:text="BACK"
+                    android:background="@drawable/button_click03"
+                    android:textColor="@color/white"
+                    android:id="@+id/button_back" />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:textSize="40sp"
+                    android:text="EXIT"
+                    android:layout_weight="1"
+                    android:textColor="@color/red"
+                    android:background="@drawable/button_click03"
+                    android:id="@+id/button_exit" />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:textSize="40sp"
+                    android:text="NEXT"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_click03"
+                    android:id="@+id/button_next" />
+
+            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout_04"
-        android:orientation="horizontal"
-        android:layout_weight="1.44"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/ic_left"
-        android:id="@+id/button_left" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/ic_right"
-        android:id="@+id/button_right" />
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
-        style="@style/MyTabLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        app:tabMaxWidth="0dp"
-        app:tabGravity="fill"
-        app:tabMode="scrollable"
-        android:background="@drawable/button_background_03"
-        android:minHeight="?attr/actionBarSize"
-        android:layout_toRightOf="@+id/button_left"
-        android:layout_toLeftOf="@+id/button_right"
-        android:layout_toStartOf="@+id/button_right"
-        android:layout_toEndOf="@+id/button_left" />
-    </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout_05"
-        android:orientation="horizontal"
-        android:layout_weight="1.14"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp">
-
-    <LinearLayout
-        android:id="@+id/linearLayout_footer"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:textSize="40sp"
-        android:layout_weight="1"
-        android:text="EXIT"
-        android:background="@drawable/button_click03"
-        android:textColor="@color/white"
-        android:id="@+id/button_exit" />
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:textSize="40sp"
-        android:text="HELP"
-        android:layout_weight="1"
-        android:textColor="@color/white"
-        android:background="@drawable/button_click03"
-        android:id="@+id/button_help" />
-
-        <Button
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:textSize="40sp"
-        android:text="NEXT"
-        android:layout_weight="1"
-        android:textColor="@color/white"
-        android:background="@drawable/button_click03"
-        android:id="@+id/button_next" />
-
-    </LinearLayout>
-    </LinearLayout>
-
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

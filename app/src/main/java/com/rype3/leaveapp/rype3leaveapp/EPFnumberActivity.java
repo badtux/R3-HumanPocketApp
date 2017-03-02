@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -110,6 +111,7 @@ public class EPFnumberActivity extends AppCompatActivity {
 
 
         mPasswordField = (EditText) findViewById(R.id.password_field);
+        mPasswordField.setInputType(InputType.TYPE_NULL);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         mediaPlayer = MediaPlayer.create(this, R.raw.click);
@@ -125,10 +127,8 @@ public class EPFnumberActivity extends AppCompatActivity {
                 back.setTextSize(35);
 
                 exit_btn.setText(getString(R.string.s_exit));
-                exit_btn.setTextSize(35);
 
                 mPasswordField.setHint(getString(R.string.s_epf_no));
-                next.setTextSize(35);
 
 
                 break;
@@ -139,6 +139,7 @@ public class EPFnumberActivity extends AppCompatActivity {
                 back.setText(getString(R.string.t_back));
                 exit_btn.setText(getString(R.string.t_exit));
                 mPasswordField.setHint(getString(R.string.t_epf_no));
+                back.setTextSize(28);
                 break;
 
             case "e":

@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -126,6 +127,7 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
         exit_btn.setOnClickListener(onClick);
 
         mPasswordField = (EditText) findViewById(R.id.password_field);
+        mPasswordField.setInputType(InputType.TYPE_NULL);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         mediaPlayer = MediaPlayer.create(this, R.raw.click);
@@ -138,11 +140,9 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
                // clear.setText(getString(R.string.s_clear));
                 back.setText(getString(R.string.s_back));
                 mPasswordField.setHint(getString(R.string.s_pin_no));
-                connect.setTextSize(28);
                 back.setTextSize(35);
 
                 exit_btn.setText(getString(R.string.s_exit));
-                exit_btn.setTextSize(35);
 
                 break;
 

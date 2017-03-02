@@ -17,6 +17,7 @@
     <color name="white">#ffffff</color>
     <color name="red">#ff0000</color>
 
+    <color name="trans">#00000000</color>
     <color name="gray_800_trans">#64424242</color>
     <color name="unselected_tab">#9c2000f2</color>
     <color name="black">#000000</color>

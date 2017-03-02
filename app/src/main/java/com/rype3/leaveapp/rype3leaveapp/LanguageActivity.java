@@ -31,6 +31,7 @@ public class LanguageActivity extends AppCompatActivity implements ConnectivityR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_language);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         widget();
 
         context = this.getApplication();
@@ -77,7 +78,6 @@ public class LanguageActivity extends AppCompatActivity implements ConnectivityR
                         english.setTextColor(Color.parseColor("#FFFFFF"));
                         utils.setSharedPreference(context,"s",Constants.LANGUAGE_TYPE);
                         btn_next.setText(getString(R.string.s_next));
-                        btn_next.setTextSize(35);
                     }
                 }
 

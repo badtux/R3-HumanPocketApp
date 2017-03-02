@@ -11,23 +11,20 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/drawerlayout"
         tools:context=".TestActivity">
 
         <RelativeLayout
             android:id="@+id/image_layer1"
             android:layout_width="fill_parent"
-            android:background="@color/gray_800"
+            android:background="@color/gray_900"
             android:layout_height="fill_parent">
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:weightSum="2"
-                android:background="@color/gray_800_trans"
                 android:orientation="horizontal">
-
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -38,102 +35,6 @@
                     <RelativeLayout
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent">
-
-                        <!--<LinearLayout-->
-                        <!--android:layout_width="fill_parent"-->
-                        <!--android:layout_height="fill_parent"-->
-                        <!--android:layout_weight="0.6"-->
-                        <!--android:orientation="vertical">-->
-
-                        <!--&lt;!&ndash;<TableLayout&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/keyboard"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:background="@android:color/white"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:divider="@drawable/keyboard_divider"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:orientation="vertical"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:gravity="center"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:layout_margin="10dp"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:showDividers="beginning|middle|end">&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TableRow style="@style/keyboard_row">&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_1"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="1"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_2"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="2"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_3"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="3"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</TableRow>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TableRow style="@style/keyboard_row">&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_4"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="4"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_5"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="5"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_6"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="6"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</TableRow>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TableRow style="@style/keyboard_row">&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_7"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="7"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_8"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="8"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_9"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="9"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</TableRow>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TableRow style="@style/keyboard_row">&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_clear"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="CLEAR"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:textAppearance="?android:attr/textAppearanceMedium"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_0"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_number_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="0"/>&ndash;&gt;-->
-
-                        <!--&lt;!&ndash;<TextView&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:id="@+id/t9_key_backspace"&ndash;&gt;-->
-                        <!--&lt;!&ndash;style="@style/keyboard_button"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:text="BACK"&ndash;&gt;-->
-                        <!--&lt;!&ndash;android:textAppearance="?android:attr/textAppearanceMedium"/>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</TableRow>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</TableLayout>&ndash;&gt;-->
-
-                        <!--</LinearLayout>-->
-
-
                         <LinearLayout
                             android:id="@+id/linearLayout_n1"
                             android:orientation="horizontal"
@@ -257,70 +158,163 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:id="@+id/edit_text_layer"
+                    <LinearLayout
+                        android:id="@+id/linearLayout_leave_category"
+                        android:orientation="vertical"
+                        android:weightSum="9"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent">
 
-                        <EditText
+                        <LinearLayout
+                            android:id="@+id/linearLayout_01_0"
+                            android:orientation="horizontal"
+                            android:layout_weight="0.66"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout_01"
+                            android:orientation="horizontal"
+                            android:layout_weight="1"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout_01_1"
+                            android:orientation="horizontal"
+                            android:layout_weight="0.5"
+                            android:gravity="center"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout_02"
+                            android:orientation="horizontal"
+                            android:layout_weight="2"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+
+                            <EditText
                             android:id="@+id/password_field"
                             android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="fill_parent"
                             android:background="@color/white"
                             android:textColor="@color/black"
-                            android:enabled="false"
-                            android:padding="5dp"
-                            android:textSize="60sp"
+                            android:textSize="40sp"
                             android:maxLines="1"
                             android:maxLength="15"
                             android:inputType="number"
                             android:gravity="center"
-                            android:hint="EPF NUMBER"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:layout_marginTop="160dp"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginRight="5dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_centerHorizontal="true" />
+                            android:hint="EPF NUMBER" />
 
-                        <Button
-                            android:text="NEXT"
-                            android:layout_width="200dp"
-                            android:layout_height="80dp"
-                            android:textSize="30sp"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_margin="16dp"
-                            android:drawablePadding="-10dp"
-                            android:padding="10dp"
-                            android:textColor="@color/white"
-                            android:background="@drawable/button_click"
-                            android:id="@+id/button_next" />
+                        </LinearLayout>
 
-                        <Button
-                            android:layout_width="180dp"
-                            android:layout_height="80dp"
-                            android:text="EXIT"
-                            android:textSize="30sp"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_margin="16dp"
-                            android:drawablePadding="-10dp"
-                            android:padding="10dp"
-                            android:textColor="@color/white"
-                            android:background="@drawable/button_click"
-                            android:id="@+id/button_back_language" />
+                        <LinearLayout
+                            android:id="@+id/linearLayout_01_2"
+                            android:orientation="horizontal"
+                            android:layout_weight="0.5"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
 
 
-                    </RelativeLayout>
+                        </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/linearLayout_03"
+                            android:orientation="horizontal"
+                            android:layout_weight="1"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout_01_3"
+                            android:orientation="horizontal"
+                            android:layout_weight="1"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout_04"
+                            android:orientation="horizontal"
+                            android:layout_weight="1"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout_05"
+                            android:orientation="horizontal"
+                            android:layout_weight="1.14"
+                            android:layout_width="fill_parent"
+                            android:layout_height="0dp">
+
+                            <LinearLayout
+                                android:id="@+id/linearLayout_footer"
+                                android:orientation="horizontal"
+                                android:weightSum="4"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent">
+
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="fill_parent"
+                                    android:layout_weight="2"
+                                    android:orientation="horizontal"
+                                    android:id="@+id/linearLayout" >
+
+
+                                    <Button
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:textSize="40sp"
+                                        android:text="EXIT"
+                                        android:gravity="center|left"
+                                        android:padding="20dp"
+                                        android:textColor="@color/red"
+                                        android:background="@drawable/button_click05"
+                                        android:id="@+id/button_back_language" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="fill_parent"
+                                    android:layout_weight="2"
+                                    android:orientation="horizontal"
+                                    android:id="@+id/linearLayout1" >
+
+                                    <Button
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"
+                                        android:textSize="40sp"
+                                        android:text="NEXT"
+                                        android:gravity="center|right"
+                                        android:padding="20dp"
+                                        android:textColor="@color/white"
+                                        android:background="@drawable/button_click04"
+                                        android:id="@+id/button_next" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
-
-
-
         </RelativeLayout>
     </android.support.v4.widget.DrawerLayout></android.support.design.widget.CoordinatorLayout>

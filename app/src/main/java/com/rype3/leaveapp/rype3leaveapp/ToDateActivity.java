@@ -7,45 +7,123 @@ package com.rype3.leaveapp.rype3leaveapp;
         import android.content.Intent;
         import android.media.MediaPlayer;
         import android.os.Bundle;
+        import android.os.Handler;
+        import android.support.design.widget.TabLayout;
         import android.util.Log;
         import android.view.View;
         import android.widget.Button;
         import android.widget.DatePicker;
         import android.widget.TextView;
+
+        import java.util.ArrayList;
         import java.util.Calendar;
         import java.util.GregorianCalendar;
 
 public class ToDateActivity extends Activity {
-    private DatePicker dpResult;
-    private Button btn_back,btn_next,btn_exit;
-    private TextView tv_date,tv_year,tv_month,tv_weekday, tv_to;
+    private Button btn_back, btn_next,btn_exit ;
+    private TextView tv_date;
+    private TextView tv_month;
+    private TextView tv_weekday;
+    private TextView tv_to;
+    private TextView tv_year;
     Utils utils;
     Context context;
     private Intent intent = null;
-    private Constants constants;
     private String jsonResult ,from_date,to_date;
     private String[] MonthStringArray ;
     private String[] WeekStringArray ;
+    private TabLayout tabLayout,tabLayoutDay;
+    private String[] monthArray;
+    int monthPosition = 0,datePosition = 0,year,month,day,toDay;
+    ArrayList datesArray;
+    private Button left_btn_month, right_btn_month, left_btn_date, right_btn_date;
+    Calendar mycal;
     private MediaPlayer mediaPlayer_1 = null,mediaPlayer = null,mediaPlayer_2 = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.to_date_activity);
+        setContentView(R.layout.activity_from_date);
 
         context = this.getApplication();
         utils =  new Utils(context);
-        constants = new Constants(context);
+
+        Date();
+        widget();
+
+        datesArray = new ArrayList();
 
         mediaPlayer = MediaPlayer.create(this, R.raw.click);
         mediaPlayer_1 = MediaPlayer.create(this, R.raw.click_2);
         mediaPlayer_2 = MediaPlayer.create(this, R.raw.error);
 
-
         intent = getIntent();
         jsonResult = intent.getStringExtra("json");
         from_date = intent.getStringExtra("from_date");
 
-        dpResult = (DatePicker) findViewById(R.id.datePicker);
+        switch (utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)){
+            case "s":
+                monthArray = getResources().getStringArray(R.array.s_month);
+                break;
+
+            case "t":
+                monthArray = getResources().getStringArray(R.array.t_month);
+                break;
+
+            case "e":
+                monthArray = getResources().getStringArray(R.array.e_month);
+                break;
+        }
+
+        for (int i = 0; i< monthArray.length; i++) {
+            tabLayout.addTab(tabLayout.newTab().setText(monthArray[i]));
+        }
+        tabLayout.setTabGravity(TabLayout.MODE_SCROLLABLE);
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                monthPosition = tab.getPosition();
+
+                datesArray.clear();
+                getMonth(year,tab.getPosition(),day);
+
+                if (monthPosition == 0){
+                    left_btn_month.setVisibility(View.INVISIBLE);
+                }else{
+                    left_btn_month.setVisibility(View.VISIBLE);
+                }
+
+                if (monthPosition == monthArray.length-1){
+                    right_btn_month.setVisibility(View.INVISIBLE);
+                }else {
+                    right_btn_month.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        new Handler().postDelayed(
+                new Runnable(){
+                    @Override
+                    public void run() {
+                        monthPosition = month;
+                        tabLayout.getTabAt(month).select();
+                        datesArray.clear();
+                        getMonth(year, month,day);
+                    }
+                }, 100);
+
+    }
+
+    public void widget(){
         tv_date = (TextView) findViewById(R.id.textView_day);
         tv_year = (TextView) findViewById(R.id.textView_year);
         tv_month = (TextView) findViewById(R.id.textView_month);
@@ -58,18 +136,32 @@ public class ToDateActivity extends Activity {
         btn_next = (Button) findViewById(R.id.button_next);
         btn_next.setOnClickListener(onclick);
 
+        left_btn_date = (Button) findViewById(R.id.btn_left);
+        left_btn_date.setOnClickListener(onclick);
+
+        right_btn_date = (Button) findViewById(R.id.btn_right);
+        right_btn_date.setOnClickListener(onclick);
+
         btn_exit = (Button) findViewById(R.id.button_exit);
         btn_exit.setOnClickListener(onclick);
+
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout_weekday);
+        tabLayoutDay = (TabLayout) findViewById(R.id.tab_layout_day);
+
+        left_btn_month = (Button) findViewById(R.id.button_left);
+        left_btn_month.setOnClickListener(onclick);
+
+        right_btn_month = (Button) findViewById(R.id.button_right);
+        right_btn_month.setOnClickListener(onclick);
 
         switch (utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)){
             case "s":
                 MonthStringArray = getResources().getStringArray(R.array.s_month);
                 WeekStringArray = getResources().getStringArray(R.array.s_week_day);
-                tv_to.setText(getString(R.string.s_to));
+
                 btn_next.setText(getString(R.string.s_next));
-
                 btn_back.setText(getString(R.string.s_back));
-
+                tv_to.setText(getString(R.string.s_to));
                 btn_exit.setText(getString(R.string.s_exit));
                 break;
 
@@ -91,112 +183,16 @@ public class ToDateActivity extends Activity {
                 btn_exit.setText(getString(R.string.e_exit));
                 break;
         }
+    }
 
+    public void Date(){
+        mycal = Calendar.getInstance();
+        year = mycal.get(Calendar.YEAR);
+        month = mycal.get(Calendar.MONTH);
+        day = mycal.get(Calendar.DAY_OF_MONTH);
+        mycal.setTimeInMillis(System.currentTimeMillis());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-
-        tv_year.setText(String.valueOf(calendar.get(Calendar.YEAR)));
-        tv_month.setText(MonthStringArray[calendar.get(Calendar.MONTH)]);
-
-
-        Calendar calendar1 = new GregorianCalendar(calendar.get(Calendar.YEAR),(calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DAY_OF_MONTH)); // Note that Month value is 0-based. e.g., 0 for January.
-        int reslut = calendar1.get(Calendar.DAY_OF_WEEK);
-        switch (reslut) {
-
-            case Calendar.MONDAY:
-                System.out.println("It's MONDAY !");
-                tv_weekday.setText(WeekStringArray[0]);
-                break;
-
-            case Calendar.TUESDAY:
-                System.out.println("It's TUESDAY !");
-                tv_weekday.setText(WeekStringArray[1]);
-                break;
-
-            case Calendar.WEDNESDAY:
-                System.out.println("It's WEDNESDAY !");
-                tv_weekday.setText(WeekStringArray[2]);
-                break;
-
-            case Calendar.THURSDAY:
-                System.out.println("It's THURSDAY !");
-                tv_weekday.setText(WeekStringArray[3]);
-                break;
-
-            case Calendar.FRIDAY:
-                System.out.println("It's FRIDAY !");
-                tv_weekday.setText(WeekStringArray[4]);
-                break;
-
-            case Calendar.SATURDAY:
-                System.out.println("It's SATURDAY !");
-                tv_weekday.setText(WeekStringArray[5]);
-                break;
-
-            case Calendar.SUNDAY:
-                System.out.println("It's SUNDAY !");
-                tv_weekday.setText(WeekStringArray[6]);
-                break;
-        }
-
-        tv_date.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        //new StringBuilder().append(day).append("/").append(month).append("/").append(year)
-
-        to_date = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)) +"/"+ String.valueOf(calendar.get(Calendar.MONTH) + 1)+"/"+String.valueOf(calendar.get(Calendar.YEAR));
-
-        dpResult.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-
-            @Override
-            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                Log.e("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + dayOfMonth+"");
-
-                Calendar calendar = new GregorianCalendar(year,(month + 1), dayOfMonth); // Note that Month value is 0-based. e.g., 0 for January.
-                int reslut = calendar.get(Calendar.DAY_OF_WEEK);
-                switch (reslut) {
-
-                    case Calendar.MONDAY:
-                        System.out.println("It's MONDAY !");
-                        tv_weekday.setText(WeekStringArray[0]);
-                        break;
-
-                    case Calendar.TUESDAY:
-                        System.out.println("It's TUESDAY !");
-                        tv_weekday.setText(WeekStringArray[1]);
-                        break;
-
-                    case Calendar.WEDNESDAY:
-                        System.out.println("It's WEDNESDAY !");
-                        tv_weekday.setText(WeekStringArray[2]);
-                        break;
-
-                    case Calendar.THURSDAY:
-                        System.out.println("It's THURSDAY !");
-                        tv_weekday.setText(WeekStringArray[3]);
-                        break;
-
-                    case Calendar.FRIDAY:
-                        System.out.println("It's FRIDAY !");
-                        tv_weekday.setText(WeekStringArray[4]);
-                        break;
-
-                    case Calendar.SATURDAY:
-                        System.out.println("It's SATURDAY !");
-                        tv_weekday.setText(WeekStringArray[5]);
-                        break;
-
-                    case Calendar.SUNDAY:
-                        System.out.println("It's SUNDAY !");
-                        tv_weekday.setText(WeekStringArray[6]);
-                        break;
-                }
-                tv_date.setText(String.valueOf(dayOfMonth));
-                tv_month.setText(MonthStringArray[month]);
-                tv_year.setText(String.valueOf(year));
-
-                to_date = String.valueOf(dayOfMonth) +"/"+ String.valueOf(month + 1)+"/"+String.valueOf(year);
-            }
-        });
+        toDay = day;
     }
 
 
@@ -215,13 +211,12 @@ public class ToDateActivity extends Activity {
             }
             if (v == btn_back){
                 if (playSound(1)) {
-                    intent = new Intent(ToDateActivity.this, FromDateActivity.class);
+                    intent = new Intent(ToDateActivity.this, ApplicationActivity.class);
                     intent.putExtra("json" ,jsonResult);
                     startActivity(intent);
                     finish();
                 }
             }
-
 
             if (v == btn_exit){
                 if (playSound(1)) {
@@ -229,6 +224,67 @@ public class ToDateActivity extends Activity {
                     startActivity(intent);
                     finish();
                 }
+            }
+
+            if (v == left_btn_month){
+                new Handler().postDelayed(
+                        new Runnable(){
+                            @Override
+                            public void run() {
+                                try {
+                                    tabLayout.getTabAt(monthPosition - 1).select();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    left_btn_month.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        }, 100);
+            }
+
+            if (v == right_btn_month){
+                new Handler().postDelayed(
+                        new Runnable(){
+                            @Override
+                            public void run() {
+                                try {
+                                    tabLayout.getTabAt(monthPosition + 1).select();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    right_btn_month.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        }, 100);
+            }
+
+
+            if (v == left_btn_date){
+                new Handler().postDelayed(
+                        new Runnable(){
+                            @Override
+                            public void run() {
+                                try {
+                                    tabLayoutDay.getTabAt(datePosition - 1).select();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    left_btn_date.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        }, 100);
+            }
+
+            if (v == right_btn_date){
+                new Handler().postDelayed(
+                        new Runnable(){
+                            @Override
+                            public void run() {
+                                try {
+                                    tabLayoutDay.getTabAt(datePosition + 1).select();
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                    right_btn_date.setVisibility(View.INVISIBLE);
+                                }
+                            }
+                        }, 100);
             }
         }
     };
@@ -266,5 +322,104 @@ public class ToDateActivity extends Activity {
             e.printStackTrace();
         }
         return true;
+    }
+
+    public void getMonth (final int year, final int month, final int date){
+
+        tabLayoutDay.removeAllTabs();
+        datesArray.clear();
+        mycal = new GregorianCalendar(year, month, 1);
+        int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        for(int i = 1 ;i<= daysInMonth; i++){
+            datesArray.add(String.valueOf(i));
+        }
+
+        for (int j = 0; j< datesArray.size(); j++) {
+            tabLayoutDay.addTab(tabLayoutDay.newTab().setText(datesArray.get(j).toString()));
+        }
+
+        tabLayoutDay.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                datePosition = tab.getPosition();
+
+                Log.e("Date td: ", String.valueOf(datePosition));
+                //    setDate(datePosition);
+                getDayofweek(datePosition);
+
+                if (datePosition == 0){
+                    left_btn_date.setVisibility(View.INVISIBLE);
+                }else{
+                    left_btn_date.setVisibility(View.VISIBLE);
+                }
+
+                if (datePosition == datesArray.size()-1){
+                    right_btn_date.setVisibility(View.INVISIBLE);
+                }else {
+                    right_btn_date.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        new Handler().postDelayed(
+                new Runnable(){
+                    @Override
+                    public void run() {
+                        tabLayoutDay.getTabAt(toDay-1).select();
+
+                    }
+                }, 100);
+
+        getDayofweek(toDay);
+    }
+
+    public void getDayofweek(int date){
+        mycal = new GregorianCalendar(year, (monthPosition), (date+1));
+        int reslut = mycal.get(Calendar.DAY_OF_WEEK);
+        switch (reslut) {
+
+            case Calendar.MONDAY:
+                tv_weekday.setText(WeekStringArray[0]);
+                break;
+
+            case Calendar.TUESDAY:
+                tv_weekday.setText(WeekStringArray[1]);
+                break;
+
+            case Calendar.WEDNESDAY:
+                tv_weekday.setText(WeekStringArray[2]);
+                break;
+
+            case Calendar.THURSDAY:
+                tv_weekday.setText(WeekStringArray[3]);
+                break;
+
+            case Calendar.FRIDAY:
+                tv_weekday.setText(WeekStringArray[4]);
+                break;
+
+            case Calendar.SATURDAY:
+                tv_weekday.setText(WeekStringArray[5]);
+                break;
+
+            case Calendar.SUNDAY:
+                tv_weekday.setText(WeekStringArray[6]);
+                break;
+        }
+
+        tv_year.setText(String.valueOf(year));
+        tv_month.setText(MonthStringArray[monthPosition].toUpperCase());
+        tv_date.setText(String.valueOf(date+1));
+
+        to_date = String.valueOf(date+1) +"/"+ String.valueOf(monthPosition+1 )+"/"+String.valueOf(year);
     }
 }
