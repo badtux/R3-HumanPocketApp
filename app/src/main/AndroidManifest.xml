@@ -40,6 +40,15 @@
             </intent-filter>
         </receiver>
 
+        <intent-filter >
+            <action android:name="android.settings.SETTINGS" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        <intent-filter >
+            <action android:name="android.settings.WIRELESS_SETTINGS" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape"
