@@ -6,16 +6,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,10 +28,13 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class ConfarmActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
 
     private TextView name,epf_no,leave_type,leave_category,leave_period,time_to,time_from,leave_reson;
-    private TextView tittle_name,tittle_epf_no,tittle_leave_type,tittle_leave_category,tittle_time_to,tittle_time_from,tittle_leave_reson,tittle_summery;
+    private TextView tittle_name,tittle_epf_no,tittle_leave_type,tittle_leave_category,tittle_leave_reson,tittle_summery;
     private Button confirm,exit, back,help;
     private CoordinatorLayout coordinatorLayout;
     private Snackbar snackbar;
@@ -46,11 +53,23 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
 
     private String[] leaveTypeArray = {"","first","second","full_day"};
     private String[] leaveCategoryArray = {"","casual","annual","medical","nopay"};
+    private   AlertDialog dialog;
+    private ProgrammaticallyExitMessage programmaticallyExitMessage;
+    // To keep track of activity's window focus
+    boolean currentFocus;
 
+    // To keep track of activity's foreground/background status
+    boolean isPaused;
+
+    Handler collapseNotificationHandler;
+    private Handler handler;
+
+    private int activityAction = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confarm);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         context = this.getApplication();
         utils = new Utils(context);
@@ -131,6 +150,8 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+       // exitActivity();
     }
 
     public void widget(String languageType){
@@ -154,7 +175,6 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
 
         exit = (Button) findViewById(R.id.button_exit);
         exit.setOnClickListener(onclick);
-
 
         tittle_summery = (TextView) findViewById(R.id.title_userName);
         tittle_name = (TextView) findViewById(R.id.tittle_name);
@@ -218,32 +238,39 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
                 exit.setText(getString(R.string.e_exit));
                 break;
         }
-    }
 
+        Settings.System.putInt(this.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 20);
+
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.screenBrightness =1f;// 100 / 100.0f;
+        getWindow().setAttributes(lp);
+    }
 
     public View.OnClickListener onclick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (view == confirm){
                 if (playSound(1)) {
+                    activityAction = 1;
                     try {
                         JSONObject jsonObject = new JSONObject(jsonResult);
 
                         Log.e("TAG Reason: ",jsonObject.getString("reason"));
 
-//                        new ProcressAsyncTask(
-//                                ConfarmActivity.this,
-//                                constants.urls(1),
-//                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
-//                                null,
-//                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
-//                                "POST",1,"1.0",null,
-//                                leaveTypeArray[leaveTypePosition],
-//                                leaveCategoryArray[leavecategoryPosition],
-//                                from_date,
-//                                to_date,
-//                                utils.getSharedPreference(context,Constants.TOKEN),
-//                                leaveReasonStringArray[leavereasonPosition],utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)).execute();
+                        new ProcressAsyncTask(
+                                ConfarmActivity.this,
+                                constants.urls(1),
+                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
+                                null,
+                                utils.getSharedPreference(context,Constants.EPF_NUMBER),
+                                "POST",1,"1.0",null,
+                                leaveTypeArray[leaveTypePosition],
+                                leaveCategoryArray[leavecategoryPosition],
+                                from_date,
+                                to_date,
+                                utils.getSharedPreference(context,Constants.TOKEN),
+                                leaveReasonStringArray[leavereasonPosition],utils.getSharedPreference(context,Constants.LANGUAGE_TYPE)).execute();
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -252,6 +279,7 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
 
             if (view == back){
                 if (playSound(1)) {
+                    activityAction = 1;
                     intent = new Intent(ConfarmActivity.this, ApplicationActivity.class);
                     intent.putExtra("json" ,jsonResult);
                     startActivity(intent);
@@ -261,11 +289,13 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
 
             if (view == help){
                 if (playSound(1)) {
+                    activityAction = 1;
                 }
             }
 
             if (view == exit){
                 if (playSound(1)) {
+                    activityAction = 1;
                     intent = new Intent(ConfarmActivity.this, LanguageActivity.class);
                     startActivity(intent);
                     finish();
@@ -274,7 +304,7 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
         }
     };
 
-    public void parseJsonResponse(final String result) {
+    public void parseJsonResponse1(final String result) {
         if (result != null) {
             Log.e("Result : " ,result);
 
@@ -286,12 +316,15 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
 
                 if (status){
                     CustomToast();
-                    exitAlertMessageBox();
+                    exitAlertMessageBox(utils.getSharedPreference(context,Constants.LANGUAGE_TYPE));
 
-                    final Handler handler = new Handler();
+                    handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            if (dialog.isShowing()){
+                                dialog.dismiss();
+                            }
                             intent = new Intent(ConfarmActivity.this, LanguageActivity.class);
                             startActivity(intent);
                             finish();
@@ -385,22 +418,54 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
     }
 
 
-    private void exitAlertMessageBox() {
-        AlertDialog dialog = new AlertDialog.Builder(ConfarmActivity.this)
-                .setTitle("Leave")
-                .setMessage("Do you want to exit?")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+    private void exitAlertMessageBox(String language) {
+        String tittle = "";
+        String message = "";
+        String ok = "";
+        String exit = "";
+
+        switch (language){
+            case "s":
+                tittle = getString(R.string.s_exit);
+                message = getString(R.string.s_exit_message);
+                ok = getString(R.string.s_ok);
+                exit = getString(R.string.s_exit);
+                break;
+
+            case "e":
+                tittle = getString(R.string.e_exit);
+                message = getString(R.string.e_exit_message);
+                ok = getString(R.string.e_ok);
+                exit = getString(R.string.e_exit);
+                break;
+
+            case "t":
+                tittle = getString(R.string.t_exit);
+                message = getString(R.string.t_exit_message);
+                ok = getString(R.string.t_ok);
+                exit = getString(R.string.t_exit);
+                break;
+        }
+
+
+        dialog = new AlertDialog.Builder(ConfarmActivity.this)
+                .setTitle(tittle)
+                .setMessage(message)
+                .setPositiveButton(ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        handler.equals(null);
                         intent = new Intent(ConfarmActivity.this, LanguageActivity.class);
                         startActivity(intent);
                         finish();
 
                     }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                })
+
+                .setNegativeButton(exit, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        handler.equals(null);
                         dialog.dismiss();
                     }
                 }).create();
@@ -445,8 +510,145 @@ public class ConfarmActivity extends AppCompatActivity implements ConnectivityRe
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_HOME) {
+            exitAlertMessageBox();
+        }
+
+        if(keyCode==KeyEvent.KEYCODE_BACK) {
+            exitAlertMessageBox();
+        }
+        return false;
+    }
+
+    private void exitAlertMessageBox() {
+
+        AlertDialog dialog = new AlertDialog.Builder(ConfarmActivity.this)
+                .setTitle("ERROR")
+                .setMessage("PRESS OK")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        dialog.show();
+        return;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        isPaused =false;
         MyApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPaused =true;
+        Log.e("onPause() :  " , String.valueOf(activityAction));
+        switch (activityAction){
+            case 0:
+                intent = new Intent(ConfarmActivity.this, LanguageActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+
+        currentFocus = hasFocus;
+
+        if (!hasFocus) {
+            // Method that handles loss of window focus
+            collapseNow();
+        }
+    }
+
+    public void collapseNow() {
+
+        // Initialize 'collapseNotificationHandler'
+        if (collapseNotificationHandler == null) {
+            collapseNotificationHandler = new Handler();
+        }
+
+        // If window focus has been lost && activity is not in a paused state
+        // Its a valid check because showing of notification panel
+        // steals the focus from current activity's window, but does not
+        // 'pause' the activity
+        if (!currentFocus && !isPaused) {
+
+            // Post a Runnable with some delay - currently set to 300 ms
+            collapseNotificationHandler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    // Use reflection to trigger a method from 'StatusBarManager'
+
+                    Object statusBarService = getSystemService("statusbar");
+                    Class<?> statusBarManager = null;
+
+                    try {
+                        statusBarManager = Class.forName("android.app.StatusBarManager");
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    Method collapseStatusBar = null;
+
+                    try {
+
+                        // Prior to API 17, the method to call is 'collapse()'
+                        // API 17 onwards, the method to call is `collapsePanels()`
+
+                        if (Build.VERSION.SDK_INT > 16) {
+                            collapseStatusBar = statusBarManager .getMethod("collapsePanels");
+                        } else {
+                            collapseStatusBar = statusBarManager .getMethod("collapse");
+                        }
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+
+                    collapseStatusBar.setAccessible(true);
+
+                    try {
+                        collapseStatusBar.invoke(statusBarService);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Check if the window focus has been returned
+                    // If it hasn't been returned, post this Runnable again
+                    // Currently, the delay is 100 ms. You can change this
+                    // value to suit your needs.
+                    if (!currentFocus && !isPaused) {
+                        collapseNotificationHandler.postDelayed(this, 100L);
+                    }
+                }
+            }, 300L);
+        }
+    }
+
+    public void exitActivity(){
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                intent = new Intent(ConfarmActivity.this,LanguageActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+        }, 1000*60*1); // 1000ms = 1s
     }
 }

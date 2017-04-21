@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.rype3.leaveapp.rype3leaveapp.ConfarmActivity">
+
+<RelativeLayout
     android:id="@+id/activity_confarm"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_900"
-    tools:context="com.rype3.leaveapp.rype3leaveapp.ConfarmActivity">
+    android:background="@color/gray_900">
 
     <LinearLayout
         android:id="@+id/linearLayout_leave_category"
@@ -413,3 +419,4 @@
     </LinearLayout>
 
 </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -10,9 +10,13 @@ import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -26,19 +30,20 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
+
+
 public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
     private Activity activity;
-    private String url, email, pin, epf, HTTP_TYPE, version, name, leaveType, leaveCategory, fromDate, toDate, token, leaveReson ,language;
+    private String url, email, pin, epf, HTTP_TYPE, version, name, leaveType, leaveCategory, fromDate, toDate, token, leaveReson, language;
     private ProgressDialog dialog;
     private final static String TAG = "Procress AsyncTask";
     private int type;
     private Context context;
 
-    public ProcressAsyncTask(Context c) {
-        context = c;
+    public ProcressAsyncTask(Context context) {
+        this.context = context;
     }
-
 
     public ProcressAsyncTask(Activity activity,
                              String url,
@@ -55,8 +60,7 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                              String toDate,
                              String token,
                              String leaveReson,
-                             String language
-    ) {
+                             String language) {
         super();
         this.activity = activity;
         this.url = url;
@@ -100,21 +104,7 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... voids) {
-        if (loadJSON(
-                this.url,
-                this.email,
-                this.pin,
-                this.epf,
-                this.HTTP_TYPE,
-                this.type,
-                this.version,
-                this.name,
-                this.leaveType,
-                this.leaveCategory,
-                this.fromDate,
-                this.toDate,
-                this.token,
-                this.leaveReson) != null) {
+        try {
             return loadJSON(
                     this.url,
                     this.email,
@@ -130,42 +120,40 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                     this.toDate,
                     this.token,
                     this.leaveReson).toString();
-        } else {
-            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override
     protected void onPostExecute(final String result) {
-        if (result != null) {
-            dialog.dismiss();
-            switch (this.type) {
-                case 0:
-                    ((PINnumberActivity) activity).parseJsonResponse(result);//1567234
-                    break;
+        dialog.dismiss();
+        switch (this.type) {
+            case 0:
+                ((PINnumberActivity) activity).parseJsonResponse(result);//1567234
+                break;
 
-                case 1:
-                    ((ConfarmActivity) activity).parseJsonResponse(result);
-                    break;
-            }
+            case 1:
+                ((ConfarmActivity) activity).parseJsonResponse1(result);
+                break;
         }
     }
 
-    public JSONObject loadJSON(
-            String url,
-            String email,
-            String pin,
-            String epf,
-            String HTTP_TYPE,
-            int type,
-            String version,
-            String name,
-            String leaveType,
-            String leaveCategory,
-            String fromDate,
-            String toDate,
-            String token,
-            String leaveReson) {
+    public JSONObject loadJSON(String url,
+                               String email,
+                               String pin,
+                               String epf,
+                               String HTTP_TYPE,
+                               int type,
+                               String version,
+                               String name,
+                               String leaveType,
+                               String leaveCategory,
+                               String fromDate,
+                               String toDate,
+                               String token,
+                               String leaveReson) {
         // Creating JSON Parser instance
         JSONParser jParser = new JSONParser();
 
@@ -176,7 +164,6 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
     }
 
     private class JSONParser {
-
         private InputStream is = null;
         private JSONObject jObj = null;
         private String json = "";
@@ -200,18 +187,124 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                                          String toDate,
                                          String token,
                                          String leaveReson) {
-            try {
-              //  jObj = null;
-                // defaultHttpClient
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(url);
-                if (token != null){
-                    httpPost.addHeader("Oauth-TOken",token);
-                }
+            Log.e("URL ", url);
+            switch (HTTP_TYPE) {
+                case "POST":
+                    Log.e("HTTP TYPE ", "POST");
+                    // Making HTTP POST request
+                    try {
+                        // defaultHttpClient
+                        DefaultHttpClient httpClient = new DefaultHttpClient();
+                        HttpPost httpPost = new HttpPost(url);
+                        if (token != null) {
+                            httpPost.addHeader("Oauth-TOken", token);
+                        }
+                        try {
+                            List<BasicNameValuePair> nameValuePairs = new LinkedList<BasicNameValuePair>();
 
-                Log.e(TAG, " URL POST : " + url);
-                try {
+                            if (email != null) {
+                                nameValuePairs.add(new BasicNameValuePair("email", email));
+                            }
 
+                            if (pin != null) {
+                                nameValuePairs.add(new BasicNameValuePair("pin", pin));
+                                nameValuePairs.add(new BasicNameValuePair("password", pin));
+                            }
+
+                            if (epf != null) {
+                                nameValuePairs.add(new BasicNameValuePair("epf", epf));
+                            }
+
+                            if (name != null) {
+                                nameValuePairs.add(new BasicNameValuePair("name", name));
+                            }
+
+                            if (leaveType != null) {
+                                if (leaveType.equals("first")) {
+                                    nameValuePairs.add(new BasicNameValuePair("leave_half", leaveType));
+                                    nameValuePairs.add(new BasicNameValuePair("leave_type", "half"));
+                                } else if (leaveType.equals("second")) {
+                                    nameValuePairs.add(new BasicNameValuePair("leave_half", leaveType));
+                                    nameValuePairs.add(new BasicNameValuePair("leave_type", "half"));
+                                } else if (leaveType.equals("full_day")) {
+                                    nameValuePairs.add(new BasicNameValuePair("leave_type", leaveType));
+                                }
+                                Log.e("TAG leave_type : ", leaveType);
+                            }
+
+                            if (leaveCategory != null) {
+                                nameValuePairs.add(new BasicNameValuePair("type", leaveCategory));
+                            }
+
+                            if (fromDate != null) {
+                                nameValuePairs.add(new BasicNameValuePair("from_date", fromDate));
+                            }
+
+                            if (toDate != null) {
+                                nameValuePairs.add(new BasicNameValuePair("to_date", toDate));
+                            } else {
+                                nameValuePairs.add(new BasicNameValuePair("to_date", fromDate));
+                            }
+
+                            if (token != null) {
+                                nameValuePairs.add(new BasicNameValuePair("token", token));
+                            }
+
+                            if (leaveReson != null) {
+                                nameValuePairs.add(new BasicNameValuePair("leave_title", leaveReson));
+                            }
+
+                            nameValuePairs.add(new BasicNameValuePair("description", ""));
+
+
+                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+
+                        HttpResponse httpResponse = httpClient.execute(httpPost);
+                        HttpEntity httpEntity = httpResponse.getEntity();
+                        is = httpEntity.getContent();
+
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (ClientProtocolException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+                        StringBuilder sb = new StringBuilder();
+                        String line = null;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        is.close();
+                        json = sb.toString();
+                    } catch (Exception e) {
+                        Log.e("Buffer Error", "Error converting result " + e.toString());
+                    }
+
+                    // try parse the string to a JSON object
+                    try {
+                        jObj = new JSONObject(json);
+                    } catch (JSONException e) {
+                        Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+//19711031 rmncrajaguru@malkey.lk
+                    break;
+
+                case "GET":
+                    Log.e("HTTP TYPE ", "GET");
+                    StringBuilder stringBuilder = new StringBuilder();
+                    HttpClient httpClient = new DefaultHttpClient();
                     List<BasicNameValuePair> nameValuePairs = new LinkedList<BasicNameValuePair>();
 
                     if (email != null) {
@@ -232,16 +325,16 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                     }
 
                     if (leaveType != null) {
-                        if(leaveType.equals("first")){
+                        if (leaveType.equals("first")) {
                             nameValuePairs.add(new BasicNameValuePair("leave_half", leaveType));
                             nameValuePairs.add(new BasicNameValuePair("leave_type", "half"));
-                        }else if (leaveType.equals("second")){
+                        } else if (leaveType.equals("second")) {
                             nameValuePairs.add(new BasicNameValuePair("leave_half", leaveType));
                             nameValuePairs.add(new BasicNameValuePair("leave_type", "half"));
-                        }else if (leaveType.equals("full_day")) {
+                        } else if (leaveType.equals("full_day")) {
                             nameValuePairs.add(new BasicNameValuePair("leave_type", leaveType));
                         }
-                        Log.e("TAG leave_type : " , leaveType);
+                        Log.e("TAG leave_type : ", leaveType);
                     }
 
                     if (leaveCategory != null) {
@@ -254,7 +347,7 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
                     if (toDate != null) {
                         nameValuePairs.add(new BasicNameValuePair("to_date", toDate));
-                    }else{
+                    } else {
                         nameValuePairs.add(new BasicNameValuePair("to_date", fromDate));
                     }
 
@@ -268,51 +361,55 @@ public class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
                     nameValuePairs.add(new BasicNameValuePair("description", ""));
 
-                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                    HttpGet httpget = new HttpGet(url + "?" + URLEncodedUtils.format(nameValuePairs, "utf-8"));
 
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        HttpResponse response = httpClient.execute(httpget);
+                        StatusLine statusLine = response.getStatusLine();
+                        int statusCode = statusLine.getStatusCode();
 
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-                HttpEntity httpEntity = httpResponse.getEntity();
-                is = httpEntity.getContent();
+                        Log.e(TAG, " statusCode " + String.valueOf(statusCode));
 
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                is.close();
-                json = sb.toString();
-            } catch (Exception e) {
-                Log.e("Buffer Error", "Error converting result " + e.toString());
-            }
-
-            // try parse the string to a JSON object
-            try {
-                jObj = new JSONObject(json);
-            } catch (JSONException e) {
-                dialog.dismiss();
-
-                Toast.makeText(context ,"TRY AGAIN" ,Toast.LENGTH_SHORT).show();
-                Log.e("JSON Parser", "Error parsing data " + e.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
+                        if (statusCode == 200) {
+                            HttpEntity entity = response.getEntity();
+                            InputStream inputStream = entity.getContent();
+                            BufferedReader reader = new BufferedReader(
+                                    new InputStreamReader(inputStream));
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                stringBuilder.append(line);
+                                jObj = new JSONObject(stringBuilder.toString());
+                            }
+                            inputStream.close();
+                        } else if (statusCode == 400) {
+                        } else {
+                            Log.d("JSON", "Failed to download file");
+                        }
+                    } catch (Exception e) {
+                        Log.d("readJSONFeed", e.getLocalizedMessage());
+                    }
+                    break;
             }
             return jObj;
         }
     }
+//    public static File getImage(String imagename) {
+//
+//        File mediaImage = null;
+//        try {
+//            String root = Environment.getExternalStorageDirectory().toString();
+//            File myDir = new File(root);
+//            if (!myDir.exists())
+//                return null;
+//
+//            mediaImage = new File(myDir.getPath() + "/.your_specific_directory/"+imagename);
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        return mediaImage;
+//    }
+
 }
+
+

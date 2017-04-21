@@ -28,6 +28,7 @@ public class Constants {
 
             case 0:
                 Url = "http://wmmmendis.rype3.net/human/api/v1/login";
+                // http://malkey.rype3.net    http://wmmmendis.rype3.net
                 break;
 
             case 1:

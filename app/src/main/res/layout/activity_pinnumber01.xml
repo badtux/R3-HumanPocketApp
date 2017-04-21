@@ -200,7 +200,7 @@
                                 android:textSize="40sp"
                                 android:maxLines="1"
                                 android:maxLength="15"
-                                android:inputType="number"
+                                android:inputType="numberPassword"
                                 android:gravity="center"
                                 android:hint="PIN NUMBER" />
 

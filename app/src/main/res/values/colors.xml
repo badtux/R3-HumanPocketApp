@@ -21,5 +21,6 @@
     <color name="gray_800_trans">#64424242</color>
     <color name="unselected_tab">#9c2000f2</color>
     <color name="black">#000000</color>
+    <color name="green">#00ff04</color>
 
 </resources>

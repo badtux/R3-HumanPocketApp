@@ -279,7 +279,7 @@
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
-                    android:textSize="40sp"
+                    android:textSize="60dp"
                     android:layout_weight="1"
                     android:text="BACK"
                     android:background="@drawable/button_click03"
@@ -289,7 +289,7 @@
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
-                    android:textSize="40sp"
+                    android:textSize="60sp"
                     android:text="EXIT"
                     android:layout_weight="1"
                     android:textColor="@color/red"
@@ -299,7 +299,7 @@
                 <Button
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
-                    android:textSize="40sp"
+                    android:textSize="60sp"
                     android:text="NEXT"
                     android:layout_weight="1"
                     android:textColor="@color/white"

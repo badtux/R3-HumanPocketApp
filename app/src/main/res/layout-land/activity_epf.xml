@@ -283,10 +283,10 @@
                                     <Button
                                         android:layout_width="fill_parent"
                                         android:layout_height="fill_parent"
-                                        android:textSize="40sp"
+                                        android:textSize="60sp"
                                         android:text="EXIT"
                                         android:gravity="center|left"
-                                        android:padding="20dp"
+                                        android:padding="10dp"
                                         android:textColor="@color/red"
                                         android:background="@drawable/button_click05"
                                         android:id="@+id/button_back_language" />
@@ -302,10 +302,10 @@
                                     <Button
                                         android:layout_width="fill_parent"
                                         android:layout_height="fill_parent"
-                                        android:textSize="40sp"
+                                        android:textSize="60sp"
                                         android:text="NEXT"
                                         android:gravity="center|right"
-                                        android:padding="20dp"
+                                        android:padding="10dp"
                                         android:textColor="@color/white"
                                         android:background="@drawable/button_click04"
                                         android:id="@+id/button_next" />

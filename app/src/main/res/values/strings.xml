@@ -28,9 +28,14 @@
     <string name="e_wrong">YOUR ENTERED DETAILS ARE INCORRECT. PLEASE CHECK AND TRY AGAIN.</string>
     <string name="s_wrong">ඔබ ඇතුලත් කල තොරතුරු වැරදි. කරුණාකර නැවත ඇතුලත කරන්න.</string>
 
-    <string name="t_wrong_1">உங்கள் விவரங்கள் தவறு. பொத்தானை</string>
-    <string name="e_wrong_1">YOUR ENTERED DETAILS ARE INCORRECT. PLEASE PRESS THIS </string>
-    <string name="s_wrong_1">ඔබ ඇතුලත් කල තොරතුරු වැරදි. කරුණාකර නැවත ඈතුලත් කිරීම සදහා මෙම</string>
+
+    <string name="t_wrong_date">தேதி தவறான</string>
+    <string name="e_wrong_date">DATE WRONG</string>
+    <string name="s_wrong_date">ඈතුලත් කල දිනය වෑරදිය.</string>
+
+    <string name="t_wrong_1">உங்கள் விவரங்கள் தவறு. பொத்தானை </string>
+    <string name="e_wrong_1">YOUR ENTERED DETAILS ARE INCORRECT. PLEASE PRESS THIS BUTTON</string>
+    <string name="s_wrong_1">ඔබ ඇතුලත් කල තොරතුරු වැරදි. කරුණාකර නැවත ඈතුලත් කිරීම සදහා මෙම බොත්තම</string>
 
     <string name="t_button">பொத்தானை.</string>
     <string name="e_button">BUTTON</string>
@@ -73,7 +78,7 @@
     <string name="s_exit">පිටවීම</string>
 
     <string name="t_ok">சரி</string>
-    <string name="e_ok">OK</string>
+    <string name="e_ok">CONFIRM</string>
     <string name="s_ok">තහවුරු කරන්න.</string>
 
     <string name="t_success">வெற்றி</string>
@@ -115,6 +120,10 @@
     <string name="t_leave_no_pay">செலுத்த வெளியே</string>
     <string name="e_leave_no_pay">NO PAY</string>
     <string name="s_leave_no_pay">වැටුප් රහිත</string>
+
+    <string name="t_exit_message">வெளியேறு?</string>
+    <string name="e_exit_message">Do you want to exit?</string>
+    <string name="s_exit_message">ඔබට තවත් සේවාවක් අවශ්යද?</string>
 
 
     <string-array name="e_leaveType_array">
