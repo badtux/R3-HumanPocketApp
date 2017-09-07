@@ -1,28 +1,133 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity" >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="25sp"
-        android:text="Mendis OAuth Login" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/auth"
-        android:text="Sign in with Mendis" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/Access"
-        android:autoLink="all"
-        android:textIsSelectable="true"
-        android:layout_gravity="center"
-        android:textSize="10sp"/>
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/login_background"
+    tools:context="com.rype3.pocket_hrm.OauthLogin">
 
-</LinearLayout>
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/drawerlayout"
+        tools:context=".OauthLogin">
+
+        <RelativeLayout
+            android:id="@+id/image_layer1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_leave_category"
+                    android:orientation="vertical"
+                    android:weightSum="9"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_001_0"
+                        android:orientation="horizontal"
+                        android:layout_weight="0.2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_0041_0"
+                        android:orientation="horizontal"
+                        android:layout_weight="4.6"
+                        android:layout_margin="5dp"
+                        android:layout_width="fill_parent"
+                        android:background="@drawable/rype3_logo_pocker_hr"
+                        android:layout_height="0dp">
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_03_1"
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_01_3"
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:weightSum="3"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+
+                            <Button
+                                android:text="Log-in with username"
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                                android:textColor="@color/icons"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="10dp"
+                                android:background="@drawable/button_login_click"
+                                android:id="@+id/button_user"
+                                android:layout_weight="1" />
+                        </LinearLayout></LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_005"
+                        android:orientation="horizontal"
+                        android:layout_weight="0.2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_04"
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+                        <Button
+                            android:text="Log-in with EPF NO."
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/icons"
+                            android:id="@+id/button_epf"
+                            android:background="@drawable/button_login_click"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout_05"
+                        android:orientation="horizontal"
+                        android:layout_weight="0.9"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <!--</LinearLayout>-->
+        </RelativeLayout>
+    </android.support.v4.widget.DrawerLayout>
+</android.support.design.widget.CoordinatorLayout>

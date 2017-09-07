@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="gray_50">#FAFAFA</color>
-    <color name="gray_100">#F5F5F5</color>
-    <color name="gray_200">#EEEEEE</color>
-    <color name="gray_300">#E0E0E0</color>
-    <color name="gray_400">#BDBDBD</color>
-    <color name="gray_500">#9E9E9E</color>
-    <color name="gray_600">#757575</color>
-    <color name="gray_700">#616161</color>
-    <color name="gray_800">#424242</color>
-    <color name="gray_900">#212121</color>
-    <color name="transparent">#00000000</color>
-    <color name="white">#ffffff</color>
-    <color name="red">#ff0000</color>
+    <color name="primary">#795548</color>
+    <color name="primary_dark">#5D4037</color>
+    <color name="primary_light">#D7CCC8</color>
+    <color name="accent">#FF5252</color>
+    <color name="primary_text">#FFFFFF</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="divider">#BDBDBD</color>
+    <color name="gray">#b7b7b7</color>
+    <color name="green">#00ae37</color>
+    <color name="colour_transparent">#00000000</color>
 
-    <color name="trans">#00000000</color>
-    <color name="gray_800_trans">#64424242</color>
-    <color name="unselected_tab">#9c2000f2</color>
+    <color name="primary_t">#14795548</color>
     <color name="black">#000000</color>
-    <color name="green">#00ff04</color>
-
+    <color name="red">#ff0000</color>
 </resources>

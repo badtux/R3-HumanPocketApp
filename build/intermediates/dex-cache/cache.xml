@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="0d191c1a09e4892d059e5ce749e4ad4e08129e35">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-25.1.1_77533ceafad046fa81463e18e35ba605acc6e20a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-25.1.1_5531f2045be9a17b766f24b54c540c8698a78bd3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support.constraint/constraint-layout/1.0.0-beta4/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="662d7533b25a666c649c10a16b42edfb95f25a4f">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support.constraint-constraint-layout-1.0.0-beta4_d7d76adec0e40361efbfd4389592f4fa3c5678ba.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/.gradle/caches/modules-2/files-2.1/io.realm/realm-android/0.84.1/b86074e6240f0f876701810a047b0261f7bd060e/realm-android-0.84.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="b86074e6240f0f876701810a047b0261f7bd060e">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/realm-android-0.84.1_df7794132826b85986ff152aaca6be85f60d4293.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="cb6fab7a71fa9ec1f483d44c5fca65ab469d8aca">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-maps-7.8.0_eae59a24942b426d6b21065f4b5c0a88d0998f84.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="3e04ac8ca644ea7baddf6fdcf72e15c79e9df94a">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-ui-25.1.1_5e0a714ee4815a79bdd20d42aed93edff0b96e92.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/transition/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="15b049fedbd8e3926bf99d9e45dfc9b2a1043bb9">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-transition-25.1.1_ef98117b7d191f6c97d7aa5e0c45d9cd43f68821.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="c9649557905bf7a80fca9e0d54cbcb7662627860">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-recyclerview-v7-25.1.1_9f90f69f3d0e42c1b2ee3d472e3807f4431b8d35.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-fragment/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="e2719c102dca3a7a5b02ce07f769362da6ddb4ab">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-fragment-25.1.1_88b557e13373a952a39d7f2e4368d9f4da591748.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="c0c912d58c9468b1f9d9769c8975afdf2c85d681">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-base-7.8.0_30d4271e38c2b75370d53488057e2c7721c22645.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/.gradle/caches/modules-2/files-2.1/org.jbundle.util.osgi.wrapped/org.jbundle.util.osgi.wrapped.org.apache.http.client/4.1.2/98c86e42679fe7ac066f6c242e0d14f0bce0bb7c/org.jbundle.util.osgi.wrapped.org.apache.http.client-4.1.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="98c86e42679fe7ac066f6c242e0d14f0bce0bb7c">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/org.jbundle.util.osgi.wrapped.org.apache.http.client-4.1.2_56bf3f5b8e16a40a75d5254de0c282103d0fbe43.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="c03bf57f358aa10d253f21989e93bcf6014b3b17">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-25.1.1_79e086f299f7ffc61eb48cb4eca1218cc900dd30.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="7bde4c34162092e0a77e7f12dc85ed77c484cf5c">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-25.1.1_788a643213d56ecbef8441b0a04cd45b0dd70110.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.8.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="4a135d56554069e5d0ff80e3220e887e57146ee5">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.google.android.gms-play-services-location-7.8.0_8f7fee6f5a40466c63f4650364afbb4208d0855b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/design/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="cd7951e04cfb9a8bf008d544a478d9a8d8192d38">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-design-25.1.1_e5d7107585ac8e5cc89687132b9eebee30285e1f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.0-beta4/constraint-layout-solver-1.0.0-beta4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="0a9cb567dc008f570c28531720168f19148da965">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/constraint-layout-solver-1.0.0-beta4_ca1c4f268cffecaf3f485b213eea398782e2888d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="a8ae156c2726ac9c56daaf4b49452ec2cdb7bba9">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-cardview-v7-25.1.1_e0b456506c3e72b880727c93fa811a515ad7013a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.1.1/support-annotations-25.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="b59b6ee8d6ecc03e672d253800430343493a6ed8">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/support-annotations-25.1.1_bc5c10c4b18afd21e84657aab82be514e3bd4004.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="0fb891e8f0cfba0513043a7bb357513d229ca2cd">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-25.1.1_e8f5ea26f1b9b105b7e662bd1e7314b9a1e249b0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="ecb496cc08dd52551fc5ec6db3bc0632e95a89bb">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-25.1.1_7053251efc70a35523ea6ad6704da850bf726883.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/exploded-aar/com.android.support/support-compat/25.1.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.1"
+        sha1="02741d05d4b697fba5e279e9881aaa1da0ca7c7f">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/app/build/intermediates/pre-dexed/debug/com.android.support-support-compat-25.1.1_e68e97f98fc150a96234412a08948d9512c0ebe1.jar" />
+    </item>
+
+</items>
