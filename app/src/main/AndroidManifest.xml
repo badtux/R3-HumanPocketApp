@@ -14,12 +14,8 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <permission
-        android:name="com.javapapers.currentlocationinmap.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.javapapers.currentlocationinmap.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
 
     <application
         android:name=".MyApplication"
@@ -28,6 +24,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyClkyhjIhx7VRX1XjJyv5hKfPqmhu-pb2E"/>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
 
         <activity
             android:name=".OauthLogin"
@@ -53,6 +57,7 @@
             </intent-filter>
         </receiver>
 
+
         <service
             android:name=".SyncService"
             android:exported="true"
@@ -77,7 +82,7 @@
 
         <provider
             android:name=".Provider"
-            android:authorities="com.rype3.pocket_hrm"
+            android:authorities="com.rype3.mendischecking"
             android:label="Provider"
             android:syncable="true" />
 
@@ -97,15 +102,14 @@
             android:name=".Sign_inActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
-
-         <activity android:name=".LeaveActivity"
-             android:screenOrientation="portrait"
-             android:windowSoftInputMode="stateHidden">
-
-         </activity>
-        <activity android:name=".SummaryActivity"
+        <activity
+            android:name=".LeaveActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".SummaryActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

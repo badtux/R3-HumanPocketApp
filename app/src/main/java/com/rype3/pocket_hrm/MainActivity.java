@@ -6,16 +6,16 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,11 +31,13 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -50,28 +52,40 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
-import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements
+        ConnectivityReceiver.ConnectivityReceiverListener,
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private TextView textView_count;
     private AutoCompleteTextView location;
     private Button  btn_in,
                     btn_out;
-                   // btn_exit,
-                  //  btn_help;
-    long MillisecondTime, StartTime, TimeBuff, timestamp, UpdateTime = 0L;
+
+    long   MillisecondTime,
+           StartTime,
+           TimeBuff,
+           timestamp,
+           UpdateTime = 0L;
+
     Handler handler;
-    int     hour,
-            Seconds,
-            Minutes,
-            MilliSeconds;
+
+    int hour,
+        Seconds,
+        Minutes,
+        MilliSeconds;
+
+ //   private Realm myRealm;
     private Context context;
     private Utils utils;
     LocationManager locationManager;
@@ -80,15 +94,25 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     private Constants constants;
     boolean newAccount = false;
     private ImageView image_in ,image_out;
-    private RelativeLayout relativeLayout_checkout,relativeLayout_checkin;
+    private RelativeLayout relativeLayout_checkout, relativeLayout_checkin;
     private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
 
+    private static final String LOG_TAG = "MainActivity";
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+
+    private PlaceArrayAdapter mPlaceArrayAdapter;
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+
+    private DataSave dataSave;
+  //  private DataSave getDataSave;
     // Constants
     // The authority for the sync adapter's content provider
     public static final String AUTHORITY = "com.rype3.mendischecking";
 
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
+
         context = this.getApplicationContext();
         utils = new Utils(context);
         constants = new Constants(context);
@@ -109,13 +134,20 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
         handler = new Handler();
 
-        Realm myRealm = Realm.getInstance(this);
+       // myRealm = Realm.getDefaultInstance();
 
-        myRealm.beginTransaction();
-        myRealm.where(Location_object.class).equalTo("syncState", true).findAll().clear();
-        myRealm.commitTransaction();
+       // getDataSave = new DataSave();
+        dataSave = new DataSave(context,utils);
 
-        utils.setSharedPreference(context, getDeviceName(), Constants.DEVICE_NAME);
+        if (checkConnection()){
+            BuildGoogleService();
+        }
+
+        location.setThreshold(3);
+
+        location.setOnItemClickListener(mAutocompleteClickListener);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, null);
+        location.setAdapter(mPlaceArrayAdapter);
 
         try {
             if (utils.getBoolean(context, Constants.EXIT_STATAUS)) {
@@ -148,6 +180,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
                     btn_in.setClickable(true);
                 }
+            }else{
+                utils.setSharedPreference(context, "",Constants.GEO_LATLONG);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,15 +189,59 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
         }
 
-        syncMethod();
-
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         Intent intent = new Intent(MainActivity.this, MyLocationListner.class);
         intent.putExtra("name", "LOCATION_LISTNER");
         startService(intent);
+
+        syncMethod();
+
+        if(checkConnection()){
+            TriggerRefresh();
+        }
+//        Intent i= new Intent(context, NetWatcher.class);
+//        i.putExtra("KEY1", "Value to be used by the service");
+//        context.startService(i);
+
     }
 
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+            final String placeId = String.valueOf(item.placeId);
+            Log.e(LOG_TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(googleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+            Log.e(LOG_TAG, "Fetching details for ID: " + item.placeId);
+        }
+    };
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(LOG_TAG, "Place query did not complete. Error: " + places.getStatus().toString());
+                return;
+            }
+            // Selecting the first object buffer.
+           final Place place = places.get(0);
+
+            Log.e(LOG_TAG, "Place latlong : " + place.getLatLng());
+            utils.setSharedPreference(context, String.valueOf(place.getLatLng()),Constants.GEO_LATLONG);
+//            CharSequence attributions = places.getAttributions();
+//            mNameTextView.setText(Html.fromHtml(place.getName() + ""));
+//            mAddressTextView.setText(Html.fromHtml(place.getAddress() + ""));
+//            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
+//            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
+//            mWebTextView.setText(place.getWebsiteUri() + "");
+//            if (attributions != null) {
+//                mAttTextView.setText(Html.fromHtml(attributions.toString()));
+//            }
+        }
+    };
 
     public void toolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -209,12 +287,10 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                           // btn_in.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
                             relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
                             relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                          //  btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
                             relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
                             relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
                             }
@@ -228,7 +304,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
                         blinkImage(image_out ,0);
 
-                        markAttendance(0, IOStime());
+                    //    long id = System.currentTimeMillis() / 1000;
+
+                      //  dataSave.DataSave(myRealm,id,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
+                        markAttendance(0,location.getText().toString());
+
                         utils.setSharedPreference(context, location.getText().toString(), Constants.LOCATION);
                         utils.setSharedPreference(context, "in", Constants.CHECKED_STATE);
                         utils.setSharedPreference(context, "true", Constants.EXIT_STATAUS);
@@ -243,17 +323,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
             if (v == btn_out) {
                 if (!location.getText().toString().isEmpty()) {
-
-//                    final int sdk = Build.VERSION.SDK_INT;
-//                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-//                        btn_out.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
-//                        btn_in.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2));
-//                    } else {
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//                            btn_out.setBackground(getResources().getDrawable(R.drawable.button_background_3));
-//                            btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2));
-//                        }
-//                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_navigate_next, getApplicationContext().getTheme()));
                     } else {
@@ -265,17 +334,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                     thankyouAlertMessageBox(utils.getSharedPreference(context, Constants.LAST_TIME));
                 }
             }
-//            if (v == btn_exit){
-//                if (!location.getText().toString().isEmpty()) {
-//                    exitAlertMessageBox(1);
-//                }
-//            }
-//
-//            if (v == btn_help){
-//                if(checkConnection()){
-//                    TriggerRefresh();
-//                }
-//            }
         }
     };
 
@@ -307,6 +365,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         boolean isConnected = ConnectivityReceiver.isConnected();
         if (isConnected) {
             return true;
+        } else {
+            ViewMessage("You don't have internet connection",0);
         }
         return false;
     }
@@ -326,8 +386,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             // on other scheduled syncs and network utilization.
 
             Bundle bundle = new Bundle();
-            bundle.putString("time", String.valueOf(StartTime));
-
             ContentResolver.addPeriodicSync(account, AUTHORITY, bundle, SYNC_FREQUENCY);
             newAccount = true;
         }
@@ -359,17 +417,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
                 final int sdk = Build.VERSION.SDK_INT;
                 if(sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                    //btn_out.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3) );
-                  //  btn_in.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2) );
-
                     relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2));
                     relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3_click));
 
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                       // btn_out.setBackground(getResources().getDrawable(R.drawable.button_background_3));
-                       // btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2));
-
                         relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2));
                         relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3_click));
                     }
@@ -384,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
                 blinkImage(image_out ,1);
             }
-        }, 10000);
+        }, 5000);
     }
 
     public boolean reset() {
@@ -397,14 +449,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         MilliSeconds = 0;
 
         return true;
-    }
-
-    public String IOStime(){
-        String ISOtime;
-        DateFormat df;
-        df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZ", Locale.UK);
-        ISOtime = df.format(new Date());
-        return ISOtime;
     }
 
     public Runnable runnable = new Runnable() {
@@ -486,7 +530,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 dialog_1.show();
                 break;
         }
-
     }
 
     private void thankyouAlertMessageBox(String time) {
@@ -498,12 +541,16 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                markAttendance(1, IOStime());
-                                utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
-                                utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
-                                resetData();
-                                TimeBuff += MillisecondTime;
-                                handler.removeCallbacks(runnable);
+                                markAttendance(1,location.getText().toString());
+
+                        //    long id_ = System.currentTimeMillis() / 1000;
+                        //    dataSave.DataSave(myRealm,id_,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
+
+                            utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
+                            utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
+                            resetData();
+                            TimeBuff += MillisecondTime;
+                            handler.removeCallbacks(runnable);
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
@@ -512,7 +559,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             }
                         }).create();
                 dialog.show();
-
     }
 
     public void parseJsonResponse(final String result) {
@@ -532,6 +578,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             return true;
         } else {
             GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
+
+            Log.e("TAG" , GooglePlayServicesUtil.getErrorDialog(status, this, 0).toString());
             return false;
         }
     }
@@ -613,14 +661,27 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
     @Override
     public void onConnected(Bundle bundle) {
+
+        mPlaceArrayAdapter.setGoogleApiClient(googleApiClient);
+        Log.e(LOG_TAG, "Google Places API connected.");
     }
 
     @Override
     public void onConnectionSuspended(int i) {
+
+        mPlaceArrayAdapter.setGoogleApiClient(null);
+        Log.e(LOG_TAG, "Google Places API connection suspended.");
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+        Log.e(LOG_TAG, "Google Places API connection failed with error code: "
+                + connectionResult.getErrorCode());
+
+        Toast.makeText(this, "Google Places API connection failed with error code:"
+                + connectionResult.getErrorCode(), Toast.LENGTH_LONG).show();
+
     }
 
     @Override
@@ -661,69 +722,72 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         }
     }
 
-    public boolean markAttendance(int position,String time){
+   // public boolean markAttendance(long id,String checkState,String deviceId,String type,boolean state,String location,int battery){
+    public boolean markAttendance(int position ,String location){
+
           if (checkConnection()) {
 
              switch (position) {
                  case 0:
-                     utils.setSharedPreference(context,String.valueOf(getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
-                 new ProcressAsyncTask(
+                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
+                    new ProcressAsyncTask(
                          MainActivity.this,
                          constants.urls(3),
                          null,
                          null,
                          null,
-                         "POST", 3, "1.0", null, null, utils.getSharedPreference(context, Constants.USER_ID), time,null,String.valueOf(meta(utils.getSharedPreference(context, Constants.DEVICE_ID),String.valueOf(getBatteryPercentage(context))+"%",utils.getSharedPreference(context,Constants.DEVICE_NAME)))).execute();
+                         "POST",
+                         3,
+                         "1.0",
+                         null,
+                         null,
+                         utils.getSharedPreference(context, Constants.USER_ID),
+                            dataSave.IOStime(),
+                         null,
+                         String.valueOf(
+                                 dataSave.meta(
+                                         utils.getSharedPreference(context, Constants.DEVICE_ID),
+                                         String.valueOf(dataSave.getBatteryPercentage(context))+"%",
+                                         utils.getSharedPreference(context,Constants.DEVICE_NAME),
+                                         location,dataSave.IOStime()))).execute();
                      break;
 
                  case 1:
-                     utils.setSharedPreference(context,String.valueOf(getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
+                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
                      new ProcressAsyncTask(
                              MainActivity.this,
                              constants.urls(4),
                              null,
                              null,
                              null,
-                             "POST", 3, "1.0", null, null, utils.getSharedPreference(context, Constants.USER_ID), null,time,String.valueOf(meta(utils.getSharedPreference(context, Constants.DEVICE_ID),String.valueOf(getBatteryPercentage(context))+"%",utils.getSharedPreference(context,Constants.DEVICE_NAME)))).execute();
+                             "POST",
+                             3,
+                             "1.0",
+                             null,
+                             null,
+                             utils.getSharedPreference(context, Constants.USER_ID),
+                             null,
+                             dataSave.IOStime(),
+                             String.valueOf(
+                                     dataSave.meta(
+                                             utils.getSharedPreference(context, Constants.DEVICE_ID),
+                                             String.valueOf(dataSave.getBatteryPercentage(context))+"%",
+                                             utils.getSharedPreference(context,Constants.DEVICE_NAME),
+                                             location,dataSave.IOStime()))).execute();
                      break;
              }
         }
         return true;
     }
 
-    public String getDeviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return capitalize(model);
-        } else {
-            return capitalize(manufacturer) + " " + model;
-        }
-    }
-
-    public static int getBatteryPercentage(Context context) {
-
-        IntentFilter iFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, iFilter);
-
-        int level = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) : -1;
-        int scale = batteryStatus != null ? batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1) : -1;
-
-        float batteryPct = level / (float) scale;
-
-        return (int) (batteryPct * 100);
-    }
-
-    private String capitalize(String s) {
-        if (s == null || s.length() == 0) {
-            return "";
-        }
-        char first = s.charAt(0);
-        if (Character.isUpperCase(first)) {
-            return s;
-        } else {
-            return Character.toUpperCase(first) + s.substring(1);
-        }
+    private boolean BuildGoogleService(){
+        googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        return true;
     }
 
     @Override
@@ -745,41 +809,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         return super.onOptionsItemSelected(item);
     }
 
-    public JSONObject meta(String did,String battery,String deviceName){
-        JSONObject jsonObject = null;
-        String lat = "";
-        String lon = "";
-
-        jsonObject = new JSONObject();
-        try {
-            jsonObject.put("did",did);
-            jsonObject.put("bat",battery);
-            jsonObject.put("d_name",deviceName);
-
-            JSONObject jsonObjectLocation = new JSONObject();
-
-            if (utils.getBoolean(context,Constants.LAT)){
-                lat = utils.getSharedPreference(context,Constants.LAT);
-            }
-
-            if (utils.getBoolean(context,Constants.LONG)){
-                lon = utils.getSharedPreference(context,Constants.LONG);
-            }
-            jsonObjectLocation.put("lat" , lat);
-            jsonObjectLocation.put("long" , lon);
-
-            jsonObject.put("location", jsonObjectLocation);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-
     @Override
-    protected void onResume () {
+    protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
 

@@ -45,7 +45,9 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
     public Location previousBestLocation = null;
     Intent intent;
     int counter = 0;
-    private Realm myRealm;
+   // private Realm myRealm;
+    private DataSave dataSave;
+    private DataSave getDataSave;
 
    // private Utils utils;
     private Context context;
@@ -58,7 +60,10 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
         context = this.getApplicationContext();
         utils = new Utils(context);
-        myRealm = Realm.getInstance(this);
+//        myRealm = Realm.getDefaultInstance();
+
+      //  getDataSave = new DataSave();
+        dataSave = new DataSave(context,utils);
 
     }
 
@@ -132,7 +137,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         return false;
     }
 
-
     /** Checks whether two providers are the same */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
@@ -140,7 +144,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         }
         return provider1.equals(provider2);
     }
-
 
     @Override
     public void onDestroy() {
@@ -166,63 +169,91 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
     public void onNetworkConnectionChanged(boolean isConnected) {
     }
 
-
     private class MyLocationListener implements LocationListener {
 
         public void onLocationChanged(final Location loc) {
 
-            if(isBetterLocation(loc, previousBestLocation)) {
-                loc.getLatitude();
-                loc.getLongitude();
+            if (isBetterLocation(loc, previousBestLocation)) {
+                // loc.getLatitude();
+                // loc.getLongitude();
 
-                utils.setSharedPreference(context,String.valueOf(loc.getLatitude()),Constants.LAT);
-                utils.setSharedPreference(context,String.valueOf(loc.getLongitude()),Constants.LONG);
+                utils.setSharedPreference(context, String.valueOf(loc.getLatitude()), Constants.LAT);
+                utils.setSharedPreference(context, String.valueOf(loc.getLongitude()), Constants.LONG);
 
-                //  Log.e("****Latitude", String.valueOf(loc.getLatitude()));
-                //  Log.e("****Longitude", String.valueOf(loc.getLongitude()));
-                //  Log.e("****Provider", loc.getProvider());
+                 Log.e("****Latitude", String.valueOf(loc.getLatitude()));
+                 Log.e("****Longitude", String.valueOf(loc.getLongitude()));
+                // Log.e("****Provider", loc.getProvider());
 
-                Long tsLong = System.currentTimeMillis() / 1000;
-                String ts = tsLong.toString();
+                if (validation()) {
+                    // long id = System.currentTimeMillis() / 1000;
 
-                if (checkConnection()) {
-                    if (validation()) {
-                        String location = "";
-                        String checkState = "";
+                    Long tsLong = System.currentTimeMillis() / 1000;
+                    String ts = tsLong.toString();
 
-                        if (utils.getBoolean(context, Constants.LOCATION)) {
-                            location = utils.getSharedPreference(context, Constants.LOCATION);
+//                    dataSave.DataSave(
+//                            myRealm,
+//                            id,
+//                            utils.getSharedPreference(context, Constants.CHECKED_STATE),
+//                            utils.getSharedPreference(context, Constants.DEVICE_ID),
+//                            "location",
+//                            true,
+//                            utils.getSharedPreference(context, Constants.LOCATION));
+
+                    if (checkConnection()) {
+                        if (validation()) {
+                            String location = "";
+                            String checkState = "";
+
+                            if (utils.getBoolean(context, Constants.LOCATION)) {
+                                location = utils.getSharedPreference(context, Constants.LOCATION);
+                            }
+
+                            if (utils.getBoolean(context, Constants.CHECKED_STATE)) {
+                                checkState = utils.getSharedPreference(context, Constants.CHECKED_STATE);
+                            }
+
+                            new ProcressAsyncTask(
+                                    "http://wmmmendis.rype3.net/io/api/v1/device/track",
+                                    String.valueOf(loc.getLatitude()),
+                                    String.valueOf(loc.getLongitude()),
+                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
+                                    Integer.parseInt(ts),
+                                    checkState,
+                                    location,
+                                    checkConnection(),
+                                    String.valueOf(
+                                            dataSave.meta(
+                                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
+                                                    String.valueOf(dataSave.getBatteryPercentage(context)),
+                                                    utils.getSharedPreference(context, Constants.DEVICE_NAME),
+                                                    utils.getSharedPreference(context, Constants.LOCATION),
+                                                    dataSave.IOStime()
+                                            ))).execute();
                         }
+                    }else {
 
-                        if (utils.getBoolean(context, Constants.CHECKED_STATE)) {
-                            checkState = utils.getSharedPreference(context, Constants.CHECKED_STATE);
+//                            if (validation()) {
+//                                myRealm.beginTransaction();
+//                                Location_object location = myRealm.createObject(Location_object.class);
+//                                location.setTimeStamp(Integer.parseInt(ts));
+//                                location.setLat(String.valueOf(loc.getLatitude()));
+//                                location.setLon(String.valueOf(loc.getLongitude()));
+//                                location.setInternetState(checkConnection());
+//
+//                                if (utils.getBoolean(context, Constants.LOCATION)) {
+//                                    location.setLocation(utils.getSharedPreference(context, Constants.LOCATION));
+//                                }
+//
+//                                location.setCheckStatus(utils.getSharedPreference(context, Constants.CHECKED_STATE)); //temerory
+//                                location.setDeviceId(utils.getSharedPreference(context, Constants.DEVICE_ID));
+//                                location.setSyncState(false);
+//                                myRealm.commitTransaction();
+//                            }
                         }
-
-                        new ProcressAsyncTask("http://wmmmendis.rype3.net/io/api/v1/device/track", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), utils.getSharedPreference(context, Constants.DEVICE_ID), Integer.parseInt(ts), checkState, location, checkConnection(),String.valueOf(meta())).execute();
-                    }
-                }else{
-
-                    if (validation()) {
-                        myRealm.beginTransaction();
-                        Location_object location = myRealm.createObject(Location_object.class);
-                        location.setTimeStamp(Integer.parseInt(ts));
-                        location.setLat(String.valueOf(loc.getLatitude()));
-                        location.setLon(String.valueOf(loc.getLongitude()));
-                        location.setInternetState(checkConnection());
-
-                        if (utils.getBoolean(context, Constants.LOCATION)) {
-                            location.setLocation(utils.getSharedPreference(context, Constants.LOCATION));
-                        }
-
-                        location.setCheckStatus(utils.getSharedPreference(context, Constants.CHECKED_STATE)); //temerory
-                        location.setDeviceId(utils.getSharedPreference(context, Constants.DEVICE_ID));
-                        location.setSyncState(false);
-                        myRealm.commitTransaction();
                     }
                 }
             }
-        }
-
+//
         boolean validation(){
             String showroom = "";
             String check_State = "";
@@ -256,6 +287,17 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
             Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
 
+//        private boolean checkConnection() {
+//            boolean isConnected = ConnectivityReceiver.isConnected();
+//            if (isConnected) {
+//                return true;
+//            }
+//            return false;
+//        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
 
         private boolean checkConnection() {
             boolean isConnected = ConnectivityReceiver.isConnected();
@@ -263,9 +305,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                 return true;
             }
             return false;
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
         }
 
         private class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
@@ -315,15 +354,15 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                         //   Log.e("onPostExecute Id : ", String.valueOf(this.timeStamp));
                             Log.e("Result Live : ", result);
 
-                        Location_object updateLocationObject = myRealm.where(Location_object.class)
-                                .equalTo("timeStamp", this.timeStamp)
-                                .notEqualTo("checkStatus", "")
-                                .findFirst();
-                        if (updateLocationObject != null) {
-                            myRealm.beginTransaction();
-                            updateLocationObject.setSyncState(true);
-                            myRealm.commitTransaction();
-                        }
+//                        Location_object updateLocationObject = myRealm.where(Location_object.class)
+//                                .equalTo("timeStamp", this.timeStamp)
+//                                .notEqualTo("checkStatus", "")
+//                                .findFirst();
+//                        if (updateLocationObject != null) {
+//                            myRealm.beginTransaction();
+//                            updateLocationObject.setSyncState(true);
+//                            myRealm.commitTransaction();
+//                        }
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
@@ -421,37 +460,37 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                 return jsonObject;
             }
         }
+
     }
-
-    public JSONObject meta(){
-        JSONObject jsonObject = null;
-        String lat = "";
-        String lon = "";
-
-        jsonObject = new JSONObject();
-        try {
-            jsonObject.put("did",utils.getSharedPreference(context,Constants.DEVICE_ID));
-            jsonObject.put("bat",utils.getSharedPreference(context,Constants.BATTERY_LEVEL));
-            jsonObject.put("d_name",utils.getSharedPreference(context,Constants.DEVICE_NAME));
-
-            JSONObject jsonObjectLocation = new JSONObject();
-
-            if (utils.getBoolean(context,Constants.LAT)){
-                lat = utils.getSharedPreference(context,Constants.LAT);
-            }
-
-            if (utils.getBoolean(context,Constants.LONG)){
-                lon = utils.getSharedPreference(context,Constants.LONG);
-            }
-            jsonObjectLocation.put("lat" , lat);
-            jsonObjectLocation.put("long" , lon);
-
-            jsonObject.put("location", jsonObjectLocation);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
+//    public JSONObject meta(){
+//        JSONObject jsonObject = null;
+//        String lat = "";
+//        String lon = "";
+//
+//        jsonObject = new JSONObject();
+//        try {
+//            jsonObject.put("did",utils.getSharedPreference(context,Constants.DEVICE_ID));
+//            jsonObject.put("bat",utils.getSharedPreference(context,Constants.BATTERY_LEVEL));
+//            jsonObject.put("d_name",utils.getSharedPreference(context,Constants.DEVICE_NAME));
+//
+//            JSONObject jsonObjectLocation = new JSONObject();
+//
+//            if (utils.getBoolean(context,Constants.LAT)){
+//                lat = utils.getSharedPreference(context,Constants.LAT);
+//            }
+//
+//            if (utils.getBoolean(context,Constants.LONG)){
+//                lon = utils.getSharedPreference(context,Constants.LONG);
+//            }
+//            jsonObjectLocation.put("lat" , lat);
+//            jsonObjectLocation.put("long" , lon);
+//
+//            jsonObject.put("location", jsonObjectLocation);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return jsonObject;
+//    }
 }

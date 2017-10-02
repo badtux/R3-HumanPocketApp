@@ -39,7 +39,6 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= Build.VERSION_CODES.M) {
 
-
             if (ContextCompat.checkSelfPermission(OauthLogin.this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 // We do not have this permission. Let's ask the user
@@ -53,8 +52,8 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
             }
         }else{
             // telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-           //  Log.e("IMEI NUMBER : ", telephonyManager.getDeviceId() +"\nDevice name : "+telephonyManager.getPhoneType());
-         //   utils.setSharedPreference(context, getDeviceName(), Constants.DEVICE_ID);
+            // Log.e("IMEI NUMBER : ", telephonyManager.getDeviceId() +"\nDevice name : "+telephonyManager.getPhoneType());
+            // utils.setSharedPreference(context, getDeviceName(), Constants.DEVICE_ID);
         }
 
         if (utils.getBoolean(context,Constants.TOKEN)){
@@ -69,7 +68,6 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
 
         epf_no = (Button)findViewById(R.id.button_epf);
         epf_no.setOnClickListener(onclick);
-
     }
 
     public View.OnClickListener onclick = new View.OnClickListener() {

@@ -9,6 +9,7 @@ public class Location_object extends RealmObject {
     private String lon;
     private String checkStatus;
     private String deviceId;
+    private String test;
     private int timeStamp;
     private boolean internetState;
     private boolean syncState;
@@ -17,15 +18,46 @@ public class Location_object extends RealmObject {
 
     }
 
-    public Location_object(String location, String lat, String checkStatus, String deviceId, int timeStamp, String lon, boolean internetState, boolean syncState) {
+    public Location_object(
+            String location,
+            String lat,
+            String lon,
+            String checkStatus,
+            String deviceId,
+            String test,
+            int timeStamp,
+            boolean internetState,
+            boolean syncState) {
         this.location = location;
         this.lat = lat;
+        this.lon = lon;
         this.checkStatus = checkStatus;
         this.deviceId = deviceId;
+        this.test = test;
         this.timeStamp = timeStamp;
-        this.lon = lon;
         this.internetState = internetState;
         this.syncState = syncState;
+    }
+
+    public void fill(final Location_object user) {
+
+        setTest(user.getTest());
+        setLocation(user.getLocation());
+        setLat(user.getLat());
+        setLon(user.getLon());
+        setCheckStatus(user.getCheckStatus());
+        setInternetState(user.isInternetState());
+        setSyncState(user.isSyncState());
+        setTimeStamp(user.getTimeStamp());
+        setDeviceId(user.getDeviceId());
+    }
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
     }
 
     public String getLocation() {

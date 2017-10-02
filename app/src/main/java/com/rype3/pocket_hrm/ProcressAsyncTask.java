@@ -49,7 +49,9 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                       String token,
                       String deviceId,
                       String uid,
-                      String checked_at, String checkout_at, String meta) {
+                      String checked_at,
+                      String checkout_at,
+                      String meta) {
         super();
         this.activity = activity;
         this.url = url;

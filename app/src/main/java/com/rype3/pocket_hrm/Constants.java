@@ -22,6 +22,7 @@ class Constants {
     static final String BATTERY_LEVEL = "battery_level";
     static final String LAT = "lat";
     static final String LONG = "long";
+    static final String GEO_LATLONG = "geo_latlong";
     protected Context context ;
 
     Constants(Context context) {

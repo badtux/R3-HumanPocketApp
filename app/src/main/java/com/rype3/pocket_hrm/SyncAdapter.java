@@ -31,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +43,7 @@ import io.realm.RealmResults;
  * Handle the transfer of data between a server and an
  * app, using the Android sync adapter framework.
  */
-public class SyncAdapter extends AbstractThreadedSyncAdapter implements ConnectivityReceiver.ConnectivityReceiverListener{
+class SyncAdapter extends AbstractThreadedSyncAdapter{
     public static final String TAG = "Sync Adapter";
     /**
      * URL to fetch content from during a sync.
@@ -66,9 +67,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
     /**
      * Set up the sync adapter
      */
-    private Realm myRealm;
-    private Utils utils;
-    private RealmResults<Location_object> locationList;
+  //  private Realm myRealm;
+  //  private RealmResults<LocationDetails> locationList;
 
     SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -76,41 +76,40 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
 
         Log.e("SyncAdapter : ","OK");
 
-        myRealm = Realm.getInstance(context);
-        utils = new Utils(context);
+     //   myRealm = Realm.getInstance(context);
+        Utils utils = new Utils(context);
 
     }
-
-    public SyncAdapter(
-            Context context,
-            boolean autoInitialize,
-            boolean allowParallelSyncs) {
-        super(context, autoInitialize, allowParallelSyncs);
-        /*
-         * If your app uses a content resolver, get an instance of it
-         * from the incoming Context
-         */
-        mContentResolver = context.getContentResolver();
-    }
+//
+//    public SyncAdapter(
+//            Context context,
+//            boolean autoInitialize,
+//            boolean allowParallelSyncs) {
+//        super(context, autoInitialize, allowParallelSyncs);
+//        /*
+//         * If your app uses a content resolver, get an instance of it
+//         * from the incoming Context
+//         */
+//        mContentResolver = context.getContentResolver();
+//    }
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
 
-        String time = bundle.getString("time");
-        if (time != null) {
-          Log.e("time : ", time);
+        String number = bundle.getString("number");
+        if (number != null) {
+          Log.e("number : ", number);
          }
-
         Handler h = new Handler(Looper.getMainLooper());
         h.post(new Runnable(){
 
             @Override
             public void run() {
 
-                locationList = myRealm.where(Location_object.class)
-                        .notEqualTo("checkStatus", "")
-                        .findAll();
-                new ProcressTask().execute(locationList.size());
+//                locationList = myRealm.where(LocationDetails.class)
+//                        .findAll();
+//                locationList.sort("id");
+//                new ProcressTask().execute(locationList.size());
             }
         });
     }
@@ -122,9 +121,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
         Log.e("updateLocalFeedData : ","OK");
     }
 
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
-    }
 
     private class ProcressTask extends AsyncTask<Integer, Integer, String> {
 
@@ -137,7 +133,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
             for (int count = 0; count < integers[0]; count++) {
 
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(24000);
                     publishProgress(count);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -152,26 +148,91 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            SyncItinerary (values[0]);
+            //SyncItinerary (values[0]);
         }
     }
 
-    public void SyncItinerary (int index){
-        Log.e("URL : " , "http://wmmmendis.rype3.net/io/api/v1/device/track");
-              new ProcressAsyncTask(
-                      "http://wmmmendis.rype3.net/io/api/v1/device/track",
-                      locationList.get(index).getLat(),
-                      locationList.get(index).getLon(),
-                      locationList.get(index).getDeviceId(),
-                      locationList.get(index).getTimeStamp(),
-                      locationList.get(index).getCheckStatus(),locationList.get(index).getLocation(),locationList.get(index).isInternetState()).execute();
-    }
+//    private void SyncItinerary(int index){
+//
+////        Log.e("URL : " , "http://wmmmendis.rype3.net/io/api/v1/device/track");
+////              new ProcressAsyncTask(
+////                      "http://wmmmendis.rype3.net/io/api/v1/device/track",
+////                      locationList.get(index).getLat(),
+////                      locationList.get(index).getLon(),
+////                      locationList.get(index).getDeviceId(),
+////                      locationList.get(index).getTimeStamp(),
+////                      locationList.get(index).getCheckStatus(),
+////                      locationList.get(index).getLocation(),
+////                      locationList.get(index).isInternetState()).
+////                      execute();
+//        String url = "";
+//
+//        try {
+//            JSONObject jsonObject = new JSONObject(locationList.get(index).getMeta());
+//
+//            String did = jsonObject.getString("did");
+//            String d_location = jsonObject.getString("d_location");
+//            String location = jsonObject.getString("location");
+//
+//            JSONObject locatio_json = new JSONObject(location);
+//
+//            String latitude= locatio_json.getString("lat");
+//            String longtitude= locatio_json.getString("long");
+//
+//            switch (locationList.get(index).getType()){
+//
+//                case "attendance":
+//
+//                    switch (locationList.get(index).getCheckState()){
+//
+//                        case "in":
+//                            url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
+//                            break;
+//
+//                        case "out":
+//                            url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
+//                            break;
+//                    }
+//
+//                    break;
+//
+//                case "location":
+//                    url = "http://wmmmendis.rype3.net/io/api/v1/device/track";
+//                    break;
+//            }
+//
+//            new ProcressAsyncTask(
+//                    url,
+//                    latitude,
+//                    longtitude,
+//                    did,
+//                    locationList.get(index).getId(),
+//                    locationList.get(index).getCheckState(),
+//                    d_location,
+//                    locationList.get(index).getMeta()).
+//                    execute();
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Log.e("TAG : " ,"Url : " + url+"\nId : " +locationList.get(index).getId() +"\nType : "+ locationList.get(index).getType() +"\nChecked state : "+locationList.get(index).getCheckState() +"\nMeta"+locationList.get(index).getMeta());
+//
+//    }
 
     private class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
-        private String url,lat,lon,device_id ,checkState,location ;
+        private String url,lat,lon,device_id ,checkState,location ,meta;
         private int timeStamp;
-        private boolean connectionState;
-        public ProcressAsyncTask(String url , String lat, String lon , String device_id, int timeStamp , String checkState , String location, boolean connectionState) {
+
+        ProcressAsyncTask(
+                String url,
+                String lat,
+                String lon,
+                String device_id,
+                int timeStamp,
+                String checkState,
+                String location,
+                String meta) {
             super();
 
             this.url = url;
@@ -181,7 +242,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
             this.timeStamp = timeStamp;
             this.checkState = checkState;
             this.location = location;
-            this.connectionState = connectionState;
+            this.meta = meta;
 
             //    Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
         }
@@ -193,8 +254,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
         @Override
         protected String doInBackground(Void... voids) {
             try {
-                if (loadJSON(this.url, this.lat, this.lon, this.device_id, this.timeStamp, this.checkState, this.location, this.connectionState) != null) {
-                    return loadJSON(this.url, this.lat, this.lon, this.device_id, this.timeStamp, this.checkState, this.location, this.connectionState).toString();
+                if (loadJSON(this.url, this.lat, this.lon, this.device_id, this.timeStamp, this.checkState, this.location, this.meta) != null) {
+                    return loadJSON(this.url, this.lat, this.lon, this.device_id, this.timeStamp, this.checkState, this.location, this.meta).toString();
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -206,52 +267,47 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
         protected void onPostExecute(final String result) {
 
             if (result != null) {
-                try {
-                    //   Log.e("onPostExecute Id : ", String.valueOf(this.timeStamp));
-                        Log.e("Result offline :  ", result);
+//              try {
+//                  Log.e("onPostExecute Id : ", String.valueOf(this.timeStamp));
+                        Log.e("Result offline :  ", String.valueOf(this.timeStamp));
 
-                    Location_object updateLocationObject = myRealm.where(Location_object.class)
-                            .equalTo("timeStamp", this.timeStamp)
-                            .notEqualTo("checkStatus", "")
-                            .findFirst();
-                    if (updateLocationObject != null) {
-                        myRealm.beginTransaction();
-                        updateLocationObject.setSyncState(true);
-                        myRealm.commitTransaction();
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+//                    Location_object updateLocationObject = myRealm.where(Location_object.class)
+//                            .equalTo("timeStamp", this.timeStamp)
+//                            .notEqualTo("checkStatus", "")
+//                            .findFirst();
+//                    if (updateLocationObject != null) {
+//                        myRealm.beginTransaction();
+//                        updateLocationObject.setSyncState(true);
+//                        myRealm.commitTransaction();
+//                    }
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
             }
         }
     }
 
-    public JSONObject loadJSON(String url , String lat, String lon , String device_id, int timeStamp , String checkState, String location, boolean connectionState) {
+    private JSONObject loadJSON(String url, String lat, String lon, String device_id, int timeStamp, String checkState, String location, String meta) {
         // Creating JSON Parser instance
        JSONParser jParser = new JSONParser();
 
         // getting JSON string from URL
-        JSONObject json = jParser.getJSONFromUrl(url ,lat,lon,device_id,timeStamp,checkState,location,connectionState);
+        JSONObject json = jParser.getJSONFromUrl(url ,lat,lon,device_id,timeStamp,checkState,location,meta);
 
         return json;
     }
 
     private class JSONParser {
 
-        private InputStream is = null;
-        private JSONObject jObj = null;
-        private String json = "";
-
-        // constructor3
-        public JSONParser() {
+        // constructor
+        JSONParser() {
 
         }
 
-        JSONObject getJSONFromUrl(String url, String lat, String lon, String device_id, int timeStamp, String checkState, String location, boolean connectionState) {
+        JSONObject getJSONFromUrl(String url, String lat, String lon, String device_id, int timeStamp, String checkState, String location, String meta) {
             JSONObject jsonObject = null;
-            // Create a new HttpClient and Post Header
-
-            //    Log.e("Check State : ", checkState);
+            //      Create a new HttpClient and Post Header
+            //      Log.e("Check State : ", checkState);
 
             try {
                 HttpClient httpclient = new DefaultHttpClient();
@@ -279,13 +335,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
                     nameValuePairs.add(new BasicNameValuePair("location", location));
                 }
 
-
                 if (timeStamp != 0) {
                     nameValuePairs.add(new BasicNameValuePair("ts", String.valueOf(timeStamp)));
                 }
-                nameValuePairs.add(new BasicNameValuePair("connectionState", String.valueOf(connectionState)));
 
-
+                if (meta != null) {
+                    nameValuePairs.add(new BasicNameValuePair("meta", meta));
+                }
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpclient.execute(httppost);
@@ -293,8 +349,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
                 int statusCode = statusLine.getStatusCode();
 
                 StringBuilder stringBuilder = new StringBuilder();
-
-                //   Log.e("TAG", " statusCode " + String.valueOf(statusCode));
 
                 if (statusCode == 200) {
                     HttpEntity entity = response.getEntity();
@@ -308,7 +362,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements Connecti
                     }
                     inputStream.close();
                 }
-            } catch (ClientProtocolException e) {
+            } catch (ClientProtocolException | UnknownHostException ignored) {
 
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
