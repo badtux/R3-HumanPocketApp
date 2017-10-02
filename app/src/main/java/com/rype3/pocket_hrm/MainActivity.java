@@ -61,6 +61,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.realm.Realm;
+
 
 public class MainActivity extends AppCompatActivity implements
         ConnectivityReceiver.ConnectivityReceiverListener,
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
         Minutes,
         MilliSeconds;
 
- //   private Realm myRealm;
+    private Realm myRealm;
     private Context context;
     private Utils utils;
     LocationManager locationManager;
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements
 
         handler = new Handler();
 
-       // myRealm = Realm.getDefaultInstance();
+        myRealm = Realm.getDefaultInstance();
 
        // getDataSave = new DataSave();
         dataSave = new DataSave(context,utils);
@@ -304,10 +306,10 @@ public class MainActivity extends AppCompatActivity implements
 
                         blinkImage(image_out ,0);
 
-                    //    long id = System.currentTimeMillis() / 1000;
+                        long id = System.currentTimeMillis() / 1000;
 
-                      //  dataSave.DataSave(myRealm,id,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
-                        markAttendance(0,location.getText().toString());
+                        dataSave.DataSave(myRealm,id,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
+                       // markAttendance(0,location.getText().toString());
 
                         utils.setSharedPreference(context, location.getText().toString(), Constants.LOCATION);
                         utils.setSharedPreference(context, "in", Constants.CHECKED_STATE);
@@ -541,10 +543,10 @@ public class MainActivity extends AppCompatActivity implements
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                markAttendance(1,location.getText().toString());
+                           //     markAttendance(1,location.getText().toString());
 
-                        //    long id_ = System.currentTimeMillis() / 1000;
-                        //    dataSave.DataSave(myRealm,id_,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
+                            long id_ = System.currentTimeMillis() / 1000;
+                            dataSave.DataSave(myRealm,id_,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
 
                             utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
                             utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);

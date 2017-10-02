@@ -45,7 +45,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
     public Location previousBestLocation = null;
     Intent intent;
     int counter = 0;
-   // private Realm myRealm;
+    private Realm myRealm;
     private DataSave dataSave;
     private DataSave getDataSave;
 
@@ -60,9 +60,9 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
         context = this.getApplicationContext();
         utils = new Utils(context);
-//        myRealm = Realm.getDefaultInstance();
+        myRealm = Realm.getDefaultInstance();
 
-      //  getDataSave = new DataSave();
+        getDataSave = new DataSave();
         dataSave = new DataSave(context,utils);
 
     }
@@ -180,57 +180,57 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                 utils.setSharedPreference(context, String.valueOf(loc.getLatitude()), Constants.LAT);
                 utils.setSharedPreference(context, String.valueOf(loc.getLongitude()), Constants.LONG);
 
-                 Log.e("****Latitude", String.valueOf(loc.getLatitude()));
-                 Log.e("****Longitude", String.valueOf(loc.getLongitude()));
-                // Log.e("****Provider", loc.getProvider());
-
+//                 Log.e("****Latitude", String.valueOf(loc.getLatitude()));
+//                 Log.e("****Longitude", String.valueOf(loc.getLongitude()));
+//                 Log.e("****Provider", loc.getProvider());
+//
                 if (validation()) {
-                    // long id = System.currentTimeMillis() / 1000;
-
-                    Long tsLong = System.currentTimeMillis() / 1000;
-                    String ts = tsLong.toString();
-
-//                    dataSave.DataSave(
-//                            myRealm,
-//                            id,
-//                            utils.getSharedPreference(context, Constants.CHECKED_STATE),
-//                            utils.getSharedPreference(context, Constants.DEVICE_ID),
-//                            "location",
-//                            true,
-//                            utils.getSharedPreference(context, Constants.LOCATION));
-
-                    if (checkConnection()) {
-                        if (validation()) {
-                            String location = "";
-                            String checkState = "";
-
-                            if (utils.getBoolean(context, Constants.LOCATION)) {
-                                location = utils.getSharedPreference(context, Constants.LOCATION);
-                            }
-
-                            if (utils.getBoolean(context, Constants.CHECKED_STATE)) {
-                                checkState = utils.getSharedPreference(context, Constants.CHECKED_STATE);
-                            }
-
-                            new ProcressAsyncTask(
-                                    "http://wmmmendis.rype3.net/io/api/v1/device/track",
-                                    String.valueOf(loc.getLatitude()),
-                                    String.valueOf(loc.getLongitude()),
-                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
-                                    Integer.parseInt(ts),
-                                    checkState,
-                                    location,
-                                    checkConnection(),
-                                    String.valueOf(
-                                            dataSave.meta(
-                                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
-                                                    String.valueOf(dataSave.getBatteryPercentage(context)),
-                                                    utils.getSharedPreference(context, Constants.DEVICE_NAME),
-                                                    utils.getSharedPreference(context, Constants.LOCATION),
-                                                    dataSave.IOStime()
-                                            ))).execute();
-                        }
-                    }else {
+                     long id = System.currentTimeMillis() / 1000;
+//
+//                    Long tsLong = System.currentTimeMillis() / 1000;
+//                    String ts = tsLong.toString();
+//
+                    dataSave.DataSave(
+                            myRealm,
+                            id,
+                            utils.getSharedPreference(context, Constants.CHECKED_STATE),
+                            utils.getSharedPreference(context, Constants.DEVICE_ID),
+                            "location",
+                            true,
+                            utils.getSharedPreference(context, Constants.LOCATION));
+//
+//                    if (checkConnection()) {
+//                        if (validation()) {
+//                            String location = "";
+//                            String checkState = "";
+//
+//                            if (utils.getBoolean(context, Constants.LOCATION)) {
+//                                location = utils.getSharedPreference(context, Constants.LOCATION);
+//                            }
+//
+//                            if (utils.getBoolean(context, Constants.CHECKED_STATE)) {
+//                                checkState = utils.getSharedPreference(context, Constants.CHECKED_STATE);
+//                            }
+//
+//                            new ProcressAsyncTask(
+//                                    "http://wmmmendis.rype3.net/io/api/v1/device/track",
+//                                    String.valueOf(loc.getLatitude()),
+//                                    String.valueOf(loc.getLongitude()),
+//                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
+//                                    Integer.parseInt(ts),
+//                                    checkState,
+//                                    location,
+//                                    checkConnection(),
+//                                    String.valueOf(
+//                                            dataSave.meta(
+//                                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
+//                                                    String.valueOf(dataSave.getBatteryPercentage(context)),
+//                                                    utils.getSharedPreference(context, Constants.DEVICE_NAME),
+//                                                    utils.getSharedPreference(context, Constants.LOCATION),
+//                                                    dataSave.IOStime()
+//                                            ))).execute();
+//                        }
+//                    }else {
 
 //                            if (validation()) {
 //                                myRealm.beginTransaction();
@@ -249,7 +249,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //                                location.setSyncState(false);
 //                                myRealm.commitTransaction();
 //                            }
-                        }
+//                        }
                     }
                 }
             }
@@ -286,7 +286,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         public void onProviderEnabled(String provider) {
             Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
-
 //        private boolean checkConnection() {
 //            boolean isConnected = ConnectivityReceiver.isConnected();
 //            if (isConnected) {
@@ -294,7 +293,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //            }
 //            return false;
 //        }
-
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
 
@@ -353,7 +351,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                     try {
                         //   Log.e("onPostExecute Id : ", String.valueOf(this.timeStamp));
                             Log.e("Result Live : ", result);
-
 //                        Location_object updateLocationObject = myRealm.where(Location_object.class)
 //                                .equalTo("timeStamp", this.timeStamp)
 //                                .notEqualTo("checkStatus", "")

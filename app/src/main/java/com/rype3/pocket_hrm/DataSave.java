@@ -8,6 +8,8 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.util.Log;
 
+import com.rype3.pocket_hrm.realm.LocationDetails;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

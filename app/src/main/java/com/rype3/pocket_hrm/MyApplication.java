@@ -3,6 +3,7 @@ package com.rype3.pocket_hrm;
 import android.app.Application;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class MyApplication extends Application {
 
@@ -14,11 +15,11 @@ public class MyApplication extends Application {
         super.onCreate();
 
         mInstance = this;
-     //   Realm.init();
+        Realm.init(this);
 
-//        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("sample.realm").schemaVersion(1).build();
-//        Realm.setDefaultConfiguration(configuration);
-//        Realm.getInstance(configuration);
+        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("sample.realm").schemaVersion(1).build();
+        Realm.setDefaultConfiguration(configuration);
+        Realm.getInstance(configuration);
     }
 
     public static synchronized MyApplication getInstance() {
@@ -31,7 +32,7 @@ public class MyApplication extends Application {
 
     @Override
     public void onTerminate() {
-       // Realm.getDefaultInstance().close();
+        Realm.getDefaultInstance().close();
         super.onTerminate();
     }
 }

@@ -14,6 +14,8 @@ import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.rype3.pocket_hrm.realm.LocationDetails;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -67,8 +69,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
     /**
      * Set up the sync adapter
      */
-  //  private Realm myRealm;
-  //  private RealmResults<LocationDetails> locationList;
+    private Realm myRealm;
+    private RealmResults<LocationDetails> locationList;
 
     SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -76,7 +78,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
         Log.e("SyncAdapter : ","OK");
 
-     //   myRealm = Realm.getInstance(context);
+        myRealm = Realm.getDefaultInstance();
         Utils utils = new Utils(context);
 
     }
@@ -106,10 +108,10 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             @Override
             public void run() {
 
-//                locationList = myRealm.where(LocationDetails.class)
-//                        .findAll();
-//                locationList.sort("id");
-//                new ProcressTask().execute(locationList.size());
+                locationList = myRealm.where(LocationDetails.class)
+                        .findAll();
+                locationList.sort("id");
+                new ProcressTask().execute(locationList.size());
             }
         });
     }
@@ -148,77 +150,77 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            //SyncItinerary (values[0]);
+            SyncItinerary (values[0]);
         }
     }
 
-//    private void SyncItinerary(int index){
-//
-////        Log.e("URL : " , "http://wmmmendis.rype3.net/io/api/v1/device/track");
-////              new ProcressAsyncTask(
-////                      "http://wmmmendis.rype3.net/io/api/v1/device/track",
-////                      locationList.get(index).getLat(),
-////                      locationList.get(index).getLon(),
-////                      locationList.get(index).getDeviceId(),
-////                      locationList.get(index).getTimeStamp(),
-////                      locationList.get(index).getCheckStatus(),
-////                      locationList.get(index).getLocation(),
-////                      locationList.get(index).isInternetState()).
-////                      execute();
-//        String url = "";
-//
-//        try {
-//            JSONObject jsonObject = new JSONObject(locationList.get(index).getMeta());
-//
-//            String did = jsonObject.getString("did");
-//            String d_location = jsonObject.getString("d_location");
-//            String location = jsonObject.getString("location");
-//
-//            JSONObject locatio_json = new JSONObject(location);
-//
-//            String latitude= locatio_json.getString("lat");
-//            String longtitude= locatio_json.getString("long");
-//
-//            switch (locationList.get(index).getType()){
-//
-//                case "attendance":
-//
-//                    switch (locationList.get(index).getCheckState()){
-//
-//                        case "in":
-//                            url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
-//                            break;
-//
-//                        case "out":
-//                            url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
-//                            break;
-//                    }
-//
-//                    break;
-//
-//                case "location":
-//                    url = "http://wmmmendis.rype3.net/io/api/v1/device/track";
-//                    break;
-//            }
-//
-//            new ProcressAsyncTask(
-//                    url,
-//                    latitude,
-//                    longtitude,
-//                    did,
-//                    locationList.get(index).getId(),
-//                    locationList.get(index).getCheckState(),
-//                    d_location,
-//                    locationList.get(index).getMeta()).
-//                    execute();
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Log.e("TAG : " ,"Url : " + url+"\nId : " +locationList.get(index).getId() +"\nType : "+ locationList.get(index).getType() +"\nChecked state : "+locationList.get(index).getCheckState() +"\nMeta"+locationList.get(index).getMeta());
-//
-//    }
+    private void SyncItinerary(int index){
+
+ //       Log.e("URL : " , "http://wmmmendis.rype3.net/io/api/v1/device/track");
+//              new ProcressAsyncTask(
+//                      "http://wmmmendis.rype3.net/io/api/v1/device/track",
+//                      locationList.get(index).getLat(),
+//                      locationList.get(index).getLon(),
+//                      locationList.get(index).getDeviceId(),
+//                      locationList.get(index).getTimeStamp(),
+//                      locationList.get(index).getCheckStatus(),
+//                      locationList.get(index).getLocation(),
+//                      locationList.get(index).isInternetState()).
+//                      execute();
+        String url = "";
+
+        try {
+            JSONObject jsonObject = new JSONObject(locationList.get(index).getMeta());
+
+            String did = jsonObject.getString("did");
+            String d_location = jsonObject.getString("d_location");
+            String location = jsonObject.getString("location");
+
+            JSONObject locatio_json = new JSONObject(location);
+
+            String latitude= locatio_json.getString("lat");
+            String longtitude= locatio_json.getString("long");
+
+            switch (locationList.get(index).getType()){
+
+                case "attendance":
+
+                    switch (locationList.get(index).getCheckState()){
+
+                        case "in":
+                            url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
+                            break;
+
+                        case "out":
+                            url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
+                            break;
+                    }
+
+                    break;
+
+                case "location":
+                    url = "http://wmmmendis.rype3.net/io/api/v1/device/track";
+                    break;
+            }
+
+            new ProcressAsyncTask(
+                    url,
+                    latitude,
+                    longtitude,
+                    did,
+                    locationList.get(index).getId(),
+                    locationList.get(index).getCheckState(),
+                    d_location,
+                    locationList.get(index).getMeta()).
+                    execute();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("TAG : " ,"Url : " + url+"\nId : " +locationList.get(index).getId() +"\nType : "+ locationList.get(index).getType() +"\nChecked state : "+locationList.get(index).getCheckState() +"\nMeta"+locationList.get(index).getMeta());
+
+    }
 
     private class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
         private String url,lat,lon,device_id ,checkState,location ,meta;
