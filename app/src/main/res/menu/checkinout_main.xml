@@ -8,4 +8,10 @@
         android:orderInCategory="100"
         android:title="LEAVE"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_in_out_history"
+        android:orderInCategory="100"
+        android:title="IN/OUT HISTORY"
+        app:showAsAction="always" />
 </menu>

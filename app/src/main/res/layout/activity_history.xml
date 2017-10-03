@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.rype3.pocket_hrm.EPFnumberActivity">
+
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawerlayout"
+        tools:context=".HistoryActivity">
+
+        <RelativeLayout
+            android:id="@+id/image_layer1"
+            android:layout_width="fill_parent"
+            android:background="@color/primary_dark"
+            android:layout_height="fill_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <include
+                    android:id="@+id/appbar"
+                    layout="@layout/appbar">
+                </include>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycle"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/app_bar_layout" />
+
+        </RelativeLayout>
+    </android.support.v4.widget.DrawerLayout>
+</android.support.design.widget.CoordinatorLayout>

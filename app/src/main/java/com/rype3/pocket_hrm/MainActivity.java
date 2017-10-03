@@ -57,11 +57,13 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.rype3.pocket_hrm.realm.LocationDetails;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements
             new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     private DataSave dataSave;
+    private com.rype3.pocket_hrm.user.Location Location;
   //  private DataSave getDataSave;
     // Constants
     // The authority for the sync adapter's content provider
@@ -138,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements
 
         myRealm = Realm.getDefaultInstance();
 
-       // getDataSave = new DataSave();
+
+
         dataSave = new DataSave(context,utils);
 
         if (checkConnection()){
@@ -214,8 +218,7 @@ public class MainActivity extends AppCompatActivity implements
             final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
             final String placeId = String.valueOf(item.placeId);
             Log.e(LOG_TAG, "Selected: " + item.description);
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                    .getPlaceById(googleApiClient, placeId);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
             Log.e(LOG_TAG, "Fetching details for ID: " + item.placeId);
         }
@@ -232,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements
            final Place place = places.get(0);
 
             Log.e(LOG_TAG, "Place latlong : " + place.getLatLng());
-            utils.setSharedPreference(context, String.valueOf(place.getLatLng()),Constants.GEO_LATLONG);
+            utils.setSharedPreference(context, String.valueOf(place.getLatLng()+"-"+place.getId()),Constants.GEO_LATLONG);
 //            CharSequence attributions = places.getAttributions();
 //            mNameTextView.setText(Html.fromHtml(place.getName() + ""));
 //            mAddressTextView.setText(Html.fromHtml(place.getAddress() + ""));
@@ -284,8 +287,9 @@ public class MainActivity extends AppCompatActivity implements
 
             if (v == btn_in) {
                 if (validation()) {
+                    hideKeyBoard();
                     if (reset()) {
-                        hideKeyBoard();
+
 
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
@@ -306,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements
 
                         blinkImage(image_out ,0);
 
-                        long id = System.currentTimeMillis() / 1000;
+                        long id = System.currentTimeMillis();
 
                         dataSave.DataSave(myRealm,id,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
                        // markAttendance(0,location.getText().toString());
@@ -319,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements
                         utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
 
                         btn_in.setClickable(false);
+
                     }
                 }
             }
@@ -545,8 +550,8 @@ public class MainActivity extends AppCompatActivity implements
                             public void onClick(DialogInterface dialog, int id) {
                            //     markAttendance(1,location.getText().toString());
 
-                            long id_ = System.currentTimeMillis() / 1000;
-                            dataSave.DataSave(myRealm,id_,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
+                            long id_ = System.currentTimeMillis();
+                            dataSave.DataSave(myRealm,id_,"out", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
 
                             utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
                             utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
@@ -733,25 +738,27 @@ public class MainActivity extends AppCompatActivity implements
                  case 0:
                      utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
                     new ProcressAsyncTask(
-                         MainActivity.this,
-                         constants.urls(3),
-                         null,
-                         null,
-                         null,
-                         "POST",
-                         3,
-                         "1.0",
-                         null,
-                         null,
-                         utils.getSharedPreference(context, Constants.USER_ID),
-                            dataSave.IOStime(),
-                         null,
+                         MainActivity.this, //activity
+                         constants.urls(3),// url
+                         null,//email
+                         null,//pin
+                         null,//epf
+                         "POST",//HTTP_TYPE
+                         3,//type activity method
+                         "1.0",//version
+                         null,//token
+                         null,//deviceId
+                         utils.getSharedPreference(context, Constants.USER_ID),//uid
+                            dataSave.IOStime(),// checked at time
+                          null, // Check string ont use
                          String.valueOf(
                                  dataSave.meta(
                                          utils.getSharedPreference(context, Constants.DEVICE_ID),
                                          String.valueOf(dataSave.getBatteryPercentage(context))+"%",
                                          utils.getSharedPreference(context,Constants.DEVICE_NAME),
-                                         location,dataSave.IOStime()))).execute();
+                                         location,dataSave.IOStime()) // meta
+
+                         )).execute();
                      break;
 
                  case 1:
@@ -804,6 +811,13 @@ public class MainActivity extends AppCompatActivity implements
 
         if (id == R.id.action_in_out) {
             Intent intent = new Intent(getBaseContext(), LeaveActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+
+        if (id == R.id.action_in_out_history) {
+            Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
             startActivity(intent);
             finish();
             return true;

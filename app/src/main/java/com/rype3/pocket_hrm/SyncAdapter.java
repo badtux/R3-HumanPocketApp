@@ -71,6 +71,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
      */
     private Realm myRealm;
     private RealmResults<LocationDetails> locationList;
+    private Utils utils;
 
     SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -79,7 +80,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
         Log.e("SyncAdapter : ","OK");
 
         myRealm = Realm.getDefaultInstance();
-        Utils utils = new Utils(context);
+        utils = new Utils(context);
 
     }
 //
@@ -108,8 +109,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             @Override
             public void run() {
 
-                locationList = myRealm.where(LocationDetails.class)
-                        .findAll();
+                locationList = myRealm.where(LocationDetails.class).equalTo("state",true).findAll();
                 locationList.sort("id");
                 new ProcressTask().execute(locationList.size());
             }
@@ -135,7 +135,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             for (int count = 0; count < integers[0]; count++) {
 
                 try {
-                    Thread.sleep(24000);
+                    Thread.sleep(5000); //5s
                     publishProgress(count);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -174,12 +174,17 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
             String did = jsonObject.getString("did");
             String d_location = jsonObject.getString("d_location");
+            String d_iso = jsonObject.getString("d_iso");
+            String d_name = jsonObject.getString("d_name");
             String location = jsonObject.getString("location");
 
             JSONObject locatio_json = new JSONObject(location);
 
             String latitude= locatio_json.getString("lat");
             String longtitude= locatio_json.getString("long");
+
+            String in = null;
+            String out = null;
 
             switch (locationList.get(index).getType()){
 
@@ -189,10 +194,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
                         case "in":
                             url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
+                             in = d_iso;
                             break;
 
                         case "out":
                             url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
+                            out = d_iso;
                             break;
                     }
 
@@ -203,48 +210,59 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                     break;
             }
 
-            new ProcressAsyncTask(
+            new ProcressAsyncTask1(
                     url,
                     latitude,
                     longtitude,
                     did,
+                    d_name,
                     locationList.get(index).getId(),
                     locationList.get(index).getCheckState(),
                     d_location,
-                    locationList.get(index).getMeta()).
+                    locationList.get(index).getMeta(),
+                    utils.getSharedPreference(getContext(),Constants.USER_ID), //  uid
+                    in, // checkIn
+                    out). //checkOut
                     execute();
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         Log.e("TAG : " ,"Url : " + url+"\nId : " +locationList.get(index).getId() +"\nType : "+ locationList.get(index).getType() +"\nChecked state : "+locationList.get(index).getCheckState() +"\nMeta"+locationList.get(index).getMeta());
 
     }
 
-    private class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
-        private String url,lat,lon,device_id ,checkState,location ,meta;
+    private class ProcressAsyncTask1 extends AsyncTask<Void, Void, String> {
+        private String url,lat,lon,device_id ,checkState,location ,meta,uid,checkedAt , checkedOutAt,device_name;
         private int timeStamp;
 
-        ProcressAsyncTask(
+        ProcressAsyncTask1(
                 String url,
                 String lat,
                 String lon,
                 String device_id,
+                String device_name,
                 int timeStamp,
                 String checkState,
                 String location,
-                String meta) {
+                String meta,
+                String uid,
+                String checkedAt ,
+                String checkedOutAt) {
             super();
 
             this.url = url;
             this.lat = lat;
             this.lon = lon;
             this.device_id = device_id;
+            this.device_name = device_name;
             this.timeStamp = timeStamp;
             this.checkState = checkState;
             this.location = location;
             this.meta = meta;
+            this.uid = uid;
+            this.checkedAt = checkedAt;
+            this.checkedOutAt = checkedOutAt;
 
             //    Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
         }
@@ -256,8 +274,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
         @Override
         protected String doInBackground(Void... voids) {
             try {
-                if (loadJSON(this.url, this.lat, this.lon, this.device_id, this.timeStamp, this.checkState, this.location, this.meta) != null) {
-                    return loadJSON(this.url, this.lat, this.lon, this.device_id, this.timeStamp, this.checkState, this.location, this.meta).toString();
+                if (loadJSON(this.url, this.lat, this.lon, this.device_id, this.device_name,this.timeStamp, this.checkState, this.location, this.meta,this.uid,this.checkedAt,this.checkedOutAt) != null) {
+                    return loadJSON(this.url, this.lat, this.lon, this.device_id,this.device_name, this.timeStamp, this.checkState, this.location, this.meta,this.uid,this.checkedAt,this.checkedOutAt).toString();
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -269,32 +287,29 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
         protected void onPostExecute(final String result) {
 
             if (result != null) {
-//              try {
-//                  Log.e("onPostExecute Id : ", String.valueOf(this.timeStamp));
-                        Log.e("Result offline :  ", String.valueOf(this.timeStamp));
+              try {
+                Log.e("result : ", result);
+                Log.e("Result offline :  ", String.valueOf(this.timeStamp));
 
-//                    Location_object updateLocationObject = myRealm.where(Location_object.class)
-//                            .equalTo("timeStamp", this.timeStamp)
-//                            .notEqualTo("checkStatus", "")
-//                            .findFirst();
-//                    if (updateLocationObject != null) {
-//                        myRealm.beginTransaction();
-//                        updateLocationObject.setSyncState(true);
-//                        myRealm.commitTransaction();
-//                    }
-//                } catch (NullPointerException e) {
-//                    e.printStackTrace();
-//                }
+                    LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", this.timeStamp).findFirst();
+                    if (updateLocationDetails != null) {
+                        myRealm.beginTransaction();
+                        updateLocationDetails.setState(false);
+                        myRealm.commitTransaction();
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    private JSONObject loadJSON(String url, String lat, String lon, String device_id, int timeStamp, String checkState, String location, String meta) {
+    private JSONObject loadJSON(String url, String lat, String lon, String device_id, String device_name,int timeStamp, String checkState, String location, String meta,String uid,String checkedAt ,String checkedOutAt) {
         // Creating JSON Parser instance
        JSONParser jParser = new JSONParser();
 
         // getting JSON string from URL
-        JSONObject json = jParser.getJSONFromUrl(url ,lat,lon,device_id,timeStamp,checkState,location,meta);
+        JSONObject json = jParser.getJSONFromUrl(url ,lat,lon,device_id,device_name,timeStamp,checkState,location,meta , uid ,checkedAt,checkedOutAt);
 
         return json;
     }
@@ -306,7 +321,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
         }
 
-        JSONObject getJSONFromUrl(String url, String lat, String lon, String device_id, int timeStamp, String checkState, String location, String meta) {
+        JSONObject getJSONFromUrl(String url, String lat, String lon, String device_id,String device_name, int timeStamp, String checkState, String location, String meta,String uid ,String checkedAt ,String checkedOutAt) {
             JSONObject jsonObject = null;
             //      Create a new HttpClient and Post Header
             //      Log.e("Check State : ", checkState);
@@ -319,6 +334,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
                 if (device_id != null) {
                     nameValuePairs.add(new BasicNameValuePair("device_id", device_id));
+                    nameValuePairs.add(new BasicNameValuePair("imei", device_id));// attendance
+
+                }
+
+                if (device_name != null){
+                    nameValuePairs.add(new BasicNameValuePair("device_name", device_name));// attendance
                 }
 
                 if (lat != null) {
@@ -341,14 +362,42 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                     nameValuePairs.add(new BasicNameValuePair("ts", String.valueOf(timeStamp)));
                 }
 
-                if (meta != null) {
+                if (meta != null) {//tracker meta, Attendance
                     nameValuePairs.add(new BasicNameValuePair("meta", meta));
+
+                  //  Log.e("LOG meta ", meta);
                 }
+
+                if (uid != null) {
+                    nameValuePairs.add(new BasicNameValuePair("uid", uid)); //need to add user id
+                }
+
+
+                if (checkedAt != null) {
+                    nameValuePairs.add(new BasicNameValuePair("checked_at", checkedAt));
+                  //  Log.e("checked_at LOG ", checkedAt);
+                }
+
+                if (checkedOutAt != null) {
+                    nameValuePairs.add(new BasicNameValuePair("checkout_at", checkedOutAt));
+                 //   Log.e("checkout_at LOG ", checkedOutAt);
+                }
+
+
+//                if ( metaAttendance != null){// in/out meta
+//                    nameValuePairs.add(new BasicNameValuePair("meta", metaAttendance));
+//
+//                    Log.e("LOG metaAttendance ", metaAttendance);
+//                }
+
+                nameValuePairs.add(new BasicNameValuePair("description", ""));
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpclient.execute(httppost);
                 StatusLine statusLine = response.getStatusLine();
                 int statusCode = statusLine.getStatusCode();
+
+                Log.e("statusCode : ", String.valueOf(statusCode));
 
                 StringBuilder stringBuilder = new StringBuilder();
 

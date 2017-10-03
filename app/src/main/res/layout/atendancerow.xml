@@ -9,6 +9,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
+        android:background="@color/primary"
+        android:layout_margin="0.5dp"
         android:weightSum="2">
 
         <LinearLayout
@@ -24,10 +26,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center|left"
-                    android:text="Kalutara south"
-                    android:layout_margin="5dp"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
+                    android:text=""
+                    android:layout_margin="2.5dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
 
@@ -43,11 +45,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center|left"
-                        android:text="17:23:23"
+                        android:text=""
                         android:layout_weight="1.5"
-                        android:textColor="@color/black"
-                        android:layout_margin="5dp"
-                        android:textSize="15sp"
+                        android:textColor="@color/white"
+                        android:layout_margin="2.5dp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -55,9 +57,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="IN"
+                        android:text=""
                         android:layout_weight="0.5"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:layout_margin="5dp"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -78,11 +80,11 @@
             android:layout_weight="0.5">
 
             <Button
-                android:id="@+id/tv_fill"
+                android:id="@+id/btn_send"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="5dp"
+                android:padding="2.5dp"
                 android:layout_gravity="center"
                 android:text="SEND NOW"
                 android:textSize="12sp"

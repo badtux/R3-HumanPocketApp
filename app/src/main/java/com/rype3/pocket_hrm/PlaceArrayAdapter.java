@@ -87,8 +87,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
             ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
             while (iterator.hasNext()) {
                 AutocompletePrediction prediction = iterator.next();
-                resultList.add(new PlaceAutocomplete(prediction.getPlaceId(),
-                        prediction.getFullText(null)));
+                resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getFullText(null), prediction.getPrimaryText(null)));
             }
             // Buffer release
             autocompletePredictions.release();
@@ -148,9 +147,11 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
 
         public CharSequence placeId;
         public CharSequence description;
+        public CharSequence primery;
 
-        PlaceAutocomplete(CharSequence placeId, CharSequence description) {
+        PlaceAutocomplete(CharSequence placeId, CharSequence description , CharSequence primery) {
             this.placeId = placeId;
+            this.primery = primery ;
             this.description = description;
         }
 

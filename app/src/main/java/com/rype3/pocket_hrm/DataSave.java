@@ -71,17 +71,18 @@ class DataSave {
             }
 
             if (utils.getBoolean(context,Constants.LAT)){
-                lat = utils.getSharedPreference(context,Constants.LAT);
+                String Lat = utils.getSharedPreference(context,Constants.LAT);
+                jsonObjectLocation.put("lat" , Lat);
+            }else{
                 jsonObjectLocation.put("lat" , lat);
             }
 
             if (utils.getBoolean(context,Constants.LONG)){
-                lon = utils.getSharedPreference(context,Constants.LONG);
-                jsonObjectLocation.put("long" , lon);
-                jsonObject.put("location", jsonObjectLocation);
+                String Lon = utils.getSharedPreference(context,Constants.LONG);
+                jsonObjectLocation.put("long" , Lon);
             }
 
-
+            jsonObject.put("location", jsonObjectLocation);
 
         } catch (JSONException e) {
             e.printStackTrace();

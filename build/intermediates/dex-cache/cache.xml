@@ -3,15 +3,6 @@
 
     <item
         is-multidex="true"
-        jar="/Users/Ruwan/.android/build-cache/bc72e5c737aca19aa3b60fafbdc5ee2bd2e70d43/output/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.2"
-        sha1="78ea232052df889856dcb7b7b542707c89bb3bfb">
-        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9aa231ffc545860c35568fe63bb2c9d2de4c0f6e/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
@@ -25,7 +16,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="c2b11dc1bfa0862a75d17bc77a7ad177f6675363">
+        sha1="00844e1cc1f5c58c6f217dea31b731627f373133">
         <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_f6297c3d6d3066fe88888eb9c67b6496d1374bd5/classes.dex" />
     </item>
 

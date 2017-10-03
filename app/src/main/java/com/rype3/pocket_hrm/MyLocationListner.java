@@ -60,9 +60,11 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
         context = this.getApplicationContext();
         utils = new Utils(context);
+
         myRealm = Realm.getDefaultInstance();
 
         getDataSave = new DataSave();
+
         dataSave = new DataSave(context,utils);
 
     }
@@ -174,6 +176,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         public void onLocationChanged(final Location loc) {
 
             if (isBetterLocation(loc, previousBestLocation)) {
+
                 // loc.getLatitude();
                 // loc.getLongitude();
 
@@ -184,12 +187,15 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //                 Log.e("****Longitude", String.valueOf(loc.getLongitude()));
 //                 Log.e("****Provider", loc.getProvider());
 //
+
                 if (validation()) {
-                     long id = System.currentTimeMillis() / 1000;
+                     long id = System.currentTimeMillis();
+
 //
 //                    Long tsLong = System.currentTimeMillis() / 1000;
 //                    String ts = tsLong.toString();
 //
+
                     dataSave.DataSave(
                             myRealm,
                             id,
@@ -250,10 +256,11 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //                                myRealm.commitTransaction();
 //                            }
 //                        }
+
                     }
                 }
             }
-//
+
         boolean validation(){
             String showroom = "";
             String check_State = "";
@@ -286,6 +293,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         public void onProviderEnabled(String provider) {
             Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
+
 //        private boolean checkConnection() {
 //            boolean isConnected = ConnectivityReceiver.isConnected();
 //            if (isConnected) {
@@ -293,6 +301,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //            }
 //            return false;
 //        }
+
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
 

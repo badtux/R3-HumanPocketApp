@@ -126,6 +126,10 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
             case 4:
                 ((Sign_inActivity) activity).parseJsonRegisterForAttendandeResponse(result);
                 break;
+
+            case 5:
+                ((HistoryActivity) activity).parseJsonResponseHistory(result);
+                break;
         }
     }
 
@@ -139,7 +143,9 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                                 String token,
                                 String deviceId,
                                 String uid,
-                                String checked_at, String checkout_at, String meta) {
+                                String checked_at,
+                                String checkout_at,
+                                String meta) {
         // Creating JSON Parser instance
         JSONParser jParser = new JSONParser();
 
@@ -206,10 +212,12 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
                             if (checked_at != null) {
                                 nameValuePairs.add(new BasicNameValuePair("checked_at", checked_at));
+                                Log.e("checked_at LOG ", checked_at);
                             }
 
                             if (checkout_at != null) {
                                 nameValuePairs.add(new BasicNameValuePair("checkout_at", checkout_at));
+                                Log.e("checkout_at LOG ", checkout_at);
                             }
 
                             if (deviceId != null) {
