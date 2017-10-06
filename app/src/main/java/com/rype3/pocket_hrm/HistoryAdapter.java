@@ -102,6 +102,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
             public void onClick(View v) {
 
                 if (checkConnection()) {
+                    utils.setSharedPreference(context, String.valueOf(LocatioDetailList.get(position).getId()),Constants.TEMP_ID);
                     switch (LocatioDetailList.get(position).getCheckState()) {
                         case "in":
                             new ProcressAsyncTask(

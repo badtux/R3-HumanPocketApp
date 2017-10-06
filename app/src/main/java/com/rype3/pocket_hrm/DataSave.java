@@ -1,12 +1,19 @@
 package com.rype3.pocket_hrm;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.util.Log;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 
 import com.rype3.pocket_hrm.realm.LocationDetails;
 
@@ -20,7 +27,7 @@ import java.util.Locale;
 
 import io.realm.Realm;
 
-class DataSave {
+class DataSave{
 
     Context context;
     Utils utils;
@@ -131,5 +138,29 @@ class DataSave {
         float batteryPct = level / (float) scale;
 
         return (int) (batteryPct * 100);
+    }
+
+    // blink icon
+    public void blinkIcon(ImageView image,int type){
+        final Animation animation = new AlphaAnimation(1, 0);
+
+        switch (type) {
+            case 0:
+                animation.setDuration(1000);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.setRepeatCount(Animation.INFINITE);
+                animation.setRepeatMode(Animation.REVERSE);
+                image.startAnimation(animation);
+                break;
+
+            case 1:
+                animation.setDuration(1000);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.setRepeatCount(Animation.INFINITE);
+                animation.setRepeatMode(Animation.REVERSE);
+                image.startAnimation(animation);
+                animation.cancel();
+                break;
+        }
     }
 }

@@ -18,19 +18,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -57,20 +50,14 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.rype3.pocket_hrm.realm.LocationDetails;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 
-public class MainActivity extends AppCompatActivity implements
-        ConnectivityReceiver.ConnectivityReceiverListener,
-        LocationListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends BaseActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ConnectivityReceiver.ConnectivityReceiverListener {
     private TextView textView_count;
     private AutoCompleteTextView location;
     private Button  btn_in,
@@ -98,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements
     private Constants constants;
     boolean newAccount = false;
     private ImageView image_in ,image_out;
+    private TextView tv_text_clear;
     private RelativeLayout relativeLayout_checkout, relativeLayout_checkin;
     private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
 
@@ -121,9 +109,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         widget();
-        toolbar();
 
         buildGoogleApiClient();
 
@@ -140,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements
         handler = new Handler();
 
         myRealm = Realm.getDefaultInstance();
-
-
 
         dataSave = new DataSave(context,utils);
 
@@ -172,19 +156,21 @@ public class MainActivity extends AppCompatActivity implements
                         }
                     }
 
-                    blinkImage(image_out ,0);
+                    dataSave.blinkIcon(image_out ,0);
 
                     StartTime = Long.parseLong(utils.getSharedPreference(context, Constants.START_TIMESTAMP));
                     handler.postDelayed(runnable, 0);
 
                     location.setText(utils.getSharedPreference(context, Constants.LOCATION));
                     btn_in.setClickable(false);
+                    tv_text_clear.setClickable(false);
                 } else {
                     utils.setSharedPreference(context, "", Constants.CHECKED_STATE);
                     utils.setSharedPreference(context, null, Constants.LOCATION);
                     utils.setSharedPreference(context, "0L", Constants.START_TIMESTAMP);
 
                     btn_in.setClickable(true);
+                    tv_text_clear.setClickable(true);
                 }
             }else{
                 utils.setSharedPreference(context, "",Constants.GEO_LATLONG);
@@ -203,24 +189,55 @@ public class MainActivity extends AppCompatActivity implements
 
         syncMethod();
 
-        if(checkConnection()){
-            TriggerRefresh();
-        }
+//        if(checkConnection()){
+//            TriggerRefresh();
+//        }Kalutara
 //        Intent i= new Intent(context, NetWatcher.class);
 //        i.putExtra("KEY1", "Value to be used by the service");
 //        context.startService(i);
 
+        tv_text_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                location.setText("");
+            }
+        });
+    }
+
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected int getMenuResource() {
+        return R.menu.checkinout_main;
+    }
+
+    @Override
+    protected String ToolBarName() {
+        return "";
+    }
+
+    @Override
+    protected int ToolBarIcon() {
+        return R.mipmap.ic_launcher_m;
     }
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
-            final String placeId = String.valueOf(item.placeId);
-            Log.e(LOG_TAG, "Selected: " + item.description);
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
-            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-            Log.e(LOG_TAG, "Fetching details for ID: " + item.placeId);
+            try {
+                final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+                final String placeId = String.valueOf(item.placeId);
+                Log.e(LOG_TAG, "Selected: " + item.description);
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
+                placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+                Log.e(LOG_TAG, "Fetching details for ID: " + item.placeId);
+            }catch (Exception e){
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Error: " + e.getMessage());
+            }
         }
     };
 
@@ -234,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements
             // Selecting the first object buffer.
            final Place place = places.get(0);
 
-            Log.e(LOG_TAG, "Place latlong : " + place.getLatLng());
+           // Log.e(LOG_TAG, "Place latlong : " + place.getLatLng());
             utils.setSharedPreference(context, String.valueOf(place.getLatLng()+"-"+place.getId()),Constants.GEO_LATLONG);
 //            CharSequence attributions = places.getAttributions();
 //            mNameTextView.setText(Html.fromHtml(place.getName() + ""));
@@ -248,20 +265,12 @@ public class MainActivity extends AppCompatActivity implements
         }
     };
 
-    public void toolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.appbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setSubtitle("");
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_m);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-    }
-
     private void widget(){
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         textView_count = (TextView) findViewById(R.id.textView_count);
         image_in = (ImageView) findViewById(R.id.iv_icon);
         image_out = (ImageView) findViewById(R.id.iv_icon_1);
+        tv_text_clear = (TextView) findViewById(R.id.text_clear);
 
         relativeLayout_checkout = (RelativeLayout) findViewById(R.id.relative_out);
         relativeLayout_checkin = (RelativeLayout) findViewById(R.id.relative_in);
@@ -290,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements
                     hideKeyBoard();
                     if (reset()) {
 
-
+                        tv_text_clear.setClickable(false);
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
                             relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
@@ -308,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements
                             image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
                         }
 
-                        blinkImage(image_out ,0);
+                        dataSave.blinkIcon(image_out ,0);
 
                         long id = System.currentTimeMillis();
 
@@ -336,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements
                         image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_navigate_next));
                     }
 
-                    blinkImage(image_out ,1);
+                    dataSave.blinkIcon(image_out ,1);
 
                     thankyouAlertMessageBox(utils.getSharedPreference(context, Constants.LAST_TIME));
                 }
@@ -344,29 +353,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     };
 
-    private void blinkImage(ImageView image ,int type){
-        final Animation animation = new AlphaAnimation(1, 0);
-
-        switch (type) {
-
-            case 0:
-                animation.setDuration(1000);
-                animation.setInterpolator(new LinearInterpolator());
-                animation.setRepeatCount(Animation.INFINITE);
-                animation.setRepeatMode(Animation.REVERSE);
-                image.startAnimation(animation);
-                break;
-
-            case 1:
-                animation.setDuration(1000);
-                animation.setInterpolator(new LinearInterpolator());
-                animation.setRepeatCount(Animation.INFINITE);
-                animation.setRepeatMode(Animation.REVERSE);
-                image.startAnimation(animation);
-                animation.cancel();
-                break;
-        }
-    }
 
     private boolean checkConnection() {
         boolean isConnected = ConnectivityReceiver.isConnected();
@@ -398,17 +384,17 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         if (newAccount || !setupComplete) {
-            TriggerRefresh();
+            TriggerRefresh("1");
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
         }
         return true;
     }
 
-    public static void TriggerRefresh() {
+    public static void TriggerRefresh(String num) {
         Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        b.putString("number","1");
+        b.putString("number",num);
 
         ContentResolver.requestSync(
                 AuthenticatorService.GetAccount(),      // Sync account
@@ -440,8 +426,9 @@ public class MainActivity extends AppCompatActivity implements
                 location.setText("");
                 textView_count.setText("00:00:00");
                 btn_in.setClickable(true);
-
-                blinkImage(image_out ,1);
+                tv_text_clear.setClickable(true);
+                dataSave.blinkIcon(image_out ,1);
+                TriggerRefresh("1");
             }
         }, 5000);
     }
@@ -590,7 +577,7 @@ public class MainActivity extends AppCompatActivity implements
             return false;
         }
     }
-    /* Class Single Location_object Listner  */
+    /* Class Single Location_object Listner */
 
     public boolean validation() {
         String String_location = location.getText().toString();
@@ -625,12 +612,11 @@ public class MainActivity extends AppCompatActivity implements
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             locationRequest.setInterval(30 * 1000);
             locationRequest.setFastestInterval(5 * 1000);
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
 
-            //**************************
+            // **************************
             builder.setAlwaysShow(true); //this is the key ingredient
-            //**************************
+            // **************************
 
             PendingResult<LocationSettingsResult> result =
                     LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
@@ -698,7 +684,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if (isConnected){
-           TriggerRefresh();
+           TriggerRefresh("1");
+        }else{
+            TriggerRefresh(null);
         }
     }
 
@@ -709,7 +697,7 @@ public class MainActivity extends AppCompatActivity implements
                 Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
                 View sbView = snackbar.getView();
                 CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) sbView.getLayoutParams();
-                params.gravity = Gravity.TOP;
+                params.gravity = Gravity.BOTTOM;
                 sbView.setLayoutParams(params);
                 TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
                 textView.setTextColor(Color.RED);
@@ -720,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements
                 snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
                 View sbView1 = snackbar.getView();
                 CoordinatorLayout.LayoutParams params1 = (CoordinatorLayout.LayoutParams) sbView1.getLayoutParams();
-                params1.gravity = Gravity.TOP;
+                params1.gravity = Gravity.BOTTOM;
                 sbView1.setLayoutParams(params1);
                 TextView textView1 = (TextView) sbView1.findViewById(android.support.design.R.id.snackbar_text);
                 textView1.setTextColor(Color.GREEN);
@@ -729,65 +717,65 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-   // public boolean markAttendance(long id,String checkState,String deviceId,String type,boolean state,String location,int battery){
-    public boolean markAttendance(int position ,String location){
-
-          if (checkConnection()) {
-
-             switch (position) {
-                 case 0:
-                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
-                    new ProcressAsyncTask(
-                         MainActivity.this, //activity
-                         constants.urls(3),// url
-                         null,//email
-                         null,//pin
-                         null,//epf
-                         "POST",//HTTP_TYPE
-                         3,//type activity method
-                         "1.0",//version
-                         null,//token
-                         null,//deviceId
-                         utils.getSharedPreference(context, Constants.USER_ID),//uid
-                            dataSave.IOStime(),// checked at time
-                          null, // Check string ont use
-                         String.valueOf(
-                                 dataSave.meta(
-                                         utils.getSharedPreference(context, Constants.DEVICE_ID),
-                                         String.valueOf(dataSave.getBatteryPercentage(context))+"%",
-                                         utils.getSharedPreference(context,Constants.DEVICE_NAME),
-                                         location,dataSave.IOStime()) // meta
-
-                         )).execute();
-                     break;
-
-                 case 1:
-                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
-                     new ProcressAsyncTask(
-                             MainActivity.this,
-                             constants.urls(4),
-                             null,
-                             null,
-                             null,
-                             "POST",
-                             3,
-                             "1.0",
-                             null,
-                             null,
-                             utils.getSharedPreference(context, Constants.USER_ID),
-                             null,
-                             dataSave.IOStime(),
-                             String.valueOf(
-                                     dataSave.meta(
-                                             utils.getSharedPreference(context, Constants.DEVICE_ID),
-                                             String.valueOf(dataSave.getBatteryPercentage(context))+"%",
-                                             utils.getSharedPreference(context,Constants.DEVICE_NAME),
-                                             location,dataSave.IOStime()))).execute();
-                     break;
-             }
-        }
-        return true;
-    }
+//      public boolean markAttendance(long id,String checkState,String deviceId,String type,boolean state,String location,int battery){
+//      public boolean markAttendance(int position ,String location){
+//
+//          if (checkConnection()) {
+//
+//             switch (position) {
+//                 case 0:
+//                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
+//                    new ProcressAsyncTask(
+//                         MainActivity.this, //activity
+//                         constants.urls(3),// url
+//                         null,//email
+//                         null,//pin
+//                         null,//epf
+//                         "POST",//HTTP_TYPE
+//                         3,//type activity method
+//                         "1.0",//version
+//                         null,//token
+//                         null,//deviceId
+//                         utils.getSharedPreference(context, Constants.USER_ID),//uid
+//                            dataSave.IOStime(),// checked at time
+//                          null, // Check string ont use
+//                         String.valueOf(
+//                                 dataSave.meta(
+//                                         utils.getSharedPreference(context, Constants.DEVICE_ID),
+//                                         String.valueOf(dataSave.getBatteryPercentage(context))+"%",
+//                                         utils.getSharedPreference(context,Constants.DEVICE_NAME),
+//                                         location,dataSave.IOStime()) // meta
+//
+//                         )).execute();
+//                     break;
+//
+//                 case 1:
+//                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
+//                     new ProcressAsyncTask(
+//                             MainActivity.this,
+//                             constants.urls(4),
+//                             null,
+//                             null,
+//                             null,
+//                             "POST",
+//                             3,
+//                             "1.0",
+//                             null,
+//                             null,
+//                             utils.getSharedPreference(context, Constants.USER_ID),
+//                             null,
+//                             dataSave.IOStime(),
+//                             String.valueOf(
+//                                     dataSave.meta(
+//                                             utils.getSharedPreference(context, Constants.DEVICE_ID),
+//                                             String.valueOf(dataSave.getBatteryPercentage(context))+"%",
+//                                             utils.getSharedPreference(context,Constants.DEVICE_NAME),
+//                                             location,dataSave.IOStime()))).execute();
+//                     break;
+//             }
+//        }
+//        return true;
+//    }
 
     private boolean BuildGoogleService(){
         googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
@@ -799,39 +787,39 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.checkinout_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_in_out) {
-            Intent intent = new Intent(getBaseContext(), LeaveActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-
-        if (id == R.id.action_in_out_history) {
-            Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.checkinout_main, menu);
+//        return true;
+//    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        if (id == R.id.action_in_out) {
+//            Intent intent = new Intent(getBaseContext(), LeaveActivity.class);
+//            startActivity(intent);
+//            finish();
+//            return true;
+//        }
+//
+//        if (id == R.id.action_in_out_history) {
+//            Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+//            startActivity(intent);
+//            finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
-
         if(checkConnection()){
-            TriggerRefresh();
+            TriggerRefresh("1");
+        }else{
+            TriggerRefresh(null);
         }
     }
 }

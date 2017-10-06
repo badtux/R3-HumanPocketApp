@@ -152,6 +152,19 @@
                         android:layout_weight="0.5"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:padding="5dp"
+                            android:textSize="15sp"
+                            android:layout_marginRight="15dp"
+                            android:gravity="center|right"
+                            android:textStyle="bold"
+                            android:textColor="@color/icons"
+                            android:text="CLEAR"
+                            android:id="@+id/text_clear" />
+
                     </LinearLayout>
 
                     <LinearLayout

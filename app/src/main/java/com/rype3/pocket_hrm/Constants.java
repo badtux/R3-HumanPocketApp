@@ -23,6 +23,7 @@ class Constants {
     static final String LAT = "lat";
     static final String LONG = "long";
     static final String GEO_LATLONG = "geo_latlong";
+    static final String TEMP_ID = "temp_id";
     protected Context context ;
 
     Constants(Context context) {

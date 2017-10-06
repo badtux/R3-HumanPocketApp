@@ -1,6 +1,7 @@
 package com.rype3.pocket_hrm;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import io.realm.RealmResults;
 public class HistoryActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
     private Toolbar toolbar;
     private Realm myRealm;
+    private Utils utils;
+    private Context context;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -36,6 +39,10 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         widget();
 
         myRealm = Realm.getDefaultInstance();
+
+        context = this.getApplicationContext();
+        utils = new Utils(context);
+
         locationDetailses = myRealm.where(LocationDetails.class).equalTo("type","attendance").equalTo("state",true).findAll();
         locationDetailses.sort("id");
 
@@ -82,7 +89,7 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         }
 
         if (id == R.id.action_sync) {
-            TriggerRefresh();
+            TriggerRefresh("1");
             return true;
         }
 
@@ -94,6 +101,24 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
             Log.e("Result : ", result);
             try {
                 JSONObject jsonObjectResult = new JSONObject(result);
+                boolean status = jsonObjectResult.getBoolean("status");
+                if (status){
+                    int id = 0;
+
+                    if (utils.getBoolean(context,Constants.TEMP_ID)) {
+                        id = Integer.parseInt(utils.getSharedPreference(context, Constants.TEMP_ID));
+                    }
+                    LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", id).findFirst();
+                    if (updateLocationDetails != null) {
+                        myRealm.beginTransaction();
+                        updateLocationDetails.setState(false);
+                        myRealm.commitTransaction();
+                    }
+
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -112,14 +137,16 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
             });
         }
         MyApplication.getInstance().setConnectivityListener(this);
+
+
     }
 
 
-    public static void TriggerRefresh() {
+    public static void TriggerRefresh(String num) {
         Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        b.putString("number","1");
+        b.putString("number",num );
 
         ContentResolver.requestSync(
                 AuthenticatorService.GetAccount(),      // Sync account

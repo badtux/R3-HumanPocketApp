@@ -40,6 +40,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Handle the transfer of data between a server and an
@@ -110,7 +111,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             public void run() {
 
                 locationList = myRealm.where(LocationDetails.class).equalTo("state",true).findAll();
-                locationList.sort("id");
+                locationList.sort("id", Sort.ASCENDING);
                 new ProcressTask().execute(locationList.size());
             }
         });
@@ -167,69 +168,70 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 //                      locationList.get(index).getLocation(),
 //                      locationList.get(index).isInternetState()).
 //                      execute();
+
         String url = "";
+            try {
+                JSONObject jsonObject = new JSONObject(locationList.get(index).getMeta());
 
-        try {
-            JSONObject jsonObject = new JSONObject(locationList.get(index).getMeta());
 
-            String did = jsonObject.getString("did");
-            String d_location = jsonObject.getString("d_location");
-            String d_iso = jsonObject.getString("d_iso");
-            String d_name = jsonObject.getString("d_name");
-            String location = jsonObject.getString("location");
+                if (jsonObject != null) {
+                    String did = jsonObject.getString("did");
+                    String d_location = jsonObject.getString("d_location");
+                    String d_iso = jsonObject.getString("d_iso");
+                    String d_name = jsonObject.getString("d_name");
+                    String location = jsonObject.getString("location");
 
-            JSONObject locatio_json = new JSONObject(location);
+                    JSONObject locatio_json = new JSONObject(location);
 
-            String latitude= locatio_json.getString("lat");
-            String longtitude= locatio_json.getString("long");
+                    String latitude = locatio_json.getString("lat");
+                    String longtitude = locatio_json.getString("long");
 
-            String in = null;
-            String out = null;
+                    String in = null;
+                    String out = null;
 
-            switch (locationList.get(index).getType()){
+                    switch (locationList.get(index).getType()) {
 
-                case "attendance":
+                        case "attendance":
 
-                    switch (locationList.get(index).getCheckState()){
+                            switch (locationList.get(index).getCheckState()) {
 
-                        case "in":
-                            url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
-                             in = d_iso;
+                                case "in":
+                                    url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
+                                    in = d_iso;
+                                    break;
+
+                                case "out":
+                                    url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
+                                    out = d_iso;
+                                    break;
+                            }
+
                             break;
 
-                        case "out":
-                            url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
-                            out = d_iso;
+                        case "location":
+                            url = "http://wmmmendis.rype3.net/io/api/v1/device/track";
                             break;
                     }
 
-                    break;
-
-                case "location":
-                    url = "http://wmmmendis.rype3.net/io/api/v1/device/track";
-                    break;
+                    new ProcressAsyncTask1(
+                            url,
+                            latitude,
+                            longtitude,
+                            did,
+                            d_name,
+                            locationList.get(index).getId(),
+                            locationList.get(index).getCheckState(),
+                            d_location,
+                            locationList.get(index).getMeta(),
+                            utils.getSharedPreference(getContext(), Constants.USER_ID), //  uid
+                            in, // checkIn
+                            out). //checkOut
+                            execute();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-            new ProcressAsyncTask1(
-                    url,
-                    latitude,
-                    longtitude,
-                    did,
-                    d_name,
-                    locationList.get(index).getId(),
-                    locationList.get(index).getCheckState(),
-                    d_location,
-                    locationList.get(index).getMeta(),
-                    utils.getSharedPreference(getContext(),Constants.USER_ID), //  uid
-                    in, // checkIn
-                    out). //checkOut
-                    execute();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Log.e("TAG : " ,"Url : " + url+"\nId : " +locationList.get(index).getId() +"\nType : "+ locationList.get(index).getType() +"\nChecked state : "+locationList.get(index).getCheckState() +"\nMeta"+locationList.get(index).getMeta());
-
+            Log.e("TAG : ", "Url : " + url + "\nId : " + locationList.get(index).getId() + "\nType : " + locationList.get(index).getType() + "\nChecked state : " + locationList.get(index).getCheckState() + "\nMeta" + locationList.get(index).getMeta());
     }
 
     private class ProcressAsyncTask1 extends AsyncTask<Void, Void, String> {
@@ -264,7 +266,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             this.checkedAt = checkedAt;
             this.checkedOutAt = checkedOutAt;
 
-            //    Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
+        //  Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
         }
 
         protected void onPreExecute() {
