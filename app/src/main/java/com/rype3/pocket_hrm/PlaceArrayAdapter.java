@@ -2,6 +2,9 @@ package com.rype3.pocket_hrm;
 
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.text.Html;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Filterable;
@@ -21,7 +24,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutocomplete> implements Filterable,ConnectivityReceiver.ConnectivityReceiverListener {
+public class PlaceArrayAdapter extends
+        ArrayAdapter<PlaceArrayAdapter.PlaceAutocomplete> implements
+        Filterable,
+        ConnectivityReceiver.ConnectivityReceiverListener {
     private static final String TAG = "PlaceArrayAdapter";
     private GoogleApiClient mGoogleApiClient;
     private AutocompleteFilter mPlaceFilter;
@@ -36,8 +42,8 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
      * @param bounds   Used to specify the search bounds
      * @param filter   Used to specify place types
      */
-    public PlaceArrayAdapter(Context context, int resource, LatLngBounds bounds,
-                             AutocompleteFilter filter) {
+
+    public PlaceArrayAdapter(Context context, int resource, LatLngBounds bounds, AutocompleteFilter filter) {
         super(context, resource);
         mBounds = bounds;
         mPlaceFilter = filter;
@@ -68,8 +74,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
                     Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
                                     mBounds, mPlaceFilter);
             // Wait for predictions, set the timeout.
-            AutocompletePredictionBuffer autocompletePredictions = results
-                    .await(60, TimeUnit.SECONDS);
+            AutocompletePredictionBuffer autocompletePredictions = results.await(60, TimeUnit.SECONDS);
             final Status status = autocompletePredictions.getStatus();
             if (!status.isSuccess()) {
                 if (!checkConnection()){
@@ -87,7 +92,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
             ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
             while (iterator.hasNext()) {
                 AutocompletePrediction prediction = iterator.next();
-                resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getFullText(null), prediction.getPrimaryText(null)));
+                resultList.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getFullText(null), prediction.getPrimaryText(null),prediction.getSecondaryText(null)));
             }
             // Buffer release
             autocompletePredictions.release();
@@ -148,16 +153,28 @@ public class PlaceArrayAdapter extends ArrayAdapter<PlaceArrayAdapter.PlaceAutoc
         public CharSequence placeId;
         public CharSequence description;
         public CharSequence primery;
+        public CharSequence address;
 
-        PlaceAutocomplete(CharSequence placeId, CharSequence description , CharSequence primery) {
+        PlaceAutocomplete(CharSequence placeId, CharSequence description , CharSequence primery,CharSequence address) {
             this.placeId = placeId;
             this.primery = primery ;
             this.description = description;
+            this.address = address;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public String toString() {
-            return description.toString();
+           // String sourceString = "<b>" + primery + "</b>";
+
+          //  String sourceString = "<h2>"+primery+"</h2><p>"+address+"</p>";
+
+         //   getContext().getResources().getString(R.string.places, primery, address);
+
+         //   mytextview.setText(Html.fromHtml(sourceString));
+
+
+            return Html.fromHtml(getContext().getResources().getString(R.string.places, primery, address)).toString();
         }
     }
 }

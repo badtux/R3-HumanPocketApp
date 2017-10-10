@@ -45,9 +45,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -57,7 +60,7 @@ import org.json.JSONObject;
 import io.realm.Realm;
 
 
-public class MainActivity extends BaseActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ConnectivityReceiver.ConnectivityReceiverListener {
+public class MainActivity extends BaseActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ConnectivityReceiver.ConnectivityReceiverListener,PlaceSelectionListener {
     private TextView textView_count;
     private AutoCompleteTextView location;
     private Button  btn_in,
@@ -85,7 +88,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     private Constants constants;
     boolean newAccount = false;
     private ImageView image_in ,image_out;
-    private TextView tv_text_clear;
+    private Button btn_clear;
     private RelativeLayout relativeLayout_checkout, relativeLayout_checkin;
     private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
 
@@ -93,8 +96,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     private static final int GOOGLE_API_CLIENT_ID = 0;
 
     private PlaceArrayAdapter mPlaceArrayAdapter;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
-            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     private DataSave dataSave;
     private com.rype3.pocket_hrm.user.Location Location;
@@ -104,6 +106,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     public static final String AUTHORITY = "com.rype3.mendischecking";
 
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
+    private PlaceAutocompleteFragment autocompleteFragment;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -116,6 +119,19 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
         if (!isGooglePlayServicesAvailable()) {
             finish();
         }
+
+//        autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+//
+//        // Register a listener to receive callbacks when a place has been selected or an error has
+//        // occurred.
+//
+//        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+//                .setCountry("LK")
+//                .build();
+//
+//        autocompleteFragment.setFilter(typeFilter);
+//
+//        autocompleteFragment.setOnPlaceSelectedListener(this);
 
         context = this.getApplicationContext();
         utils = new Utils(context);
@@ -133,7 +149,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
             BuildGoogleService();
         }
 
-        location.setThreshold(3);
+       // location.setThreshold(null);
 
         location.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, null);
@@ -163,14 +179,14 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 
                     location.setText(utils.getSharedPreference(context, Constants.LOCATION));
                     btn_in.setClickable(false);
-                    tv_text_clear.setClickable(false);
+                    btn_clear.setClickable(false);
                 } else {
                     utils.setSharedPreference(context, "", Constants.CHECKED_STATE);
                     utils.setSharedPreference(context, null, Constants.LOCATION);
                     utils.setSharedPreference(context, "0L", Constants.START_TIMESTAMP);
 
                     btn_in.setClickable(true);
-                    tv_text_clear.setClickable(true);
+                    btn_clear.setClickable(true);
                 }
             }else{
                 utils.setSharedPreference(context, "",Constants.GEO_LATLONG);
@@ -195,8 +211,8 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 //        Intent i= new Intent(context, NetWatcher.class);
 //        i.putExtra("KEY1", "Value to be used by the service");
 //        context.startService(i);
-
-        tv_text_clear.setOnClickListener(new View.OnClickListener() {
+//
+       btn_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 location.setText("");
@@ -230,7 +246,9 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
             try {
                 final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
                 final String placeId = String.valueOf(item.placeId);
-                Log.e(LOG_TAG, "Selected: " + item.description);
+               // Log.e(LOG_TAG, "Selected: " + item.primery);
+                location.setText(item.primery);
+
                 PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
                 placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
                 Log.e(LOG_TAG, "Fetching details for ID: " + item.placeId);
@@ -270,7 +288,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
         textView_count = (TextView) findViewById(R.id.textView_count);
         image_in = (ImageView) findViewById(R.id.iv_icon);
         image_out = (ImageView) findViewById(R.id.iv_icon_1);
-        tv_text_clear = (TextView) findViewById(R.id.text_clear);
+        btn_clear = (Button) findViewById(R.id.clear);
 
         relativeLayout_checkout = (RelativeLayout) findViewById(R.id.relative_out);
         relativeLayout_checkin = (RelativeLayout) findViewById(R.id.relative_in);
@@ -299,7 +317,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
                     hideKeyBoard();
                     if (reset()) {
 
-                        tv_text_clear.setClickable(false);
+                        btn_clear.setClickable(false);
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
                             relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
@@ -426,7 +444,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
                 location.setText("");
                 textView_count.setText("00:00:00");
                 btn_in.setClickable(true);
-                tv_text_clear.setClickable(true);
+                btn_clear.setClickable(true);
                 dataSave.blinkIcon(image_out ,1);
                 TriggerRefresh("1");
             }
@@ -812,6 +830,9 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 //        return super.onOptionsItemSelected(item);
 //    }
 
+
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -821,5 +842,16 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
         }else{
             TriggerRefresh(null);
         }
+    }
+
+    @Override
+    public void onPlaceSelected(Place place) {
+        Log.e("TAG", "Place Selected: " + place.getName());
+    }
+
+    @Override
+    public void onError(Status status) {
+
+        Log.e("TAG", "onError: Status = " + status.toString());
     }
 }

@@ -137,8 +137,6 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
             });
         }
         MyApplication.getInstance().setConnectivityListener(this);
-
-
     }
 
 
