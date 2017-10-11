@@ -26,6 +26,8 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
     private Toolbar toolbar;
     private Realm myRealm;
     private Utils utils;
+    private String number;
+    private Intent intent;
     private Context context;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView recyclerView;
@@ -50,6 +52,10 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
             mAdapter = new HistoryAdapter(HistoryActivity.this,this, locationDetailses);
             recyclerView.setAdapter(mAdapter);
         }
+
+        intent =  getIntent();
+        number = intent.getStringExtra("number");
+
     }
 
     public void toolbar() {
@@ -84,6 +90,7 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
 
         if (id == android.R.id.home) {
             Intent intent = new Intent(HistoryActivity.this,MainActivity.class);
+            intent.putExtra("number",number);
             startActivity(intent);
             finish();
         }

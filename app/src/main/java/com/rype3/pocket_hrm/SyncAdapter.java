@@ -102,19 +102,23 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
         String number = bundle.getString("number");
         if (number != null) {
-          Log.e("number : ", number);
-         }
-        Handler h = new Handler(Looper.getMainLooper());
-        h.post(new Runnable(){
+            Log.e("number : ", number);
 
-            @Override
-            public void run() {
+            if (number.equals("1")) {
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(new Runnable() {
 
-                locationList = myRealm.where(LocationDetails.class).equalTo("state",true).findAll();
-                locationList.sort("id", Sort.ASCENDING);
-                new ProcressTask().execute(locationList.size());
+                    @Override
+                    public void run() {
+
+                        locationList = myRealm.where(LocationDetails.class).equalTo("state", true).findAll();
+                        locationList.sort("id", Sort.ASCENDING);
+
+                        new ProcressTask().execute(locationList.size());
+                    }
+                });
             }
-        });
+        }
     }
 
     public void updateLocalFeedData(final String stream, final SyncResult syncResult)
@@ -170,9 +174,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 //                      execute();
 
         String url = "";
+
+        if(locationList.size() > index && index >= 0) {
+
             try {
                 JSONObject jsonObject = new JSONObject(locationList.get(index).getMeta());
-
 
                 if (jsonObject != null) {
                     String did = jsonObject.getString("did");
@@ -231,7 +237,13 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.e("TAG : ", "Url : " + url + "\nId : " + locationList.get(index).getId() + "\nType : " + locationList.get(index).getType() + "\nChecked state : " + locationList.get(index).getCheckState() + "\nMeta" + locationList.get(index).getMeta());
+            Log.e("TAG : ",
+                    "Url : " + url +
+                    "\nId : " + locationList.get(index).getId() +
+                    "\nType : " + locationList.get(index).getType() +
+                    "\nChecked state : " + locationList.get(index).getCheckState() + "\nMeta" + locationList.get(index).getMeta());
+        }
+
     }
 
     private class ProcressAsyncTask1 extends AsyncTask<Void, Void, String> {

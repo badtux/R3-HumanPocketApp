@@ -22,6 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity{
     protected abstract int getMenuResource();
     protected abstract String ToolBarName();
     protected abstract int ToolBarIcon();
+    protected abstract String Number();
 
     private void configureToolbar(String title, int icon) {
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -59,6 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity{
 
                 if (id == R.id.action_in_out_history) {
                     Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+                    intent.putExtra("number","2");
                     startActivity(intent);
                     finish();
                     return true;

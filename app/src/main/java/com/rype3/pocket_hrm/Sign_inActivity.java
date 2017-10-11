@@ -256,6 +256,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
                 utils.setSharedPreference(context,userEpfNumber,Constants.USER_EPF_NO);
                 if (status){
                     intent = new Intent(Sign_inActivity.this,MainActivity.class);
+                    intent.putExtra("number","1");
                     startActivity(intent);
                     finish();
                 }

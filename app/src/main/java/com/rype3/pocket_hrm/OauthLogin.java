@@ -58,6 +58,7 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
 
         if (utils.getBoolean(context,Constants.TOKEN)){
             intent = new Intent(OauthLogin.this,MainActivity.class);
+            intent.putExtra("number","1");
             startActivity(intent);
             finish();
         }

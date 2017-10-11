@@ -99,6 +99,8 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     private DataSave dataSave;
+    private Intent intent;
+    private String number ;
     private com.rype3.pocket_hrm.user.Location Location;
   //  private DataSave getDataSave;
     // Constants
@@ -125,9 +127,9 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 //        // Register a listener to receive callbacks when a place has been selected or an error has
 //        // occurred.
 //
-//        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-//                .setCountry("LK")
-//                .build();
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setCountry("LK")
+                .build();
 //
 //        autocompleteFragment.setFilter(typeFilter);
 //
@@ -149,10 +151,13 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
             BuildGoogleService();
         }
 
+        intent = getIntent();
+        number = intent.getStringExtra("number");
+
        // location.setThreshold(null);
 
         location.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, null);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, typeFilter);
         location.setAdapter(mPlaceArrayAdapter);
 
         try {
@@ -238,6 +243,11 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     @Override
     protected int ToolBarIcon() {
         return R.mipmap.ic_launcher_m;
+    }
+
+    @Override
+    protected String Number() {
+        return number;
     }
 
     private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
@@ -401,10 +411,11 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
             newAccount = true;
         }
 
-        if (newAccount || !setupComplete) {
-            TriggerRefresh("1");
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
-        }
+//        if (newAccount || !setupComplete) {
+//            TriggerRefresh("1");
+//            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
+//        }
+
         return true;
     }
 
@@ -702,7 +713,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if (isConnected){
-           TriggerRefresh("1");
+           TriggerRefresh(number);
         }else{
             TriggerRefresh(null);
         }
@@ -830,15 +841,12 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 //        return super.onOptionsItemSelected(item);
 //    }
 
-
-
-
     @Override
     protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
         if(checkConnection()){
-            TriggerRefresh("1");
+            TriggerRefresh(number);
         }else{
             TriggerRefresh(null);
         }
