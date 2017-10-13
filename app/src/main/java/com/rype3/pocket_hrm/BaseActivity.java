@@ -1,5 +1,6 @@
 package com.rype3.pocket_hrm;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +11,17 @@ import android.view.MenuItem;
 public abstract class BaseActivity extends AppCompatActivity{
 
     public Toolbar toolbar;
+    private Utils utils;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
         configureToolbar(ToolBarName() ,ToolBarIcon());
+
+        context = getApplicationContext();
+        utils = new Utils(context);
     }
 
     protected abstract int getLayoutResource();
@@ -69,5 +75,20 @@ public abstract class BaseActivity extends AppCompatActivity{
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean exitState(){
+
+        if (utils.getBoolean(context,Constants.EXIT_STATAUS)){
+
+            String state = utils.getSharedPreference(context,Constants.EXIT_STATAUS);
+            if (state.equals("")){
+                return false;
+            }else if (state.equals("false")){
+                return false;
+            }
+
+        }
+        return true;
     }
 }

@@ -19,14 +19,17 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,38 +49,41 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 
 
-public class MainActivity extends BaseActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ConnectivityReceiver.ConnectivityReceiverListener,PlaceSelectionListener {
+public class MainActivity extends BaseActivity implements
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        ConnectivityReceiver.ConnectivityReceiverListener, PlaceAutocompleteAdapter.PlaceAutoCompleteInterface,
+        View.OnClickListener  {
     private TextView textView_count;
-    private AutoCompleteTextView location;
-    private Button  btn_in,
-                    btn_out;
+    private EditText location;
+    private Button btn_in, btn_out;
 
-    long   MillisecondTime,
-           StartTime,
-           TimeBuff,
-           timestamp,
-           UpdateTime = 0L;
+    long MillisecondTime,
+            StartTime,
+            TimeBuff,
+            timestamp,
+            UpdateTime = 0L;
 
     Handler handler;
 
-    int hour,
-        Seconds,
-        Minutes,
-        MilliSeconds;
+    int     hour,
+            Seconds,
+            Minutes,
+            MilliSeconds;
 
     private Realm myRealm;
     private Context context;
@@ -85,36 +91,47 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     LocationManager locationManager;
     protected GoogleApiClient googleApiClient;
     private CoordinatorLayout coordinatorLayout;
-    private Constants constants;
     boolean newAccount = false;
-    private ImageView image_in ,image_out;
+    private ImageView image_in, image_out;
     private Button btn_clear;
     private RelativeLayout relativeLayout_checkout, relativeLayout_checkin;
     private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
 
     private static final String LOG_TAG = "MainActivity";
-    private static final int GOOGLE_API_CLIENT_ID = 0;
-
-    private PlaceArrayAdapter mPlaceArrayAdapter;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
 
     private DataSave dataSave;
     private Intent intent;
-    private String number ;
+    private String number;
     private com.rype3.pocket_hrm.user.Location Location;
-  //  private DataSave getDataSave;
+    //  private DataSave getDataSave;
     // Constants
     // The authority for the sync adapter's content provider
     public static final String AUTHORITY = "com.rype3.mendischecking";
-
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
-    private PlaceAutocompleteFragment autocompleteFragment;
+    private RecyclerView mRecyclerView;
+    LinearLayoutManager llm;
+    PlaceAutocompleteAdapter mAdapter;
+    AutocompleteFilter typeFilter;
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+
+
+    @Override
+    public void onStart() {
+        googleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        widget();
 
         buildGoogleApiClient();
 
@@ -122,22 +139,12 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
             finish();
         }
 
-//        autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-//
-//        // Register a listener to receive callbacks when a place has been selected or an error has
-//        // occurred.
-//
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+        typeFilter = new AutocompleteFilter.Builder()
                 .setCountry("LK")
                 .build();
-//
-//        autocompleteFragment.setFilter(typeFilter);
-//
-//        autocompleteFragment.setOnPlaceSelectedListener(this);
 
         context = this.getApplicationContext();
         utils = new Utils(context);
-        constants = new Constants(context);
 
         timestamp = System.currentTimeMillis() / 1000;
 
@@ -145,27 +152,29 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 
         myRealm = Realm.getDefaultInstance();
 
-        dataSave = new DataSave(context,utils);
+        dataSave = new DataSave(context, utils);
 
-        if (checkConnection()){
+        if (checkConnection()) {
             BuildGoogleService();
         }
 
         intent = getIntent();
         number = intent.getStringExtra("number");
 
-       // location.setThreshold(null);
+        widget();
 
-        location.setOnItemClickListener(mAutocompleteClickListener);
-        mPlaceArrayAdapter = new PlaceArrayAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_MOUNTAIN_VIEW, typeFilter);
-        location.setAdapter(mPlaceArrayAdapter);
+
 
         try {
             if (utils.getBoolean(context, Constants.EXIT_STATAUS)) {
                 boolean exit_state = Boolean.parseBoolean(utils.getSharedPreference(context, Constants.EXIT_STATAUS));
 
                 if (exit_state) {
-
+                    if (exitState()) {
+                        relativeLayout_checkin.setVisibility(View.VISIBLE);
+                        relativeLayout_checkout.setVisibility(View.VISIBLE);
+                        textView_count.setVisibility(View.VISIBLE);
+                    }
                     final int sdk = Build.VERSION.SDK_INT;
                     if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
                         relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
@@ -177,7 +186,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
                         }
                     }
 
-                    dataSave.blinkIcon(image_out ,0);
+                    dataSave.blinkIcon(image_out, 0);
 
                     StartTime = Long.parseLong(utils.getSharedPreference(context, Constants.START_TIMESTAMP));
                     handler.postDelayed(runnable, 0);
@@ -193,8 +202,8 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
                     btn_in.setClickable(true);
                     btn_clear.setClickable(true);
                 }
-            }else{
-                utils.setSharedPreference(context, "",Constants.GEO_LATLONG);
+            } else {
+                utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -210,14 +219,7 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 
         syncMethod();
 
-//        if(checkConnection()){
-//            TriggerRefresh();
-//        }Kalutara
-//        Intent i= new Intent(context, NetWatcher.class);
-//        i.putExtra("KEY1", "Value to be used by the service");
-//        context.startService(i);
-//
-       btn_clear.setOnClickListener(new View.OnClickListener() {
+    btn_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 location.setText("");
@@ -250,49 +252,6 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
         return number;
     }
 
-    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            try {
-                final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
-                final String placeId = String.valueOf(item.placeId);
-               // Log.e(LOG_TAG, "Selected: " + item.primery);
-                location.setText(item.primery);
-
-                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
-                placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-                Log.e(LOG_TAG, "Fetching details for ID: " + item.placeId);
-            }catch (Exception e){
-                e.printStackTrace();
-                Log.e(LOG_TAG, "Error: " + e.getMessage());
-            }
-        }
-    };
-
-    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
-        @Override
-        public void onResult(@NonNull PlaceBuffer places) {
-            if (!places.getStatus().isSuccess()) {
-                Log.e(LOG_TAG, "Place query did not complete. Error: " + places.getStatus().toString());
-                return;
-            }
-            // Selecting the first object buffer.
-           final Place place = places.get(0);
-
-           // Log.e(LOG_TAG, "Place latlong : " + place.getLatLng());
-            utils.setSharedPreference(context, String.valueOf(place.getLatLng()+"-"+place.getId()),Constants.GEO_LATLONG);
-//            CharSequence attributions = places.getAttributions();
-//            mNameTextView.setText(Html.fromHtml(place.getName() + ""));
-//            mAddressTextView.setText(Html.fromHtml(place.getAddress() + ""));
-//            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
-//            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
-//            mWebTextView.setText(place.getWebsiteUri() + "");
-//            if (attributions != null) {
-//                mAttTextView.setText(Html.fromHtml(attributions.toString()));
-//            }
-        }
-    };
-
     private void widget(){
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         textView_count = (TextView) findViewById(R.id.textView_count);
@@ -309,13 +268,84 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
         btn_out = (Button) findViewById(R.id.button_out);
         btn_out.setOnClickListener(onclick);
 
-//        btn_exit = (Button) findViewById(R.id.button_exit);
-//        btn_exit.setOnClickListener(onclick);
-//
-//        btn_help = (Button) findViewById(R.id.button_help);
-//        btn_help.setOnClickListener(onclick);
+        location = (EditText) findViewById(R.id.et_location);
 
-        location = (AutoCompleteTextView) findViewById(R.id.autoComplete_location);
+
+        mRecyclerView = (RecyclerView)findViewById(R.id.list_search);
+        mRecyclerView.setHasFixedSize(true);
+        llm = new LinearLayoutManager(context);
+        mRecyclerView.setLayoutManager(llm);
+
+
+        mAdapter = new PlaceAutocompleteAdapter(this, R.layout.view_placesearch, googleApiClient, BOUNDS_MOUNTAIN_VIEW, typeFilter);
+        mRecyclerView.setAdapter(mAdapter);
+
+        location.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (count > 0) {
+                    if (!exitState()) {
+
+                        btn_clear.setVisibility(View.VISIBLE);
+                        relativeLayout_checkin.setVisibility(View.GONE);
+                        relativeLayout_checkout.setVisibility(View.GONE);
+                        textView_count.setVisibility(View.GONE);
+
+                    }
+                    if (mAdapter != null) {
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            relativeLayout_checkin.setVisibility(View.VISIBLE);
+                            relativeLayout_checkout.setVisibility(View.VISIBLE);
+                            textView_count.setVisibility(View.VISIBLE);
+                            mRecyclerView.setAdapter(null);
+                        }
+                    }, 10000);
+
+
+                } else if (count==0){
+                    if (mAdapter != null) {
+                        if (!exitState()) {
+                            relativeLayout_checkin.setVisibility(View.VISIBLE);
+                            relativeLayout_checkout.setVisibility(View.VISIBLE);
+                            textView_count.setVisibility(View.VISIBLE);
+                            mRecyclerView.setAdapter(null);
+                    }
+                }else{
+                    if (!exitState()) {
+
+                        relativeLayout_checkin.setVisibility(View.VISIBLE);
+                        relativeLayout_checkout.setVisibility(View.VISIBLE);
+                        textView_count.setVisibility(View.VISIBLE);
+                        btn_clear.setVisibility(View.GONE);
+                    }
+                    }
+//                    if (mSavedAdapter != null && mSavedAddressList.size() > 0) {
+//                        mRecyclerView.setAdapter(mSavedAdapter);
+//                    }
+                }
+                if (!s.toString().equals("") && googleApiClient.isConnected()) {
+                    mAdapter.getFilter().filter(s.toString());
+                } else if (!googleApiClient.isConnected()) {
+//                    Toast.makeText(getApplicationContext(), Constants.API_NOT_CONNECTED, Toast.LENGTH_SHORT).show();
+                    Log.e("", "NOT CONNECTED");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     public View.OnClickListener onclick = new View.OnClickListener() {
@@ -683,16 +713,10 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
 
     @Override
     public void onConnected(Bundle bundle) {
-
-        mPlaceArrayAdapter.setGoogleApiClient(googleApiClient);
-        Log.e(LOG_TAG, "Google Places API connected.");
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
-        mPlaceArrayAdapter.setGoogleApiClient(null);
-        Log.e(LOG_TAG, "Google Places API connection suspended.");
     }
 
     @Override
@@ -746,100 +770,15 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
         }
     }
 
-//      public boolean markAttendance(long id,String checkState,String deviceId,String type,boolean state,String location,int battery){
-//      public boolean markAttendance(int position ,String location){
-//
-//          if (checkConnection()) {
-//
-//             switch (position) {
-//                 case 0:
-//                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
-//                    new ProcressAsyncTask(
-//                         MainActivity.this, //activity
-//                         constants.urls(3),// url
-//                         null,//email
-//                         null,//pin
-//                         null,//epf
-//                         "POST",//HTTP_TYPE
-//                         3,//type activity method
-//                         "1.0",//version
-//                         null,//token
-//                         null,//deviceId
-//                         utils.getSharedPreference(context, Constants.USER_ID),//uid
-//                            dataSave.IOStime(),// checked at time
-//                          null, // Check string ont use
-//                         String.valueOf(
-//                                 dataSave.meta(
-//                                         utils.getSharedPreference(context, Constants.DEVICE_ID),
-//                                         String.valueOf(dataSave.getBatteryPercentage(context))+"%",
-//                                         utils.getSharedPreference(context,Constants.DEVICE_NAME),
-//                                         location,dataSave.IOStime()) // meta
-//
-//                         )).execute();
-//                     break;
-//
-//                 case 1:
-//                     utils.setSharedPreference(context,String.valueOf(dataSave.getBatteryPercentage(context))+"%",Constants.BATTERY_LEVEL);
-//                     new ProcressAsyncTask(
-//                             MainActivity.this,
-//                             constants.urls(4),
-//                             null,
-//                             null,
-//                             null,
-//                             "POST",
-//                             3,
-//                             "1.0",
-//                             null,
-//                             null,
-//                             utils.getSharedPreference(context, Constants.USER_ID),
-//                             null,
-//                             dataSave.IOStime(),
-//                             String.valueOf(
-//                                     dataSave.meta(
-//                                             utils.getSharedPreference(context, Constants.DEVICE_ID),
-//                                             String.valueOf(dataSave.getBatteryPercentage(context))+"%",
-//                                             utils.getSharedPreference(context,Constants.DEVICE_NAME),
-//                                             location,dataSave.IOStime()))).execute();
-//                     break;
-//             }
-//        }
-//        return true;
-//    }
-
     private boolean BuildGoogleService(){
         googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
                 .addApi(Places.GEO_DATA_API)
-                .enableAutoManage(this, GOOGLE_API_CLIENT_ID, this)
+                .enableAutoManage(this, 0, this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
         return true;
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.checkinout_main, menu);
-//        return true;
-//    }
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//
-//        if (id == R.id.action_in_out) {
-//            Intent intent = new Intent(getBaseContext(), LeaveActivity.class);
-//            startActivity(intent);
-//            finish();
-//            return true;
-//        }
-//
-//        if (id == R.id.action_in_out_history) {
-//            Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
-//            startActivity(intent);
-//            finish();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     protected void onResume() {
@@ -853,13 +792,61 @@ public class MainActivity extends BaseActivity implements LocationListener, Goog
     }
 
     @Override
-    public void onPlaceSelected(Place place) {
-        Log.e("TAG", "Place Selected: " + place.getName());
+    public void onClick(View v) {
+        if(v == btn_clear){
+            location.setText("");
+            if(mAdapter!=null){
+                mAdapter.clearList();
+            }
+        }
     }
 
     @Override
-    public void onError(Status status) {
+    public void onPlaceClick(ArrayList<PlaceAutocompleteAdapter.PlaceAutocomplete> mResultList, int position) {
+        if(mResultList!=null){
+            try {
+                if (mResultList.size() != 0) {
+                    final String placeId = String.valueOf(mResultList.get(position).placeId);
+                        /*
+                             Issue a request to the Places Geo Data API to retrieve a Place object with additional details about the place.
+                         */
 
-        Log.e("TAG", "onError: Status = " + status.toString());
+                    location.setText(mResultList.get(position).primery);
+
+                    if (mAdapter != null) {
+                        mRecyclerView.setAdapter(null);
+                        if (!exitState()) {
+                            relativeLayout_checkin.setVisibility(View.VISIBLE);
+                            relativeLayout_checkout.setVisibility(View.VISIBLE);
+                            textView_count.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+
+                    PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
+                    placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+                        @Override
+                        public void onResult(PlaceBuffer places) {
+                            if (places.getCount() == 1) {
+
+                                //Do the things here on Click.....
+//                            Intent data = new Intent();
+//                            data.putExtra("lat",String.valueOf(places.get(0).getLatLng().latitude));
+//                            data.putExtra("lng", String.valueOf(places.get(0).getLatLng().longitude));
+//                            setResult(SearchActivity.RESULT_OK, data);
+//                            finish();
+
+                            } else {
+                                Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }else {
+                    Log.e("TAG" , "NOT At que");
+                }
+            }
+            catch(Exception e){
+            }
+        }
     }
 }
