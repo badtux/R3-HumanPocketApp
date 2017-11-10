@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.rype3.mendischecking"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 12
-        versionName "1.1.4-a"
+        versionCode 16
+        versionName "1.1.8-a"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

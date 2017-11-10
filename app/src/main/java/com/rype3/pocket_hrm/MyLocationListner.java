@@ -191,10 +191,9 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                 if (validation()) {
                      long id = System.currentTimeMillis();
 
-//
+
 //                    Long tsLong = System.currentTimeMillis() / 1000;
 //                    String ts = tsLong.toString();
-//
 
                     dataSave.DataSave(
                             myRealm,
@@ -203,7 +202,9 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                             utils.getSharedPreference(context, Constants.DEVICE_ID),
                             "location",
                             true,
-                            utils.getSharedPreference(context, Constants.LOCATION));
+                            utils.getSharedPreference(context, Constants.LOCATION),
+                            utils.getSharedPreference(context,Constants.USER_EPF_NO),
+                            utils.getSharedPreference(context,Constants.USER_ID),dataSave.Version(context));
 //
 //                    if (checkConnection()) {
 //                        if (validation()) {
@@ -256,7 +257,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //                                myRealm.commitTransaction();
 //                            }
 //                        }
-
                     }
                 }
             }
@@ -304,7 +304,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
-
 
         private boolean checkConnection() {
             boolean isConnected = ConnectivityReceiver.isConnected();

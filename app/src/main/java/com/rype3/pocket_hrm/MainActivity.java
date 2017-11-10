@@ -1,24 +1,25 @@
 package com.rype3.pocket_hrm;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -28,6 +29,8 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -53,26 +56,31 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.rype3.pocket_hrm.realm.LocationDetails;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class MainActivity extends BaseActivity implements
-        LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        ConnectivityReceiver.ConnectivityReceiverListener, PlaceAutocompleteAdapter.PlaceAutoCompleteInterface,
-        View.OnClickListener  {
-    private TextView textView_count;
+        ConnectivityReceiver.ConnectivityReceiverListener,
+        PlaceAutocompleteAdapter.PlaceAutoCompleteInterface,
+        View.OnClickListener {
+    private TextView textView_count, version;
     private EditText location;
     private Button btn_in, btn_out;
 
-    long MillisecondTime,
+    long onDutyInMiliSeconds,
             StartTime,
             TimeBuff,
             timestamp,
@@ -80,7 +88,7 @@ public class MainActivity extends BaseActivity implements
 
     Handler handler;
 
-    int     hour,
+    int hour,
             Seconds,
             Minutes,
             MilliSeconds;
@@ -91,29 +99,25 @@ public class MainActivity extends BaseActivity implements
     LocationManager locationManager;
     protected GoogleApiClient googleApiClient;
     private CoordinatorLayout coordinatorLayout;
-    boolean newAccount = false;
     private ImageView image_in, image_out;
     private Button btn_clear;
     private RelativeLayout relativeLayout_checkout, relativeLayout_checkin;
-    private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
 
     private static final String LOG_TAG = "MainActivity";
 
     private DataSave dataSave;
     private Intent intent;
     private String number;
-    private com.rype3.pocket_hrm.user.Location Location;
     //  private DataSave getDataSave;
     // Constants
-    // The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "com.rype3.mendischecking";
-    private static final String PREF_SETUP_COMPLETE = "setup_complete";
     private RecyclerView mRecyclerView;
     LinearLayoutManager llm;
     PlaceAutocompleteAdapter mAdapter;
     AutocompleteFilter typeFilter;
+    private RealmResults<LocationDetails> locationList;
+    public ArrayList<Integer> id_list;
+    private  Location lastLocation;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
-
 
     @Override
     public void onStart() {
@@ -132,6 +136,7 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        widget();
 
         buildGoogleApiClient();
 
@@ -139,11 +144,16 @@ public class MainActivity extends BaseActivity implements
             finish();
         }
 
+        if (checkConnection()) {
+            BuildGoogleService();
+        }
+
         typeFilter = new AutocompleteFilter.Builder()
                 .setCountry("LK")
                 .build();
 
         context = this.getApplicationContext();
+
         utils = new Utils(context);
 
         timestamp = System.currentTimeMillis() / 1000;
@@ -154,77 +164,169 @@ public class MainActivity extends BaseActivity implements
 
         dataSave = new DataSave(context, utils);
 
-        if (checkConnection()) {
-            BuildGoogleService();
-        }
+        version.setText(dataSave.Version(context));
+
+        id_list = new ArrayList<>();
 
         intent = getIntent();
         number = intent.getStringExtra("number");
 
-        widget();
-
-
-
-        try {
-            if (utils.getBoolean(context, Constants.EXIT_STATAUS)) {
-                boolean exit_state = Boolean.parseBoolean(utils.getSharedPreference(context, Constants.EXIT_STATAUS));
-
-                if (exit_state) {
-                    if (exitState()) {
-                        relativeLayout_checkin.setVisibility(View.VISIBLE);
-                        relativeLayout_checkout.setVisibility(View.VISIBLE);
-                        textView_count.setVisibility(View.VISIBLE);
-                    }
-                    final int sdk = Build.VERSION.SDK_INT;
-                    if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                        relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
-                        relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
-                            relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
-                        }
-                    }
-
-                    dataSave.blinkIcon(image_out, 0);
-
-                    StartTime = Long.parseLong(utils.getSharedPreference(context, Constants.START_TIMESTAMP));
-                    handler.postDelayed(runnable, 0);
-
-                    location.setText(utils.getSharedPreference(context, Constants.LOCATION));
-                    btn_in.setClickable(false);
-                    btn_clear.setClickable(false);
-                } else {
-                    utils.setSharedPreference(context, "", Constants.CHECKED_STATE);
-                    utils.setSharedPreference(context, null, Constants.LOCATION);
-                    utils.setSharedPreference(context, "0L", Constants.START_TIMESTAMP);
-
-                    btn_in.setClickable(true);
-                    btn_clear.setClickable(true);
-                }
-            } else {
-                utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2));
-            utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
+        if (utils.getBoolean(context, Constants.EXIT_STATAUS)) {
+            boolean exit_state = Boolean.parseBoolean(utils.getSharedPreference(context, Constants.EXIT_STATAUS));
+            AppState(exit_state);
+        } else {
+            utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
         }
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        Intent intent = new Intent(MainActivity.this, MyLocationListner.class);
-        intent.putExtra("name", "LOCATION_LISTNER");
-        startService(intent);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // now get the lat/lon from the location and do something with it.
+            if (lastLocation != null) {
+                utils.setSharedPreference(context, String.valueOf(lastLocation.getLatitude()), Constants.LAT);
+                utils.setSharedPreference(context, String.valueOf(lastLocation.getLongitude()), Constants.LONG);
 
-        syncMethod();
+//                String provider = locationManager.getBestProvider(new Criteria(), true);
+//
+//                Location locations = locationManager.getLastKnownLocation(provider);
+//                List<String> providerList = locationManager.getAllProviders();
+//                if (null != locations && null != providerList && providerList.size() > 0) {
+//                    double longitude = locations.getLongitude();
+//                    double latitude = locations.getLatitude();
+//                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+//                    try {
+//                        List<Address> listAddresses = geocoder.getFromLocation(latitude, longitude, 1);
+//
+//                        if (null != listAddresses && listAddresses.size() > 0) {
+//                            String _Location = listAddresses.get(0).getAddressLine(0);
+//                           // Log.e("TAG location : ", _Location);
+//
+//                            location.setHint("Near by : "+_Location);
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 
-    btn_clear.setOnClickListener(new View.OnClickListener() {
+                } else {
+                    Log.e("TAG ", " null lat/long");
+                    utils.setSharedPreference(context, String.valueOf(0), Constants.LAT);
+                    utils.setSharedPreference(context, String.valueOf(0), Constants.LONG);
+                }
+            }
+
+
+
+        btn_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 location.setText("");
             }
         });
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.list_search);
+        mRecyclerView.setHasFixedSize(true);
+        llm = new LinearLayoutManager(context);
+        mRecyclerView.setLayoutManager(llm);
+
+
+        try {
+            mAdapter = new PlaceAutocompleteAdapter(this, R.layout.view_placesearch, googleApiClient, BOUNDS_MOUNTAIN_VIEW, typeFilter);
+            mRecyclerView.setAdapter(mAdapter);
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(context,e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+        location.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (count > 0) {
+                    //  if (!exitState()) {
+
+                    btn_clear.setVisibility(View.VISIBLE);
+                    relativeLayout_checkin.setVisibility(View.GONE);
+                    relativeLayout_checkout.setVisibility(View.GONE);
+                    textView_count.setVisibility(View.GONE);
+
+                    //  }
+                    if (mAdapter != null) {
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+
+//                    final Handler handler = new Handler();
+//                    handler.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            relativeLayout_checkin.setVisibility(View.VISIBLE);
+//                            relativeLayout_checkout.setVisibility(View.VISIBLE);
+//                            textView_count.setVisibility(View.VISIBLE);
+//                            mRecyclerView.setAdapter(null);
+//                        }
+//                    }, 10 *1000);
+                } else if (count == 0) {
+                    if (mAdapter != null) {
+                        relativeLayout_checkin.setVisibility(View.VISIBLE);
+                        relativeLayout_checkout.setVisibility(View.VISIBLE);
+                        textView_count.setVisibility(View.VISIBLE);
+                        mRecyclerView.setAdapter(null);
+                    } else {
+//                        if (!exitState()) {
+//
+//                            relativeLayout_checkin.setVisibility(View.VISIBLE);
+//                            relativeLayout_checkout.setVisibility(View.VISIBLE);
+//                            textView_count.setVisibility(View.VISIBLE);
+//                            btn_clear.setVisibility(View.GONE);
+//                        }
+                    }
+                }
+                if (!s.toString().equals("") && googleApiClient.isConnected()) {
+                    mAdapter.getFilter().filter(s.toString());
+                } else if (!googleApiClient.isConnected()) {
+//                    Toast.makeText(getApplicationContext(), Constants.API_NOT_CONNECTED, Toast.LENGTH_SHORT).show();
+                    Log.e("", "NOT CONNECTED");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        location.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                  /* Write your logic here that will be executed when user taps next button */
+
+                    relativeLayout_checkin.setVisibility(View.VISIBLE);
+                    relativeLayout_checkout.setVisibility(View.VISIBLE);
+                    textView_count.setVisibility(View.VISIBLE);
+                    btn_clear.setVisibility(View.GONE);
+
+                    InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
+
     }
 
     @Override
@@ -252,9 +354,10 @@ public class MainActivity extends BaseActivity implements
         return number;
     }
 
-    private void widget(){
+    private void widget() {
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         textView_count = (TextView) findViewById(R.id.textView_count);
+        version = (TextView) findViewById(R.id.app_version);
         image_in = (ImageView) findViewById(R.id.iv_icon);
         image_out = (ImageView) findViewById(R.id.iv_icon_1);
         btn_clear = (Button) findViewById(R.id.clear);
@@ -270,82 +373,6 @@ public class MainActivity extends BaseActivity implements
 
         location = (EditText) findViewById(R.id.et_location);
 
-
-        mRecyclerView = (RecyclerView)findViewById(R.id.list_search);
-        mRecyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(context);
-        mRecyclerView.setLayoutManager(llm);
-
-
-        mAdapter = new PlaceAutocompleteAdapter(this, R.layout.view_placesearch, googleApiClient, BOUNDS_MOUNTAIN_VIEW, typeFilter);
-        mRecyclerView.setAdapter(mAdapter);
-
-        location.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (count > 0) {
-                    if (!exitState()) {
-
-                        btn_clear.setVisibility(View.VISIBLE);
-                        relativeLayout_checkin.setVisibility(View.GONE);
-                        relativeLayout_checkout.setVisibility(View.GONE);
-                        textView_count.setVisibility(View.GONE);
-
-                    }
-                    if (mAdapter != null) {
-                        mRecyclerView.setAdapter(mAdapter);
-                    }
-
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            relativeLayout_checkin.setVisibility(View.VISIBLE);
-                            relativeLayout_checkout.setVisibility(View.VISIBLE);
-                            textView_count.setVisibility(View.VISIBLE);
-                            mRecyclerView.setAdapter(null);
-                        }
-                    }, 10000);
-
-
-                } else if (count==0){
-                    if (mAdapter != null) {
-                        if (!exitState()) {
-                            relativeLayout_checkin.setVisibility(View.VISIBLE);
-                            relativeLayout_checkout.setVisibility(View.VISIBLE);
-                            textView_count.setVisibility(View.VISIBLE);
-                            mRecyclerView.setAdapter(null);
-                    }
-                }else{
-                    if (!exitState()) {
-
-                        relativeLayout_checkin.setVisibility(View.VISIBLE);
-                        relativeLayout_checkout.setVisibility(View.VISIBLE);
-                        textView_count.setVisibility(View.VISIBLE);
-                        btn_clear.setVisibility(View.GONE);
-                    }
-                    }
-//                    if (mSavedAdapter != null && mSavedAddressList.size() > 0) {
-//                        mRecyclerView.setAdapter(mSavedAdapter);
-//                    }
-                }
-                if (!s.toString().equals("") && googleApiClient.isConnected()) {
-                    mAdapter.getFilter().filter(s.toString());
-                } else if (!googleApiClient.isConnected()) {
-//                    Toast.makeText(getApplicationContext(), Constants.API_NOT_CONNECTED, Toast.LENGTH_SHORT).show();
-                    Log.e("", "NOT CONNECTED");
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     public View.OnClickListener onclick = new View.OnClickListener() {
@@ -356,7 +383,6 @@ public class MainActivity extends BaseActivity implements
                 if (validation()) {
                     hideKeyBoard();
                     if (reset()) {
-
                         btn_clear.setClickable(false);
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
@@ -364,8 +390,8 @@ public class MainActivity extends BaseActivity implements
                             relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
-                            relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
+                                relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
+                                relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
                             }
                         }
 
@@ -375,22 +401,31 @@ public class MainActivity extends BaseActivity implements
                             image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
                         }
 
-                        dataSave.blinkIcon(image_out ,0);
+                        dataSave.blinkIcon(image_out, 0);
 
                         long id = System.currentTimeMillis();
 
-                        dataSave.DataSave(myRealm,id,"in", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
-                       // markAttendance(0,location.getText().toString());
+                        dataSave.DataSave(
+                                myRealm,
+                                id,
+                                "in",
+                                utils.getSharedPreference(context, Constants.DEVICE_ID),
+                                "attendance",
+                                true,
+                                location.getText().toString(),
+                                utils.getSharedPreference(context, Constants.USER_EPF_NO),
+                                utils.getSharedPreference(context, Constants.USER_ID),
+                                dataSave.Version(context));
 
                         utils.setSharedPreference(context, location.getText().toString(), Constants.LOCATION);
                         utils.setSharedPreference(context, "in", Constants.CHECKED_STATE);
                         utils.setSharedPreference(context, "true", Constants.EXIT_STATAUS);
-                        StartTime = SystemClock.uptimeMillis();
+                        StartTime = System.currentTimeMillis();
                         handler.postDelayed(runnable, 0);
                         utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
 
                         btn_in.setClickable(false);
-
+                        //     TriggerRefresh("1");
                     }
                 }
             }
@@ -403,7 +438,7 @@ public class MainActivity extends BaseActivity implements
                         image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_navigate_next));
                     }
 
-                    dataSave.blinkIcon(image_out ,1);
+                    dataSave.blinkIcon(image_out, 1);
 
                     thankyouAlertMessageBox(utils.getSharedPreference(context, Constants.LAST_TIME));
                 }
@@ -411,49 +446,22 @@ public class MainActivity extends BaseActivity implements
         }
     };
 
-
     private boolean checkConnection() {
         boolean isConnected = ConnectivityReceiver.isConnected();
         if (isConnected) {
             return true;
         } else {
-            ViewMessage("You don't have internet connection",0);
+            ViewMessage("You don't have internet connection", 0);
         }
         return false;
     }
 
-    private boolean syncMethod() {
-        boolean setupComplete = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_SETUP_COMPLETE, false);
-        Account account = AuthenticatorService.GetAccount();
-
-        AccountManager accountManager = (AccountManager) this.getSystemService(Context.ACCOUNT_SERVICE);
-
-        if (accountManager.addAccountExplicitly(account, null, null)) {
-            // Inform the system that this account supports sync
-            ContentResolver.setIsSyncable(account, AUTHORITY, 1);
-            // Inform the system that this account is eligible for auto sync when the network is up
-            ContentResolver.setSyncAutomatically(account, AUTHORITY, true);
-            // Recommend a schedule for automatic synchronization. The system may modify this based
-            // on other scheduled syncs and network utilization.
-
-            Bundle bundle = new Bundle();
-            ContentResolver.addPeriodicSync(account, AUTHORITY, bundle, SYNC_FREQUENCY);
-            newAccount = true;
-        }
-
-//        if (newAccount || !setupComplete) {
-//            TriggerRefresh("1");
-//            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
-//        }
-
-        return true;
-    }
-
-    public static void TriggerRefresh(String num) {
+    public static void TriggerRefresh(String num, ArrayList<Integer> id_list) {
         Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        b.putString("number",num);
+        b.putString("number", num);
+        b.putString("id_list", String.valueOf(id_list));
 
         ContentResolver.requestSync(
                 AuthenticatorService.GetAccount(),      // Sync account
@@ -461,14 +469,14 @@ public class MainActivity extends BaseActivity implements
                 b);                                      // Extras
     }
 
-    private void resetData(){
+    private void resetData() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 final int sdk = Build.VERSION.SDK_INT;
-                if(sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
                     relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2));
                     relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3_click));
 
@@ -480,20 +488,20 @@ public class MainActivity extends BaseActivity implements
                 }
 
                 utils.setSharedPreference(context, "", Constants.CHECKED_STATE);
-                utils.setSharedPreference(context,null,Constants.LOCATION);
-                utils.setSharedPreference(context,"",Constants.START_TIMESTAMP);
+                utils.setSharedPreference(context, null, Constants.LOCATION);
+                utils.setSharedPreference(context, "", Constants.START_TIMESTAMP);
                 location.setText("");
                 textView_count.setText("00:00:00");
                 btn_in.setClickable(true);
                 btn_clear.setClickable(true);
-                dataSave.blinkIcon(image_out ,1);
-                TriggerRefresh("1");
+                dataSave.blinkIcon(image_out, 1);
+                TriggerRefresh("1", id_list());
             }
         }, 5000);
     }
 
     public boolean reset() {
-        MillisecondTime = 0L;
+        onDutyInMiliSeconds = 0L;
         StartTime = 0L;
         TimeBuff = 0L;
         UpdateTime = 0L;
@@ -508,23 +516,13 @@ public class MainActivity extends BaseActivity implements
 
         public void run() {
 
-            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+            onDutyInMiliSeconds = System.currentTimeMillis() - (StartTime);
 
-            UpdateTime = TimeBuff + MillisecondTime;
+            String time_spent = getTimeSpentString(onDutyInMiliSeconds);
 
-            Seconds = (int) (UpdateTime / 1000);
+            textView_count.setText(time_spent);
 
-            hour = Seconds / (60 * 60);
-
-            Minutes = (Seconds / 60) % 60;
-
-            Seconds = Seconds % 60;
-
-            MilliSeconds = (int) (UpdateTime % 1000);
-
-            textView_count.setText(hour + ":" + String.format("%02d",Minutes) + ":" + String.format("%02d", Seconds));
-
-            utils.setSharedPreference(context, (hour + ":" + String.format("%02d",Minutes) + ":" + String.format("%02d", Seconds)), Constants.LAST_TIME);
+            utils.setSharedPreference(context, time_spent, Constants.LAST_TIME);
 
             handler.postDelayed(this, 0);
         }
@@ -546,7 +544,7 @@ public class MainActivity extends BaseActivity implements
 
     private void exitAlertMessageBox(int type) {
 
-        switch (type){
+        switch (type) {
             case 0:
                 android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(MainActivity.this)
                         .setTitle("Exit?")
@@ -587,31 +585,40 @@ public class MainActivity extends BaseActivity implements
 
     private void thankyouAlertMessageBox(String time) {
 
-                String msg = "You have spent " + time + " Hrs at this location. Do you want to record the exit?";
-                android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Please Confirm")
-                        .setMessage(msg)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                           //     markAttendance(1,location.getText().toString());
+        String msg = "You have spent " + time + " Hrs at this location. Do you want to record the exit?";
+        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(MainActivity.this)
+                .setTitle("Please Confirm")
+                .setMessage(msg)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
 
-                            long id_ = System.currentTimeMillis();
-                            dataSave.DataSave(myRealm,id_,"out", utils.getSharedPreference(context, Constants.DEVICE_ID),"attendance",true,location.getText().toString());
 
-                            utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
-                            utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
-                            resetData();
-                            TimeBuff += MillisecondTime;
-                            handler.removeCallbacks(runnable);
-                            }
-                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                onBackPressed();
-                            }
-                        }).create();
-                dialog.show();
+                        long id_ = System.currentTimeMillis();
+                        dataSave.DataSave(
+                                myRealm,
+                                id_,
+                                "out",
+                                utils.getSharedPreference(context, Constants.DEVICE_ID),
+                                "attendance",
+                                true,
+                                location.getText().toString(),
+                                utils.getSharedPreference(context, Constants.USER_EPF_NO),
+                                utils.getSharedPreference(context, Constants.USER_ID), dataSave.Version(context));
+
+                        utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
+                        utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
+                        resetData();
+                        //   TimeBuff += MillisecondTime;
+                        handler.removeCallbacks(runnable);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        onBackPressed();
+                    }
+                }).create();
+        dialog.show();
     }
 
     public void parseJsonResponse(final String result) {
@@ -632,7 +639,7 @@ public class MainActivity extends BaseActivity implements
         } else {
             GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
 
-            Log.e("TAG" , GooglePlayServicesUtil.getErrorDialog(status, this, 0).toString());
+            Log.e("TAG", GooglePlayServicesUtil.getErrorDialog(status, this, 0).toString());
             return false;
         }
     }
@@ -647,14 +654,14 @@ public class MainActivity extends BaseActivity implements
             return false;
         }
 
-        if (String_location.isEmpty()){
+        if (String_location.isEmpty()) {
             ViewMessage("Location is required", 0);
             return false;
         }
         return true;
     }
 
-    private void hideKeyBoard(){
+    private void hideKeyBoard() {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
@@ -731,15 +738,11 @@ public class MainActivity extends BaseActivity implements
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-    }
-
-    @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-        if (isConnected){
-           TriggerRefresh(number);
-        }else{
-            TriggerRefresh(null);
+        if (isConnected) {
+            TriggerRefresh(number, id_list());
+        } else {
+            TriggerRefresh(null, null);
         }
     }
 
@@ -770,7 +773,7 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
-    private boolean BuildGoogleService(){
+    private boolean BuildGoogleService() {
         googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
                 .addApi(Places.GEO_DATA_API)
                 .enableAutoManage(this, 0, this)
@@ -784,26 +787,26 @@ public class MainActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
-        if(checkConnection()){
-            TriggerRefresh(number);
-        }else{
-            TriggerRefresh(null);
+        if (checkConnection()) {
+            TriggerRefresh(number, id_list());
+        } else {
+            TriggerRefresh(null, null);
         }
     }
 
     @Override
     public void onClick(View v) {
-        if(v == btn_clear){
+        if (v == btn_clear) {
             location.setText("");
-            if(mAdapter!=null){
+            if (mAdapter != null) {
                 mAdapter.clearList();
             }
         }
     }
 
     @Override
-    public void onPlaceClick(ArrayList<PlaceAutocompleteAdapter.PlaceAutocomplete> mResultList, int position) {
-        if(mResultList!=null){
+    public void onPlaceClick(ArrayList<PlaceAutocompleteAdapter.PlaceAutocomplete> mResultList, final int position) {
+        if (mResultList != null) {
             try {
                 if (mResultList.size() != 0) {
                     final String placeId = String.valueOf(mResultList.get(position).placeId);
@@ -822,12 +825,20 @@ public class MainActivity extends BaseActivity implements
                         }
                     }
 
-
                     PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
                     placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
                         @Override
-                        public void onResult(PlaceBuffer places) {
+                        public void onResult(@NonNull PlaceBuffer places) {
                             if (places.getCount() == 1) {
+                                places.get(position).getLatLng();
+
+                             //   Log.e("GEO : ", String.valueOf(places.get(position).getLatLng()));
+
+                                if (places != null) {
+                                    utils.setSharedPreference(context, String.valueOf(places.get(position).getLatLng()), Constants.GEO_LATLONG);
+                                }else{
+                                    utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
+                                }
 
                                 //Do the things here on Click.....
 //                            Intent data = new Intent();
@@ -841,12 +852,87 @@ public class MainActivity extends BaseActivity implements
                             }
                         }
                     });
-                }else {
-                    Log.e("TAG" , "NOT At que");
+                } else {
+                    Log.e("TAG", "NOT At que");
                 }
-            }
-            catch(Exception e){
+            } catch (Exception e) {
             }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void AppState(boolean state) {
+        try {
+            if (state) {
+                if (exitState()) {
+                    relativeLayout_checkin.setVisibility(View.VISIBLE);
+                    relativeLayout_checkout.setVisibility(View.VISIBLE);
+                    textView_count.setVisibility(View.VISIBLE);
+                }
+                final int sdk = Build.VERSION.SDK_INT;
+                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
+                    relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
+                    relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
+                        relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
+                    }
+                }
+
+                dataSave.blinkIcon(image_out, 0);
+
+                StartTime = Long.parseLong(utils.getSharedPreference(context, Constants.START_TIMESTAMP));
+                handler.postDelayed(runnable, 0);
+
+                location.setText(utils.getSharedPreference(context, Constants.LOCATION));
+                btn_in.setClickable(false);
+                btn_clear.setClickable(false);
+            } else {
+                utils.setSharedPreference(context, "", Constants.CHECKED_STATE);
+                utils.setSharedPreference(context, null, Constants.LOCATION);
+                utils.setSharedPreference(context, "0L", Constants.START_TIMESTAMP);
+
+                btn_in.setClickable(true);
+                btn_clear.setClickable(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2));
+            utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
+        }
+    }
+
+    private String getTimeSpentString(long diff) {
+        String time = "";
+        try {
+            long diffSeconds = diff / 1000 % 60;
+            long diffMinutes = diff / (60 * 1000) % 60;
+            long diffHours = diff / (60 * 60 * 1000) % 24;
+            long diffDays = diff / (24 * 60 * 60 * 1000);
+
+
+            time = String.format("%02d", diffHours) + ":" + String.format("%02d", diffMinutes) + ":" + String.format("%02d", diffSeconds);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return time;
+    }
+
+    private ArrayList<Integer> id_list(){
+        id_list.clear();
+
+        locationList = myRealm.where(LocationDetails.class).equalTo("state", true).findAll();
+
+        if (locationList != null) {
+            for (int i = 0; i < locationList.size(); i++) {
+                id_list.add(locationList.get(i).getId());
+            }
+        } else {
+            id_list.add(null);
+        }
+        return id_list;
     }
 }

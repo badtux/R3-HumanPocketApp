@@ -29,9 +29,11 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".OauthLogin"
+            android:name=".SplashActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -80,9 +82,15 @@
             android:syncable="true" />
 
         <activity
+            android:name=".OauthLogin"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
             android:name=".PINnumberActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
+
         <activity
             android:name=".EPFnumberActivity"
             android:screenOrientation="portrait"

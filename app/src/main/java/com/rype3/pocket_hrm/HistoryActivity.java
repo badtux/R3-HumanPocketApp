@@ -146,7 +146,6 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         MyApplication.getInstance().setConnectivityListener(this);
     }
 
-
     public static void TriggerRefresh(String num) {
         Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);

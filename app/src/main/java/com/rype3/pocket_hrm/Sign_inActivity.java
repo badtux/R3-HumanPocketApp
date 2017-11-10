@@ -77,7 +77,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
-                Log.e("url : ", url);
+                //Log.e("url : ", url);
 
                 if (url.contains("?code=") && authComplete != true) {
                     Uri uri = Uri.parse(url);
@@ -175,7 +175,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
 
         @Override
         protected void onPostExecute(JSONObject json) {
-            Log.e("Token Json : ", json.toString());
+            Log.e("token json : ", json.toString());
             pDialog.dismiss();
 
             try {
@@ -186,8 +186,8 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
 
                 utils.setSharedPreference(context,access_token,Constants.TOKEN);
 
-                Log.e("Token Access", access_token);
-                Log.e("Expire", expires_in);
+             //   Log.e("Token Access", access_token);
+            //    Log.e("Expire", expires_in);
 
         //        web.clearCache(true);
         //        web.clearFormData();
@@ -199,7 +199,15 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
                             null,
                             null,
                             null,
-                            "POST",2,"1.0",null,utils.getSharedPreference(context,Constants.DEVICE_ID),null,null,null,null).execute();
+                            "POST",
+                            2,
+                            "1.0",
+                            null,
+                            utils.getSharedPreference(context,Constants.DEVICE_ID),
+                            null,
+                            null,
+                            null,
+                            null).execute();
                 }
             } catch (JSONException e) {
                 // TODO Auto-generated catch block

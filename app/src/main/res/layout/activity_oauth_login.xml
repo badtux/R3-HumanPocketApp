@@ -31,32 +31,40 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                    <LinearLayout
-                        android:id="@+id/linearLayout_001_0"
-                        android:orientation="horizontal"
-                        android:layout_weight="0.2"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp">
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linearLayout_0041_0"
                         android:orientation="horizontal"
-                        android:layout_weight="4.6"
+                        android:layout_weight="3.8"
                         android:layout_margin="5dp"
                         android:layout_width="fill_parent"
                         android:background="@drawable/rype3_logo_pocker_hr"
                         android:layout_height="0dp">
                     </LinearLayout>
 
-
                     <LinearLayout
                         android:id="@+id/linearLayout_03_1"
                         android:orientation="horizontal"
-                        android:layout_weight="1"
+                        android:layout_weight="0.8"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp">
+
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:gravity="center|bottom"
+                            android:text="LOG-IN WITH"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="22sp"
+                            android:textStyle="bold"/>
+
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="0.2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp"></LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linearLayout_01_3"
@@ -73,14 +81,14 @@
 
 
                             <Button
-                                android:text="Log-in with username"
+                                android:text="username"
                                 android:layout_width="fill_parent"
                                 android:layout_height="fill_parent"
                                 android:textColor="@color/icons"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
-                                android:layout_marginLeft="10dp"
-                                android:layout_marginRight="10dp"
+                                android:layout_marginLeft="25dp"
+                                android:layout_marginRight="25dp"
                                 android:background="@drawable/button_login_click"
                                 android:id="@+id/button_user"
                                 android:layout_weight="1" />
@@ -89,10 +97,18 @@
                     <LinearLayout
                         android:id="@+id/linearLayout_005"
                         android:orientation="horizontal"
-                        android:layout_weight="0.2"
+                        android:layout_weight="0.8"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp">
 
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:gravity="center"
+                            android:text="OR"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="22sp"
+                            android:textStyle="bold|italic"/>
 
                     </LinearLayout>
 
@@ -103,11 +119,11 @@
                         android:layout_width="fill_parent"
                         android:layout_height="0dp">
                         <Button
-                            android:text="Log-in with EPF NO."
+                            android:text="EPF NO."
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="25dp"
+                            android:layout_marginRight="25dp"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/icons"
@@ -117,14 +133,63 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/linearLayout_05"
                         android:orientation="horizontal"
                         android:layout_weight="0.9"
                         android:layout_width="fill_parent"
                         android:layout_height="0dp">
-
-
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="0.5"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0dp">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_weight="1.2"
+                                android:layout_width="0dp"
+                                android:layout_height="fill_parent">
+
+                                <TextView
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:gravity="center|right"
+                                    android:text="POWERD BY"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_weight="0.25"
+                                android:layout_width="0dp"
+                                android:layout_gravity="center|left"
+                                android:layout_height="fill_parent">
+
+                                <ImageView
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="fill_parent"
+                                    android:padding="3.5dp"
+                                    android:src="@drawable/rype3_trans"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_weight="0.55"
+                                android:layout_width="0dp"
+                                android:layout_gravity="center|left"
+                                android:layout_height="fill_parent"></LinearLayout>
+
+
+                    </LinearLayout></LinearLayout>
                 </LinearLayout>
             </LinearLayout>
             <!--</LinearLayout>-->

@@ -116,44 +116,43 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
 
             // Submit the query to the autocomplete API and retrieve a PendingResult that will
             // contain the results when the query completes.
-            PendingResult<AutocompletePredictionBuffer> results =
-                    Places.GeoDataApi
-                            .getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
+            PendingResult<AutocompletePredictionBuffer> results = Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
                                     mBounds, mPlaceFilter);
+            if (results != null){
+                // This method should have been called off the main UI thread. Block and wait for at most 60s
+                // for a result from the API.
+                AutocompletePredictionBuffer autocompletePredictions = results.await(60, TimeUnit.SECONDS);
 
-            // This method should have been called off the main UI thread. Block and wait for at most 60s
-            // for a result from the API.
-            AutocompletePredictionBuffer autocompletePredictions = results
-                    .await(60, TimeUnit.SECONDS);
-
-            // Confirm that the query completed successfully, otherwise return null
-            final Status status = autocompletePredictions.getStatus();
-            if (!status.isSuccess()) {
+                // Confirm that the query completed successfully, otherwise return null
+                final Status status = autocompletePredictions.getStatus();
+                if (!status.isSuccess()) {
 //                Toast.makeText(mContext, "Error contacting API: " + status.toString(),
 //                        Toast.LENGTH_SHORT).show();
-                Log.e("", "Error getting autocomplete prediction API call: " + status.toString());
+                    Log.e("", "Error getting autocomplete prediction API call: " + status.toString());
+                    autocompletePredictions.release();
+                    return null;
+                }
+                Log.i("", "Query completed. Received " + autocompletePredictions.getCount() + " predictions.");
+
+                // Copy the results into our own data structure, because we can't hold onto the buffer.
+                // AutocompletePrediction objects encapsulate the API response (place ID and description).
+
+                Iterator<AutocompletePrediction> iterator = autocompletePredictions.iterator();
+                ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
+                while (iterator.hasNext()) {
+                    AutocompletePrediction prediction = iterator.next();
+                    // Get the details of this prediction and copy it into a new PlaceAutocomplete object.
+                    resultList.add(new PlaceAutocomplete(
+                            prediction.getPlaceId(),
+                            prediction.getPrimaryText(null),
+                            prediction.getSecondaryText(null)));
+                }
+
+                // Release the buffer now that all data has been copied.
                 autocompletePredictions.release();
-                return null;
+
+                return resultList;
             }
-
-            Log.i("", "Query completed. Received " + autocompletePredictions.getCount()
-                    + " predictions.");
-
-            // Copy the results into our own data structure, because we can't hold onto the buffer.
-            // AutocompletePrediction objects encapsulate the API response (place ID and description).
-
-            Iterator<AutocompletePrediction> iterator = autocompletePredictions.iterator();
-            ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
-            while (iterator.hasNext()) {
-                AutocompletePrediction prediction = iterator.next();
-                // Get the details of this prediction and copy it into a new PlaceAutocomplete object.
-                resultList.add(new PlaceAutocomplete(prediction.getPlaceId(),prediction.getPrimaryText(null), prediction.getSecondaryText(null)));
-            }
-
-            // Release the buffer now that all data has been copied.
-            autocompletePredictions.release();
-
-            return resultList;
         }
         Log.e("", "Google API client is not connected for autocomplete query.");
         return null;
@@ -208,7 +207,6 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
             mAddress = (TextView)itemView.findViewById(R.id.address);
             primaryText = (TextView)itemView.findViewById(R.id.primary_text);
         }
-
     }
 
     /**

@@ -212,12 +212,12 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
                             if (checked_at != null) {
                                 nameValuePairs.add(new BasicNameValuePair("checked_at", checked_at));
-                                Log.e("checked_at LOG ", checked_at);
+                             //   Log.e("checked_at LOG ", checked_at);
                             }
 
                             if (checkout_at != null) {
                                 nameValuePairs.add(new BasicNameValuePair("checkout_at", checkout_at));
-                                Log.e("checkout_at LOG ", checkout_at);
+                           //     Log.e("checkout_at LOG ", checkout_at);
                             }
 
                             if (deviceId != null) {

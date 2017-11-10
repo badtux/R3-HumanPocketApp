@@ -128,7 +128,7 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
     private boolean checkConnection() {
         boolean isConnected = ConnectivityReceiver.isConnected();
         if (isConnected) {
-            ViewMessage("Connection success", 1);
+          //  ViewMessage("Connection success", 1);
             return true;
         }
         ViewMessage("You don't have internet connection", 0);
