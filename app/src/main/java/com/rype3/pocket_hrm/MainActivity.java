@@ -7,9 +7,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -44,7 +41,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -57,15 +53,9 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.rype3.pocket_hrm.realm.LocationDetails;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -117,7 +107,7 @@ public class MainActivity extends BaseActivity implements
     private RealmResults<LocationDetails> locationList;
     public ArrayList<Integer> id_list;
     private  Location lastLocation;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(6.0083849,80.3094838), new LatLng(9.8014351,80.2087608));
 
     @Override
     public void onStart() {
@@ -224,20 +214,6 @@ public class MainActivity extends BaseActivity implements
                     utils.setSharedPreference(context, String.valueOf(0), Constants.LONG);
                 }
             }
-
-
-
-        btn_clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                location.setText("");
-            }
-        });
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.list_search);
-        mRecyclerView.setHasFixedSize(true);
-        llm = new LinearLayoutManager(context);
-        mRecyclerView.setLayoutManager(llm);
 
 
         try {
@@ -373,6 +349,11 @@ public class MainActivity extends BaseActivity implements
 
         location = (EditText) findViewById(R.id.et_location);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.list_search);
+        mRecyclerView.setHasFixedSize(true);
+        llm = new LinearLayoutManager(context);
+        mRecyclerView.setLayoutManager(llm);
+
     }
 
     public View.OnClickListener onclick = new View.OnClickListener() {
@@ -383,6 +364,13 @@ public class MainActivity extends BaseActivity implements
                 if (validation()) {
                     hideKeyBoard();
                     if (reset()) {
+
+                        intent = new Intent(MainActivity.this, MyLocationListner.class);
+                        intent.putExtra("name", "START SETVICE");
+                        startService(intent);
+
+
+
                         btn_clear.setClickable(false);
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
@@ -425,7 +413,7 @@ public class MainActivity extends BaseActivity implements
                         utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
 
                         btn_in.setClickable(false);
-                        //     TriggerRefresh("1");
+                        TriggerRefresh("1", id_list());
                     }
                 }
             }
@@ -442,6 +430,10 @@ public class MainActivity extends BaseActivity implements
 
                     thankyouAlertMessageBox(utils.getSharedPreference(context, Constants.LAST_TIME));
                 }
+            }
+
+            if (v == btn_clear){
+                location.setText("");
             }
         }
     };
@@ -495,7 +487,10 @@ public class MainActivity extends BaseActivity implements
                 btn_in.setClickable(true);
                 btn_clear.setClickable(true);
                 dataSave.blinkIcon(image_out, 1);
-                TriggerRefresh("1", id_list());
+
+                intent = new Intent(MainActivity.this, MyLocationListner.class);
+                intent.putExtra("name", "STOP SETVICE");
+                startService(intent);
             }
         }, 5000);
     }
@@ -806,6 +801,7 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onPlaceClick(ArrayList<PlaceAutocompleteAdapter.PlaceAutocomplete> mResultList, final int position) {
+
         if (mResultList != null) {
             try {
                 if (mResultList.size() != 0) {
@@ -815,7 +811,7 @@ public class MainActivity extends BaseActivity implements
                          */
 
                     location.setText(mResultList.get(position).primery);
-
+//                    utils.setSharedPreference(context, String.valueOf(mResultList.get(position).placeId), Constants.GEO_LATLONG);
                     if (mAdapter != null) {
                         mRecyclerView.setAdapter(null);
                         if (!exitState()) {
@@ -829,24 +825,24 @@ public class MainActivity extends BaseActivity implements
                     placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
                         @Override
                         public void onResult(@NonNull PlaceBuffer places) {
-                            if (places.getCount() == 1) {
-                                places.get(position).getLatLng();
-
-                             //   Log.e("GEO : ", String.valueOf(places.get(position).getLatLng()));
-
-                                if (places != null) {
-                                    utils.setSharedPreference(context, String.valueOf(places.get(position).getLatLng()), Constants.GEO_LATLONG);
-                                }else{
-                                    utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
-                                }
-
-                                //Do the things here on Click.....
-//                            Intent data = new Intent();
-//                            data.putExtra("lat",String.valueOf(places.get(0).getLatLng().latitude));
-//                            data.putExtra("lng", String.valueOf(places.get(0).getLatLng().longitude));
-//                            setResult(SearchActivity.RESULT_OK, data);
-//                            finish();
-
+                           if (places != null) {
+//
+  //                          if (places.getCount() == 1) {
+//
+                               utils.setSharedPreference(context, String.valueOf(places.get(0).getLatLng()), Constants.GEO_LATLONG);
+//
+//                                }else{
+//
+//                                utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
+//                            }
+//
+//                                //Do the things here on Click.....
+////                            Intent data = new Intent();
+////                            data.putExtra("lat",String.valueOf(places.get(0).getLatLng().latitude));
+////                            data.putExtra("lng", String.valueOf(places.get(0).getLatLng().longitude));
+////                            setResult(SearchActivity.RESULT_OK, data);
+////                            finish();
+//
                             } else {
                                 Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_SHORT).show();
                             }
@@ -856,6 +852,7 @@ public class MainActivity extends BaseActivity implements
                     Log.e("TAG", "NOT At que");
                 }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

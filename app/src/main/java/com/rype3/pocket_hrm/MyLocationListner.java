@@ -71,13 +71,23 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
     @Override
     public void onStart(Intent intent, int startId) {
+        String name = intent.getStringExtra("name");
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
 
         try {
+            switch (name){
+                case "START SETVICE":
+            \        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+                    break;
+
+                case "STOP SETVICE":
+                    onDestroy();
+                    break;
+            }
            // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
         } catch (SecurityException e) {
           //  dialogGPS(this.getContext()); // lets the user know there is a problem with the gps
         }
@@ -90,6 +100,8 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
         }
+
+
     }
 
     @Override
@@ -151,7 +163,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
     public void onDestroy() {
         // handler.removeCallbacks(sendUpdatesToUI);
         super.onDestroy();
-     //   Log.v("STOP_SERVICE", "DONE");
+        Log.e("STOP_SERVICE", "DONE");
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -183,18 +195,16 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                 utils.setSharedPreference(context, String.valueOf(loc.getLatitude()), Constants.LAT);
                 utils.setSharedPreference(context, String.valueOf(loc.getLongitude()), Constants.LONG);
 
-//                 Log.e("****Latitude", String.valueOf(loc.getLatitude()));
-//                 Log.e("****Longitude", String.valueOf(loc.getLongitude()));
+    //              Log.e("****Latitude", String.valueOf(loc.getLatitude()));
+    //             Log.e("****Longitude", String.valueOf(loc.getLongitude()));
 //                 Log.e("****Provider", loc.getProvider());
 //
 
                 if (validation()) {
                      long id = System.currentTimeMillis();
 
-
 //                    Long tsLong = System.currentTimeMillis() / 1000;
 //                    String ts = tsLong.toString();
-
                     dataSave.DataSave(
                             myRealm,
                             id,

@@ -154,7 +154,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             for (int count = 0; count < integers[0]; count++) {
 
                 try {
-                    Thread.sleep(5000); //5s
+                    Thread.sleep(30000); //30s
                     publishProgress(count);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

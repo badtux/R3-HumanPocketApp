@@ -36,21 +36,17 @@ public class SplashActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         ConnectivityReceiver.ConnectivityReceiverListener{
-    LocationManager locationManager;
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
     // The authority for the sync adapter's content provider
     public static final String AUTHORITY = "com.rype3.mendischecking";
     boolean newAccount = false;
     private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
     Intent intent;
-    protected GoogleApiClient googleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-            Intent intent = new Intent(SplashActivity.this, MyLocationListner.class);
-            intent.putExtra("name", "LOCATION_LISTNER");
+            intent = new Intent(SplashActivity.this, MyLocationListner.class);
+            intent.putExtra("name", "START SETVICE");
             startService(intent);
 
             if (syncMethod()) {
@@ -89,26 +85,21 @@ public class SplashActivity extends AppCompatActivity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
     }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-
     }
 }

@@ -3,6 +3,7 @@ package com.rype3.pocket_hrm;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,8 @@ import com.rype3.pocket_hrm.realm.LocationDetails;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -31,6 +34,8 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
     private Context context;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView recyclerView;
+    public ArrayList<Integer> id_list;
+    private RealmResults<LocationDetails> locationList;
     private RecyclerView.LayoutManager mLayoutManager;
     private RealmResults<LocationDetails> locationDetailses;
     @Override
@@ -56,6 +61,7 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         intent =  getIntent();
         number = intent.getStringExtra("number");
 
+        id_list = new ArrayList<>();
     }
 
     public void toolbar() {
@@ -96,7 +102,7 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         }
 
         if (id == R.id.action_sync) {
-            TriggerRefresh("1");
+            TriggerRefresh("1" ,id_list());
             return true;
         }
 
@@ -146,15 +152,31 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         MyApplication.getInstance().setConnectivityListener(this);
     }
 
-    public static void TriggerRefresh(String num) {
+    public static void TriggerRefresh(String num, ArrayList<Integer> id_list) {
         Bundle b = new Bundle();
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        b.putString("number",num );
+        b.putString("number", num);
+        b.putString("id_list", String.valueOf(id_list));
 
         ContentResolver.requestSync(
                 AuthenticatorService.GetAccount(),      // Sync account
                 null, // Content authority
                 b);                                      // Extras
+    }
+
+    private ArrayList<Integer> id_list(){
+        id_list.clear();
+
+        locationList = myRealm.where(LocationDetails.class).equalTo("state", true).findAll();
+
+        if (locationList != null) {
+            for (int i = 0; i < locationList.size(); i++) {
+                id_list.add(locationList.get(i).getId());
+            }
+        } else {
+            id_list.add(null);
+        }
+        return id_list;
     }
 }

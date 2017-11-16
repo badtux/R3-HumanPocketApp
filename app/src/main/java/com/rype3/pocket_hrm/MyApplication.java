@@ -26,6 +26,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        SystemClock.sleep(TimeUnit.SECONDS.toMillis(3));
+
         mInstance = this;
         Realm.init(this);
 
@@ -36,7 +38,7 @@ public class MyApplication extends Application {
         Realm.setDefaultConfiguration(configuration);
         Realm.getInstance(configuration);
 
-        SystemClock.sleep(TimeUnit.SECONDS.toMillis(3));
+
     }
 
     public static synchronized MyApplication getInstance() {
