@@ -61,6 +61,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
         web.clearHistory();
         web.clearFormData();
         web.removeAllViews();
+
         web.loadUrl(OAUTH_URL + "?redirect_uri=" + REDIRECT_URI + "&response_type=code&client_id=" + CLIENT_ID + "&scope=" + OAUTH_SCOPE);
 
         web.setWebViewClient(new WebViewClient() {
@@ -82,7 +83,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
                 if (url.contains("?code=") && authComplete != true) {
                     Uri uri = Uri.parse(url);
                     authCode = uri.getQueryParameter("code");
-                    Log.e("", "CODE : " + authCode);
+                 //   Log.e("", "CODE : " + authCode);
                     authComplete = true;
                     resultIntent.putExtra("code", authCode);
                     Sign_inActivity.this.setResult(Activity.RESULT_OK, resultIntent);
@@ -92,7 +93,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
                     new TokenGet().execute();
 
                 } else if (url.contains("error=access_denied")) {
-                    Log.e("", "ACCESS_DENIED_HERE");
+                   // Log.e("", "ACCESS_DENIED_HERE");
                     resultIntent.putExtra("code", authCode);
                     authComplete = true;
                     setResult(Activity.RESULT_CANCELED, resultIntent);
@@ -175,7 +176,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
 
         @Override
         protected void onPostExecute(JSONObject json) {
-            Log.e("token json : ", json.toString());
+           // Log.e("token json : ", json.toString());
             pDialog.dismiss();
 
             try {
@@ -218,7 +219,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
 
     public void parseJsonRegisterResponse(final String result) {
         if (result != null) {
-            Log.e("RegisterResponse : ", result);//1567234
+          //  Log.e("RegisterResponse : ", result);//1567234
             try {
                 JSONObject jsonObjectResult = new JSONObject(result);
                 boolean status = jsonObjectResult.getBoolean("status");
@@ -253,7 +254,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
 
     public void parseJsonRegisterForAttendandeResponse(final String result) {
         if (result != null) {
-            Log.e("Attendance Response : ", result);//1567234
+         //   Log.e("Attendance Response : ", result);//1567234
             try {
                 JSONObject jsonObjectResult = new JSONObject(result);
                 boolean status = jsonObjectResult.getBoolean("status");

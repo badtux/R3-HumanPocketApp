@@ -31,10 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocompleteAdapter.PlaceViewHolder> implements Filterable {
 
-    public interface PlaceAutoCompleteInterface{
-        public void onPlaceClick(ArrayList<PlaceAutocomplete> mResultList, int position);
-    }
-
     Context mContext;
     PlaceAutoCompleteInterface mListener;
     private static final String TAG = "PlaceAutocompleteAdapter";
@@ -58,6 +54,15 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
         mBounds = bounds;
         mPlaceFilter = filter;
         this.mListener = (PlaceAutoCompleteInterface)mContext;
+    }
+
+
+    public void setGoogleApiClient(GoogleApiClient googleApiClient) {
+        if (googleApiClient == null || !googleApiClient.isConnected()) {
+            mGoogleApiClient = null;
+        } else {
+            mGoogleApiClient = googleApiClient;
+        }
     }
 
     /*
@@ -132,7 +137,7 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
                     autocompletePredictions.release();
                     return null;
                 }
-                Log.i("", "Query completed. Received " + autocompletePredictions.getCount() + " predictions.");
+                Log.e("", "Query completed. Received " + autocompletePredictions.getCount() + " predictions.");
 
                 // Copy the results into our own data structure, because we can't hold onto the buffer.
                 // AutocompletePrediction objects encapsulate the API response (place ID and description).
@@ -152,9 +157,11 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
                 autocompletePredictions.release();
 
                 return resultList;
+
             }
         }
         Log.e("", "Google API client is not connected for autocomplete query.");
+
         return null;
     }
 
@@ -228,5 +235,9 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
         public String toString() {
             return description.toString();
         }
+    }
+
+    public interface PlaceAutoCompleteInterface{
+        void onPlaceClick(ArrayList<PlaceAutocomplete> mResultList, int position);
     }
 }

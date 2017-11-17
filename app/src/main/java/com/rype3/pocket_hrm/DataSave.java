@@ -55,7 +55,7 @@ class DataSave{
         locationDetails.setType(type);
         locationDetails.setState(state);
 
-       // Log.e("LOG : ", String.valueOf(meta(deviceId, String.valueOf(getBatteryPercentage(context)), getDeviceName(),location,IOStime(),epf_no,user_id,app_v)));
+   //     Log.e("LOG : ", String.valueOf(meta(deviceId, String.valueOf(getBatteryPercentage(context)), getDeviceName(),location,IOStime(),epf_no,user_id,app_v)));
 
         realm.commitTransaction();
 

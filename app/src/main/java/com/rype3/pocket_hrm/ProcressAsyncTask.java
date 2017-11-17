@@ -130,6 +130,10 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
             case 5:
                 ((HistoryActivity) activity).parseJsonResponseHistory(result);
                 break;
+
+            case 6:
+               Log.e("RESULT : " , result);
+                break;
         }
     }
 
@@ -174,7 +178,7 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                                   String deviceId,
                                   String uid,
                                   String checked_at, String checkout_at, String meta) {
-            Log.e("URL ", url);
+         //   Log.e("URL ", url);
             switch (HTTP_TYPE) {
                 case "POST":
                     Log.e("HTTP TYPE ", "POST");
@@ -229,7 +233,7 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                             if (meta != null){
                                 nameValuePairs.add(new BasicNameValuePair("meta", meta));
 
-                                Log.e("LOG ", meta);
+                             //   Log.e("LOG ", meta);
                             }
 
                             nameValuePairs.add(new BasicNameValuePair("description", ""));
@@ -244,6 +248,11 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                         HttpResponse httpResponse = httpClient.execute(httpPost);
                         HttpEntity httpEntity = httpResponse.getEntity();
                         is = httpEntity.getContent();
+
+                        StatusLine statusLine = httpResponse.getStatusLine();
+                        int statusCode = statusLine.getStatusCode();
+
+                    //    Log.e(TAG, " Status code : " + String.valueOf(statusCode));
 
                     } catch (Exception e) {
                         e.printStackTrace();

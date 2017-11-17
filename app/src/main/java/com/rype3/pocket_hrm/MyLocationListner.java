@@ -71,21 +71,21 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
     @Override
     public void onStart(Intent intent, int startId) {
-        String name = intent.getStringExtra("name");
+       // String name = intent.getStringExtra("name");
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
 
         try {
-            switch (name){
-                case "START SETVICE":
-            \        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
-                    break;
+         //   switch (name){
+            //    case "START SETVICE":
+                  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+            //        break;
 
-                case "STOP SETVICE":
-                    onDestroy();
-                    break;
-            }
+           //     case "STOP SETVICE":
+            //        onDestroy();
+           //         break;
+           // }
            // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
 
         } catch (SecurityException e) {

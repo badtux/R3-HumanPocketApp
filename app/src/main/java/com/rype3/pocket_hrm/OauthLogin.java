@@ -1,9 +1,10 @@
 package com.rype3.pocket_hrm;
-
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -13,9 +14,21 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import java.io.UnsupportedEncodingException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class OauthLogin extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
     private CoordinatorLayout coordinatorLayout;
@@ -23,6 +36,15 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
     Intent intent;
     Utils utils;
     Context context;
+    private String url;
+
+    //Client id
+    private static String CLIENT_ID = "589bf05f277bf8424f3cc6ea";
+
+    //Use your own client secret
+    private static String REDIRECT_URI = "http://localhost";
+    private static String OAUTH_URL = "http://wmmmendis.rype3.nit/human/account/oauth/authorize";
+    private static String OAUTH_SCOPE = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +99,20 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
 
             if (checkConnection()) {
                 if (v == user_name) {
-                    intent = new Intent(OauthLogin.this, Sign_inActivity.class);
+                  //  intent = new Intent(OauthLogin.this, Sign_inActivity.class);
+
+
+                    if(checkConnection()){
+                        new HTTPAsyncTask(OAUTH_URL + "?redirect_uri=" + REDIRECT_URI + "&response_type=code&client_id=" + CLIENT_ID + "&scope=" + OAUTH_SCOPE ).execute();
+                    }
                 }
 
                 if (v == epf_no) {
                     intent = new Intent(OauthLogin.this, EPFnumberActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
-                startActivity(intent);
-                finish();
+
             }
         }
     };
@@ -189,6 +217,117 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
             return s;
         } else {
             return Character.toUpperCase(first) + s.substring(1);
+        }
+    }
+
+    private class HTTPAsyncTask extends AsyncTask<Void, Void, String> {
+
+        private String url;
+        private ProgressDialog dialog;
+        private final static String TAG = "HTTPAsyncTask";
+
+        HTTPAsyncTask(String url) {
+            super();
+            this.url = url;
+        }
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(OauthLogin.this);
+            dialog.setTitle("Please wait...");
+            dialog.setCancelable(false);
+            dialog.setIndeterminate(false);
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                return loadJSON(
+                        this.url).toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final String result) {
+            dialog.dismiss();
+            Log.e("RESULT : " , String.valueOf(result));
+
+            if (result.equals("200")){
+                intent = new Intent(OauthLogin.this, Sign_inActivity.class);
+                startActivity(intent);
+                finish();
+            }else{
+                ViewMessage("Service unavailable. Try again in few minutes.", 0);
+            }
+        }
+
+        private Integer loadJSON(String url) {
+            // Creating JSON Parser instance
+            JSONParser jParser = new JSONParser();
+            // getting JSON string from URL
+            return jParser.getJSONFromUrl(url);
+        }
+
+        private class JSONParser {
+            int statusCode;
+            // constructor
+            JSONParser() {
+            }
+
+            Integer getJSONFromUrl(String url) {
+              //  Log.e("URL ", url);
+                // Making HTTP POST request
+                        try {
+                            // defaultHttpClient
+                            DefaultHttpClient httpClient = new DefaultHttpClient();
+                            HttpPost httpPost = new HttpPost(url);
+
+                            try {
+                                List<BasicNameValuePair> nameValuePairs = new LinkedList<BasicNameValuePair>();
+                                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+
+                            HttpResponse httpResponse = httpClient.execute(httpPost);
+                            HttpEntity httpEntity = httpResponse.getEntity();
+
+                            StatusLine statusLine = httpResponse.getStatusLine();
+                            statusCode = statusLine.getStatusCode();
+
+                           // Log.e(TAG, " Status code : " + String.valueOf(statusCode));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+//                        try {
+//                            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
+//                            StringBuilder sb = new StringBuilder();
+//                            String line = null;
+//                            while ((line = reader.readLine()) != null) {
+//                                sb.append(line).append("\n");
+//                            }
+//                            is.close();
+//                            json = sb.toString();
+//                        } catch (Exception e) {
+//                            Log.e("Buffer Error", "Error converting result " + e.toString());
+//                        }
+//
+//                        // try parse the string to a JSON object
+//                        try {
+//                            jObj = new JSONObject(json);
+//                        } catch (JSONException e) {
+//                            Log.e("JSON Parser", "Error parsing data " + e.toString());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+                return statusCode;
+            }
         }
     }
 }

@@ -45,6 +45,7 @@ public class SplashActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
             intent = new Intent(SplashActivity.this, MyLocationListner.class);
             intent.putExtra("name", "START SETVICE");
             startService(intent);

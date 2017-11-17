@@ -48,6 +48,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
@@ -364,13 +365,9 @@ public class MainActivity extends BaseActivity implements
                 if (validation()) {
                     hideKeyBoard();
                     if (reset()) {
-
-                        intent = new Intent(MainActivity.this, MyLocationListner.class);
-                        intent.putExtra("name", "START SETVICE");
-                        startService(intent);
-
-
-
+//                        intent = new Intent(MainActivity.this, MyLocationListner.class);
+//                        intent.putExtra("name", "START SETVICE");
+//                        startService(intent);
                         btn_clear.setClickable(false);
                         final int sdk = Build.VERSION.SDK_INT;
                         if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
@@ -488,9 +485,7 @@ public class MainActivity extends BaseActivity implements
                 btn_clear.setClickable(true);
                 dataSave.blinkIcon(image_out, 1);
 
-                intent = new Intent(MainActivity.this, MyLocationListner.class);
-                intent.putExtra("name", "STOP SETVICE");
-                startService(intent);
+                TriggerRefresh("1", id_list());
             }
         }, 5000);
     }
@@ -603,6 +598,7 @@ public class MainActivity extends BaseActivity implements
 
                         utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
                         utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
+                        TriggerRefresh("1", id_list());
                         resetData();
                         //   TimeBuff += MillisecondTime;
                         handler.removeCallbacks(runnable);
@@ -719,6 +715,8 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onConnectionSuspended(int i) {
+
+        Log.e(LOG_TAG, "Google Places API connection suspended.");
     }
 
     @Override
@@ -821,35 +819,59 @@ public class MainActivity extends BaseActivity implements
                         }
                     }
 
-                    PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
-                    placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
-                        @Override
-                        public void onResult(@NonNull PlaceBuffer places) {
-                           if (places != null) {
+//                    PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placeId);
+//                    placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+//                        @Override
+//                        public void onResult(@NonNull PlaceBuffer places) {
 //
-  //                          if (places.getCount() == 1) {
+//                            if (!places.getStatus().isSuccess()) {
+//                                 // Request did not complete successfully
+//                                Log.e("TAG", "Place query did not complete. Error: " + places.getStatus().toString());
+//                                places.release();
+//                                return;
+//                            }else {
 //
-                               utils.setSharedPreference(context, String.valueOf(places.get(0).getLatLng()), Constants.GEO_LATLONG);
-//
-//                                }else{
-//
-//                                utils.setSharedPreference(context, "", Constants.GEO_LATLONG);
 //                            }
+//                        }
+//                    });
+
+//                    private ResultCallback<PlaceBuffer> fromPlaceResultCallback = new ResultCallback<PlaceBuffer>() {
+//                        @Override
+//                        public void onResult(@NonNull PlaceBuffer places) {
+//                            if (!places.getStatus().isSuccess()) {
+//                                places.release();
+//                                return;
+//                            }
+//                            // Get the Place object from the buffer.
+//                            if(places.getCount() > 0) {
+//                                // Got place details
+//                                Place place = places.get(0);
+//                                // Do your stuff
+//                            } else {
+//                                // No place details
+//                                Toast.makeText(MainActivity.this, "Place details not found.", Toast.LENGTH_LONG).show();
+//                            }
+//                            places.release();
+//                        }
 //
-//                                //Do the things here on Click.....
-////                            Intent data = new Intent();
-////                            data.putExtra("lat",String.valueOf(places.get(0).getLatLng().latitude));
-////                            data.putExtra("lng", String.valueOf(places.get(0).getLatLng().longitude));
-////                            setResult(SearchActivity.RESULT_OK, data);
-////                            finish();
-//
-                            } else {
-                                Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                } else {
-                    Log.e("TAG", "NOT At que");
+//                } else {
+//                    Log.e("TAG", "NOT At que");
+
+                    Places.GeoDataApi.getPlaceById(googleApiClient, placeId)
+                            .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                                @Override
+                                public void onResult(@NonNull PlaceBuffer places) {
+                                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                                        final Place myPlace = places.get(0);
+                                       // Log.e("TAG", "Place found: " + myPlace.getName());
+                                        utils.setSharedPreference(context, String.valueOf(myPlace.getLatLng()), Constants.GEO_LATLONG);
+                                    } else {
+                                        Log.e("TAG", "Place not found");
+                                    }
+                                    places.release();
+                                }
+                            });
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -125,9 +125,6 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
-//
-
                        }
                     }
                 });
@@ -306,15 +303,19 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
             if (result != null) {
               try {
-              //  Log.e("result : ", result);
+             //   Log.e("result : ", result);
               //  Log.e("Result offline :  ", String.valueOf(this.timeStamp));
 
-                    LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", this.timeStamp).findFirst();
-                    if (updateLocationDetails != null) {
-                        myRealm.beginTransaction();
-                        updateLocationDetails.setState(false);
-                        myRealm.commitTransaction();
-                    }
+                  if (!result.equals("0")) {
+                      LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", this.timeStamp).findFirst();
+                      if (updateLocationDetails != null) {
+                          myRealm.beginTransaction();
+                          updateLocationDetails.setState(false);
+                          myRealm.commitTransaction();
+                      }
+                  } else {
+                      Log.e("TAG : ", "Server not response");
+                  }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -429,14 +430,14 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                         jsonObject = new JSONObject(stringBuilder.toString());
                     }
                     inputStream.close();
+                    return timeStamp;
                 }
             } catch (ClientProtocolException | UnknownHostException ignored) {
 
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
             }
-            return timeStamp;
-
+            return 0;
         }
     }
 }
