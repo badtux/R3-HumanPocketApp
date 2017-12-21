@@ -13,6 +13,7 @@ public abstract class BaseActivity extends AppCompatActivity{
     public Toolbar toolbar;
     private Utils utils;
     private Context context;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity{
 
         context = getApplicationContext();
         utils = new Utils(context);
+
     }
 
     protected abstract int getLayoutResource();
@@ -29,6 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity{
     protected abstract String ToolBarName();
     protected abstract int ToolBarIcon();
     protected abstract String Number();
+    protected abstract String Place();
 
     private void configureToolbar(String title, int icon) {
         toolbar = (Toolbar) findViewById(R.id.appbar);
@@ -39,7 +42,18 @@ public abstract class BaseActivity extends AppCompatActivity{
             setSupportActionBar(toolbar);
             getSupportActionBar().setIcon(icon);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
-            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            switch (ToolBarName()){
+                case "Search":
+                    getSupportActionBar().setIcon(null);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    break;
+
+                default:
+
+            }
+
+
         }
     }
 
@@ -73,6 +87,16 @@ public abstract class BaseActivity extends AppCompatActivity{
                 }
                 break;
 
+            case R.menu.search_menu:
+                if (id == R.id.action_done){
+                    addPlace(Place());
+                }
+        }
+
+        if (id == android.R.id.home) {
+            intent = new Intent(BaseActivity.this,MainActivity.class);
+            startActivity(intent);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -90,5 +114,13 @@ public abstract class BaseActivity extends AppCompatActivity{
 
         }
         return true;
+    }
+
+    public void addPlace(String place){
+        intent = new Intent(BaseActivity.this,MainActivity.class);
+        intent.putExtra("place" , place);
+        startActivity(intent);
+        finish();
+
     }
 }

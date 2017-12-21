@@ -8,8 +8,8 @@ import android.util.Log;
 
 public class AuthenticatorService extends Service {
     private static final String TAG = "Authenticator Service";
-    private static final String ACCOUNT_TYPE = "com.rype3.mendischecking";
-    public static final String ACCOUNT_NAME = "Mendis";
+    private static final String ACCOUNT_TYPE = "com.rype3.pocket_hrm";
+    public static final String ACCOUNT_NAME = "POCKET HRM";
 
     // Instance field that stores the authenticator object
     private Authenticator mAuthenticator;

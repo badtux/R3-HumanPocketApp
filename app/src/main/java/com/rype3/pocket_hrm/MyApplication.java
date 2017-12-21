@@ -2,9 +2,12 @@ package com.rype3.pocket_hrm;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.support.multidex.MultiDex;
+
+import com.rype3.pocket_hrm.realm.RealmMigrations;
 
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +41,11 @@ public class MyApplication extends Application {
         Realm.setDefaultConfiguration(configuration);
         Realm.getInstance(configuration);
 
+//        final RealmConfiguration configuration = new RealmConfiguration.Builder().name("sample.realm").schemaVersion(2).migration(new RealmMigrations()).build();
+//        Realm.setDefaultConfiguration(configuration);
+//        Realm.getInstance(configuration);
 
+        startService(new Intent(this, BackServices.class));
     }
 
     public static synchronized MyApplication getInstance() {

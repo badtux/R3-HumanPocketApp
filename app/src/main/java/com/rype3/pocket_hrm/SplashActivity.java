@@ -36,34 +36,112 @@ public class SplashActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         ConnectivityReceiver.ConnectivityReceiverListener{
+
+    // Constants
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
+
     // The authority for the sync adapter's content provider
-    public static final String AUTHORITY = "com.rype3.mendischecking";
+    public static final String AUTHORITY = "com.rype3.pocket_hrm";
+
+
+    // Sync interval constants
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 1L;
+    public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
+
     boolean newAccount = false;
     private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
+
     Intent intent;
+    private DataSave dataSave;
+    private Context context;
+    private Utils utils;
+    ContentResolver mResolver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-            intent = new Intent(SplashActivity.this, MyLocationListner.class);
-            intent.putExtra("name", "START SETVICE");
-            startService(intent);
+        context = this.getApplicationContext();
+        utils = new Utils(context);
+        dataSave = new DataSave(context, utils);
 
-            if (syncMethod()) {
-                intent = new Intent(this, OauthLogin.class);
-            } else {
-                Toast.makeText(getApplicationContext(), "SYNC Error", Toast.LENGTH_SHORT).show();
-                intent = new Intent(this, OauthLogin.class);
-            }
-            startActivity(intent);
-            finish();
+//        intent = new Intent(SplashActivity.this, MyLocationListner.class);
+//        intent.putExtra("name", "START SETVICE");
+//        startService(intent);
+
+        if (syncMethod()) {
+            intent = new Intent(this, OauthLogin.class);
+        } else {
+            Toast.makeText(getApplicationContext(), "SYNC Error", Toast.LENGTH_SHORT).show();
+            intent = new Intent(this, OauthLogin.class);
+        }
+        startActivity(intent);
+        finish();
+
+
+        mResolver = getContentResolver();
+        /*
+         * Turn on periodic syncing
+         */
+
+//        Account account = AuthenticatorService.GetAccount();
+//        ContentResolver.addPeriodicSync(
+//                account,
+//                AUTHORITY,
+//                Bundle.EMPTY,
+//                SYNC_INTERVAL);
+//        mAccount = CreateSyncAccount(this);
+//
+//        // Get the content resolver for your app
+//        mResolver = getContentResolver();
+//        /*
+//         * Turn on periodic syncing
+//         */
+//        ContentResolver.addPeriodicSync(
+//                mAccount,
+//                AUTHORITY,
+//                Bundle.EMPTY,
+//                SYNC_INTERVAL);
+//
+//
+//        intent = new Intent(this, OauthLogin.class);
+
     }
+
+//    public static Account CreateSyncAccount(Context context) {
+//        // Create the account type and default account
+//        Account newAccount = new Account(
+//                ACCOUNT, ACCOUNT_TYPE);
+//        // Get an instance of the Android account manager
+//        AccountManager accountManager =
+//                (AccountManager) context.getSystemService(
+//                        ACCOUNT_SERVICE);
+//        /*
+//         * Add the account and account type, no password or user data
+//         * If successful, return the Account object, otherwise report an error.
+//         */
+//        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+//            /*
+//             * If you don't set android:syncable="true" in
+//             * in your <provider> element in the manifest,
+//             * then call context.setIsSyncable(account, AUTHORITY, 1)
+//             * here.
+//             */
+//            return newAccount;
+//        } else {
+//            /*
+//             * The account exists or some other error occurred. Log this, report it,
+//             * or handle it internally.
+//             */
+//            return null;
+//        }
+//    }
 
     private boolean syncMethod() {
         boolean setupComplete = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_SETUP_COMPLETE, false);
-        Account account = AuthenticatorService.GetAccount();
 
+        Account account = AuthenticatorService.GetAccount();
         AccountManager accountManager = (AccountManager) this.getSystemService(Context.ACCOUNT_SERVICE);
 
         if (accountManager.addAccountExplicitly(account, null, null)) {
@@ -75,13 +153,16 @@ public class SplashActivity extends AppCompatActivity implements
             // on other scheduled syncs and network utilization.
 
             Bundle bundle = new Bundle();
-            ContentResolver.addPeriodicSync(account, AUTHORITY, bundle, SYNC_FREQUENCY);
+            ContentResolver.addPeriodicSync(account, AUTHORITY, bundle, SYNC_INTERVAL);
             newAccount = true;
+
+            if (newAccount || !setupComplete) {
+                dataSave.TriggerRefresh("2" ,null);
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
+            }
         }
         return true;
     }
-
-     /* Class Single Location_object Listner */
 
 
     @Override

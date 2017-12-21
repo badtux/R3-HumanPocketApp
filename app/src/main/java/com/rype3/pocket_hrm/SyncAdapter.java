@@ -13,7 +13,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.rype3.pocket_hrm.Utils;
 import com.rype3.pocket_hrm.realm.LocationDetails;
 
 import org.apache.http.HttpEntity;
@@ -45,7 +47,7 @@ import io.realm.Realm;
  * Handle the transfer of data between a server and an
  * app, using the Android sync adapter framework.
  */
-class SyncAdapter extends AbstractThreadedSyncAdapter{
+class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = "Sync Adapter";
     /**
      * URL to fetch content from during a sync.
@@ -72,7 +74,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
     private Realm myRealm;
     private LocationDetails getLocation;
     private Utils utils;
-    private DataSave dataSave;
+    public DataSave dataSave;
     JSONArray jsonArray;
 
     SyncAdapter(Context context, boolean autoInitialize) {
@@ -101,42 +103,47 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
+        Log.e("TAG :","onPerformSync()");
 
-        String number = bundle.getString("number");
-        final String id_list = bundle.getString("id_list");
-        if (number != null) {
-            Log.e("number : ", number);
 
-            if (number.equals("1")) {
-                Handler h = new Handler(Looper.getMainLooper());
-                h.post(new Runnable() {
+//        Handler h1 = new Handler(Looper.getMainLooper());
+//        h1.post(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                Toast.makeText(getContext(), "onPerformSync()",Toast.LENGTH_SHORT).show();
+//            }
+//               });
 
-                    @Override
-                    public void run() {
 
-                        if (id_list != null){
-
-                            try {
-                              jsonArray = new JSONArray(id_list);
-
-                            //    Log.e("Id list : ", jsonArray.toString());
-
-                                new ProcressTask2().execute(jsonArray.length());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                       }
-                    }
-                });
-            }
-        }
-    }
-
-    public void updateLocalFeedData(final String stream, final SyncResult syncResult)
-            throws IOException, XmlPullParserException, RemoteException,
-            OperationApplicationException, ParseException {
-
-        Log.e("updateLocalFeedData : ","OK");
+//        String number = bundle.getString("number");
+//        final String id_list = bundle.getString("id_list");
+//        if (number != null) {
+//            Log.e("number : ", number);
+//
+//            if (number.equals("1")) {
+//                Handler h = new Handler(Looper.getMainLooper());
+//                h.post(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//
+//                        if (id_list != null){
+//
+//                            try {
+//                                jsonArray = new JSONArray(id_list);
+//
+//                                Log.e("Id list : ", jsonArray.toString());
+//
+//                                new ProcressTask2().execute(jsonArray.length());
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                });
+//         }
+      //  }
     }
 
 
@@ -151,8 +158,9 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             for (int count = 0; count < integers[0]; count++) {
 
                 try {
-                    Thread.sleep(30000); //30s
+                    Thread.sleep(5000); //30s
                     publishProgress(count);
+                    Log.e("count : " , String.valueOf(count));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -196,7 +204,6 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                     String url = "";
                     switch (getLocation.getType()) {
 
-
                         case "attendance":
 
                             switch (getLocation.getCheckState()) {
@@ -233,15 +240,14 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                             out). //checkOut
                             execute();
 
-//                    Log.e("TAG : ",
-//                            "Url : " + url +
-//                            "\nId : " + getLocation.getId() +
-//                            "\nType : " + getLocation.getType() +
-//                            "\nChecked state : " + getLocation.getCheckState() + "\nMeta" + getLocation.getMeta());
+                    Log.e("TAG : ",
+                            "Url : " + url +
+                                    "\nId : " + getLocation.getId() +
+                                    "\nType : " + getLocation.getType() +
+                                    "\nChecked state : " + getLocation.getCheckState() + "\nMeta" + getLocation.getMeta());
+
                 }
             }
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -279,7 +285,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
             this.checkedAt = checkedAt;
             this.checkedOutAt = checkedOutAt;
 
-        //  Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
+            //  Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
         }
 
         protected void onPreExecute() {
@@ -302,20 +308,20 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
         protected void onPostExecute(final String result) {
 
             if (result != null) {
-              try {
-             //   Log.e("result : ", result);
-              //  Log.e("Result offline :  ", String.valueOf(this.timeStamp));
+                try {
+                    //   Log.e("result : ", result);
+                    Log.e("Result offline :  ", result);
 
-                  if (!result.equals("0")) {
-                      LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", this.timeStamp).findFirst();
-                      if (updateLocationDetails != null) {
-                          myRealm.beginTransaction();
-                          updateLocationDetails.setState(false);
-                          myRealm.commitTransaction();
-                      }
-                  } else {
-                      Log.e("TAG : ", "Server not response");
-                  }
+                    if (!result.equals("0")) {
+                        LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", this.timeStamp).findFirst();
+                        if (updateLocationDetails != null) {
+                            myRealm.beginTransaction();
+                            updateLocationDetails.setState(false);
+                            myRealm.commitTransaction();
+                        }
+                    } else {
+                        Log.e("TAG : ", "Server not response");
+                    }
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -325,7 +331,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
     private Integer loadJSON(String url, String lat, String lon, String device_id, String device_name,int timeStamp, String checkState, String location, String meta,String uid,String checkedAt ,String checkedOutAt) {
         // Creating JSON Parser instance
-       JSONParser jParser = new JSONParser();
+        JSONParser jParser = new JSONParser();
 
         // getting JSON string from URL
         int json = jParser.getJSONFromUrl(url ,lat,lon,device_id,device_name,timeStamp,checkState,location,meta , uid ,checkedAt,checkedOutAt);
@@ -383,7 +389,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                 if (meta != null) {//tracker meta, Attendance
                     nameValuePairs.add(new BasicNameValuePair("meta", meta));
 
-                  //  Log.e("LOG meta ", meta);
+                    //  Log.e("LOG meta ", meta);
                 }
 
                 if (uid != null) {
@@ -392,12 +398,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
 
                 if (checkedAt != null) {
                     nameValuePairs.add(new BasicNameValuePair("checked_at", checkedAt));
-                  //  Log.e("checked_at LOG ", checkedAt);
+                    //  Log.e("checked_at LOG ", checkedAt);
                 }
 
                 if (checkedOutAt != null) {
                     nameValuePairs.add(new BasicNameValuePair("checkout_at", checkedOutAt));
-                 //   Log.e("checkout_at LOG ", checkedOutAt);
+                    //   Log.e("checkout_at LOG ", checkedOutAt);
                 }
 
 
@@ -422,23 +428,55 @@ class SyncAdapter extends AbstractThreadedSyncAdapter{
                 if (statusCode == 200) {
                     HttpEntity entity = response.getEntity();
                     InputStream inputStream = entity.getContent();
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        stringBuilder.append(line);
-                        jsonObject = new JSONObject(stringBuilder.toString());
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = reader.readLine()) != null) {
+//                        stringBuilder.append(line);
+//                        jsonObject = new JSONObject(stringBuilder.toString());
+//                        inputStream.close();
+//                        break;
+//                    }
+                    try {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"), 8);
+                        StringBuilder sb = new StringBuilder();
+                        String line = null;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        inputStream.close();
+                        String json = sb.toString();
+                        jsonObject = new JSONObject(json);
+
+                        // Log.e("JSON : " , jsonObject.toString());
+
+                        Handler h = new Handler(Looper.getMainLooper());
+                        final JSONObject finalJsonObject = jsonObject;
+                        h.post(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                try {
+                                    Toast.makeText(getContext(), finalJsonObject.getString("message"),Toast.LENGTH_SHORT).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+
+                    } catch (Exception e) {
+                        Log.e("Buffer Error", "Error converting result " + e.toString());
                     }
-                    inputStream.close();
                     return timeStamp;
                 }
             } catch (ClientProtocolException | UnknownHostException ignored) {
 
-            } catch (JSONException | IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return 0;
         }
+
     }
 }
-

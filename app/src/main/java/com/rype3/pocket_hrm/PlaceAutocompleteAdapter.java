@@ -56,15 +56,6 @@ public class PlaceAutocompleteAdapter extends RecyclerView.Adapter<PlaceAutocomp
         this.mListener = (PlaceAutoCompleteInterface)mContext;
     }
 
-
-    public void setGoogleApiClient(GoogleApiClient googleApiClient) {
-        if (googleApiClient == null || !googleApiClient.isConnected()) {
-            mGoogleApiClient = null;
-        } else {
-            mGoogleApiClient = googleApiClient;
-        }
-    }
-
     /*
     Clear List items
      */

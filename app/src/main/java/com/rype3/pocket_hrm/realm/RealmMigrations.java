@@ -2,9 +2,7 @@ package com.rype3.pocket_hrm.realm;
 
 
 import io.realm.DynamicRealm;
-import io.realm.Realm;
 import io.realm.RealmMigration;
-import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
 public class RealmMigrations implements RealmMigration {

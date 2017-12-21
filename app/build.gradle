@@ -7,11 +7,12 @@ android {
         applicationId "com.rype3.mendischecking"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 20
-        versionName "1.1.11-a"
+        versionCode 23
+        versionName "1.1.14"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false

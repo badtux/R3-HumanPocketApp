@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.rype3.pocket_hrm.SearchActivity">
+
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/drawerlayout"
+        tools:context=".TestActivity">
+
+        <RelativeLayout
+            android:id="@+id/image_layer1"
+            android:layout_width="fill_parent"
+            android:background="@color/primary_dark"
+            android:layout_height="fill_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/app_bar_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <include
+                    android:id="@+id/appbar"
+                    layout="@layout/appbar">
+                </include>
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/card_view_channel"
+                android:layout_gravity="center"
+                android:layout_below="@+id/app_bar_layout"
+                android:layout_width="fill_parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/relative_layout_showroom"
+                    android:layout_width="fill_parent"
+                    android:padding="7.5dp"
+                    android:layout_height="fill_parent">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/et_location"
+                            android:layout_width="0dp"
+                            android:layout_height="fill_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="2.65"
+                            android:background="@color/colour_transparent"
+                            android:backgroundTint="@color/white"
+                            android:drawableLeft="@drawable/places_ic_search"
+                            android:gravity="center|left"
+                            android:hint="ADD YOUR LOCATION"
+                            android:paddingLeft="10dp"
+                            android:imeOptions="actionDone"
+                            android:inputType="textAutoComplete|textCapWords"
+                            android:maxLines="1"
+                            android:textColor="@color/black"
+                            android:textSize="18sp">
+                        </EditText>
+                        <LinearLayout
+                            android:id="@+id/linear_layout_clear"
+                            android:orientation="vertical"
+                            android:layout_weight="0.35"
+                            android:layout_width="0dp"
+                            android:gravity="center"
+                            android:layout_height="fill_parent">
+
+                            <Button
+                                android:id="@+id/clear"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:onClick="onClick"
+                                android:background="@drawable/ic_clear"/>
+                        </LinearLayout></LinearLayout></RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_search"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_below="@+id/card_view_channel"/>
+
+
+        </RelativeLayout>
+    </android.support.v4.widget.DrawerLayout>
+</android.support.design.widget.CoordinatorLayout>

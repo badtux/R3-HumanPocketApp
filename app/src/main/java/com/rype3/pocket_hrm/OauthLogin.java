@@ -43,7 +43,7 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
 
     //Use your own client secret
     private static String REDIRECT_URI = "http://localhost";
-    private static String OAUTH_URL = "http://wmmmendis.rype3.nit/human/account/oauth/authorize";
+    private static String OAUTH_URL = "http://wmmmendis.rype3.net/human/account/oauth/authorize";
     private static String OAUTH_SCOPE = "";
 
     @Override

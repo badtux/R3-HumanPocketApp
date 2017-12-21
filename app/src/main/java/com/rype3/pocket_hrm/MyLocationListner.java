@@ -39,7 +39,7 @@ import io.realm.Realm;
 
 public class MyLocationListner extends Service implements ConnectivityReceiver.ConnectivityReceiverListener{
     public static final String BROADCAST_ACTION = "LOCATION_LISTNER";
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
+    private static final int TWO_MINUTES = 1000 * 60 * 20; //20 miniuts
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
@@ -100,8 +100,6 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
         }
-
-
     }
 
     @Override
@@ -137,8 +135,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         boolean isSignificantlyLessAccurate = accuracyDelta > 200;
 
         // Check if the old and new location are from the same provider
-        boolean isFromSameProvider = isSameProvider(location.getProvider(),
-                currentBestLocation.getProvider());
+        boolean isFromSameProvider = isSameProvider(location.getProvider(), currentBestLocation.getProvider());
 
         // Determine location quality using a combination of timeliness and accuracy
         if (isMoreAccurate) {
@@ -189,7 +186,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
             if (isBetterLocation(loc, previousBestLocation)) {
 
-                // loc.getLatitude();
+    // loc.getLatitude();
                 // loc.getLongitude();
 
                 utils.setSharedPreference(context, String.valueOf(loc.getLatitude()), Constants.LAT);
@@ -203,9 +200,10 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
                 if (validation()) {
                      long id = System.currentTimeMillis();
 
-//                    Long tsLong = System.currentTimeMillis() / 1000;
-//                    String ts = tsLong.toString();
+    //                    Long tsLong = System.currentTimeMillis() / 1000;
+    //                    String ts = tsLong.toString();
                     dataSave.DataSave(
+                            null,
                             myRealm,
                             id,
                             utils.getSharedPreference(context, Constants.CHECKED_STATE),
@@ -297,11 +295,11 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         }
 
         public void onProviderDisabled(String provider) {
-            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_LONG).show();
         }
 
         public void onProviderEnabled(String provider) {
-            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_LONG).show();
         }
 
 //        private boolean checkConnection() {

@@ -1,13 +1,17 @@
 package com.rype3.pocket_hrm;
 
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.rype3.pocket_hrm.SyncAdapter;
+
+/**
+ * Define a Service that returns an IBinder for the
+ * sync adapter class, allowing the sync adapter framework to call
+ * onPerformSync().
+ */
 public class SyncService extends Service {
-    private static final String TAG = "Sync Service";
     // Storage for an instance of the sync adapter
     private static SyncAdapter sSyncAdapter = null;
     // Object to use as a thread-safe lock
@@ -17,7 +21,6 @@ public class SyncService extends Service {
      */
     @Override
     public void onCreate() {
-        Log.e(TAG, "Service created");
         /*
          * Create the sync adapter as a singleton.
          * Set the sync adapter as syncable
@@ -28,15 +31,6 @@ public class SyncService extends Service {
                 sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
             }
         }
-    }
-
-    @Override
-    /**
-     * Logging-only destructor.
-     */
-    public void onDestroy() {
-        super.onDestroy();
-        Log.e(TAG, "Service destroyed");
     }
     /**
      * Return an object that allows the system to invoke
