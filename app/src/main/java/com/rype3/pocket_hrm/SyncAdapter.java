@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,6 +76,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private LocationDetails getLocation;
     private Utils utils;
     public DataSave dataSave;
+    public ArrayList<Integer> id_list;
     JSONArray jsonArray;
 
     SyncAdapter(Context context, boolean autoInitialize) {
@@ -86,64 +88,31 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         myRealm = Realm.getDefaultInstance();
         utils = new Utils(context);
 
+        id_list = new ArrayList<>();
+
         dataSave = new DataSave(context, utils);
     }
-//
-//    public SyncAdapter(
-//            Context context,
-//            boolean autoInitialize,
-//            boolean allowParallelSyncs) {
-//        super(context, autoInitialize, allowParallelSyncs);
-//        /*
-//         * If your app uses a content resolver, get an instance of it
-//         * from the incoming Context
-//         */
-//        mContentResolver = context.getContentResolver();
-//    }
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.e("TAG :","onPerformSync()");
 
+        Handler h1 = new Handler(Looper.getMainLooper());
+        h1.post(new Runnable() {
 
-//        Handler h1 = new Handler(Looper.getMainLooper());
-//        h1.post(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Toast.makeText(getContext(), "onPerformSync()",Toast.LENGTH_SHORT).show();
-//            }
-//               });
+            public void run() {
 
+                if (!String.valueOf(DataSave.Ids(id_list,myRealm)).equals("[]")){
 
-//        String number = bundle.getString("number");
-//        final String id_list = bundle.getString("id_list");
-//        if (number != null) {
-//            Log.e("number : ", number);
-//
-//            if (number.equals("1")) {
-//                Handler h = new Handler(Looper.getMainLooper());
-//                h.post(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//
-//                        if (id_list != null){
-//
-//                            try {
-//                                jsonArray = new JSONArray(id_list);
-//
-//                                Log.e("Id list : ", jsonArray.toString());
-//
-//                                new ProcressTask2().execute(jsonArray.length());
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                });
-//         }
-      //  }
+                    jsonArray = new JSONArray(id_list);
+
+                    new ProcressTask2().execute(jsonArray.length());
+
+                }else{
+                    Log.e("TAG Id list : ", "not ready");
+                }
+            }
+               });
     }
 
 
@@ -158,9 +127,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             for (int count = 0; count < integers[0]; count++) {
 
                 try {
-                    Thread.sleep(5000); //30s
+                    Thread.sleep(30000); //30s
                     publishProgress(count);
-                    Log.e("count : " , String.valueOf(count));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -181,7 +149,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private void SyncItinerary(int index) {
 
         try {
-            Log.e("Id list : ", jsonArray.get(index).toString());
+          //  Log.e("Id list : ", jsonArray.get(index).toString());
 
             getLocation = myRealm.where(LocationDetails.class).equalTo("id", Integer.parseInt(jsonArray.get(index).toString())).findFirst();
 
@@ -239,13 +207,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                             in, // checkIn
                             out). //checkOut
                             execute();
-
-                    Log.e("TAG : ",
-                            "Url : " + url +
-                                    "\nId : " + getLocation.getId() +
-                                    "\nType : " + getLocation.getType() +
-                                    "\nChecked state : " + getLocation.getCheckState() + "\nMeta" + getLocation.getMeta());
-
+//                    Log.e("TAG : ",
+//                            "Url : " + url +
+//                                    "\nId : " + getLocation.getId() +
+//                                    "\nType : " + getLocation.getType() +
+//                                    "\nChecked state : " + getLocation.getCheckState() + "\nMeta" + getLocation.getMeta());
                 }
             }
         } catch (JSONException e) {

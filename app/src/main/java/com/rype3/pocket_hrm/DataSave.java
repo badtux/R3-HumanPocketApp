@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +18,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -51,6 +55,8 @@ import java.util.Locale;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+
 class DataSave implements ConnectivityReceiver.ConnectivityReceiverListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener{
 
     Context context;
@@ -79,7 +85,6 @@ class DataSave implements ConnectivityReceiver.ConnectivityReceiverListener,Goog
    //     Log.e("LOG : ", String.valueOf(meta(deviceId, String.valueOf(getBatteryPercentage(context)), getDeviceName(),location,IOStime(),epf_no,user_id,app_v)));
 
         realm.commitTransaction();
-
 
 //        databaseHandler.addContact(new com.rype3.pocket_hrm.Sqldb.LocationDetails((int) id,location,"","",checkState,deviceId,
 //                String.valueOf(meta(deviceId, String.valueOf(getBatteryPercentage(context)), getDeviceName(),location,IOStime(),epf_no,user_id,app_v)),type));
@@ -212,7 +217,6 @@ class DataSave implements ConnectivityReceiver.ConnectivityReceiverListener,Goog
             e.printStackTrace();
         }
 
-
         return "v "+versionCode;
     }
 
@@ -269,7 +273,7 @@ class DataSave implements ConnectivityReceiver.ConnectivityReceiverListener,Goog
     }
 
 
-    public ArrayList<Integer> Ids(ArrayList<Integer> id_list,Realm realm){
+    public static ArrayList<Integer> Ids(ArrayList<Integer> id_list,Realm realm){
         id_list.clear();
 
         RealmResults<LocationDetails> locationList = realm.where(LocationDetails.class).equalTo("state", true).findAll();
@@ -368,11 +372,11 @@ class DataSave implements ConnectivityReceiver.ConnectivityReceiverListener,Goog
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
     }
 
     @Override
     public void onConnectionSuspended(int i) {
+
 
     }
 

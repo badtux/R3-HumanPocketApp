@@ -102,7 +102,7 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
         }
 
         if (id == R.id.action_sync) {
-            TriggerRefresh("1" ,id_list());
+      //      TriggerRefresh("1" ,id_list());
             return true;
         }
 
@@ -111,7 +111,7 @@ public class HistoryActivity extends AppCompatActivity implements ConnectivityRe
 
     public void parseJsonResponseHistory(final String result) {
         if (result != null) {
-            Log.e("Result : ", result);
+          //  Log.e("Result : ", result);
             try {
                 JSONObject jsonObjectResult = new JSONObject(result);
                 boolean status = jsonObjectResult.getBoolean("status");

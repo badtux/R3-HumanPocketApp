@@ -1,15 +1,14 @@
 package com.rype3.pocket_hrm;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -94,6 +93,8 @@ public class MainActivity extends BaseActivity implements
   //  public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
     public static final long SYNC_INTERVAL = SECONDS_PER_MINUTE;
 
+    LocationManager mLocationManager;
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,30 +132,8 @@ public class MainActivity extends BaseActivity implements
         if (placeName != null) {
             locationEditText.setText(placeName);
         }
-
-    //    backServices = new BackServices(context);
-
-    //    intent = new Intent(context, BackServices.class);
-
-//        if (!isMyServiceRunning(BackServices.class)) {
-//            startService(intent);
-//        }
-
-       // syncMethod();
     }
 
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.e ("isMyServiceRunning?", true+"");
-                return true;
-            }
-        }
-        Log.e ("isMyServiceRunning?", false+"");
-        return false;
-    }
 
     @Override
     protected int getLayoutResource() {
@@ -315,7 +294,7 @@ public class MainActivity extends BaseActivity implements
                 locationEditText.setClickable(true);
                 dataSave.blinkIcon(image_out, 1);
 
-                dataSave.TriggerRefresh("1", dataSave.Ids(id_list,myRealm));
+             //   dataSave.TriggerRefresh("1", dataSave.Ids(id_list,myRealm));
             }
         }, 5000);
     }
@@ -427,9 +406,9 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if (isConnected) {
-            dataSave.TriggerRefresh(number, dataSave.Ids(id_list,myRealm));
+           // dataSave.TriggerRefresh(number, dataSave.Ids(id_list,myRealm));
         } else {
-            dataSave.TriggerRefresh(null, null);
+         //   dataSave.TriggerRefresh(null, null);
         }
     }
 
@@ -486,17 +465,5 @@ public class MainActivity extends BaseActivity implements
             btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2));
             utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
         }
-    }
-
-    private boolean syncMethod() {
-
-        Account account = AuthenticatorService.GetAccount();
-        AccountManager accountManager = (AccountManager) this.getSystemService(Context.ACCOUNT_SERVICE);
-        if (accountManager.addAccountExplicitly(account, null, null)) {
-            Bundle bundle = new Bundle();
-            ContentResolver.addPeriodicSync(account, AUTHORITY, bundle, 2*1000);
-
-        }
-        return true;
     }
 }
