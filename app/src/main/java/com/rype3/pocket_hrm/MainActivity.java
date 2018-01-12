@@ -93,7 +93,6 @@ public class MainActivity extends BaseActivity implements
   //  public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
     public static final long SYNC_INTERVAL = SECONDS_PER_MINUTE;
 
-    LocationManager mLocationManager;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
