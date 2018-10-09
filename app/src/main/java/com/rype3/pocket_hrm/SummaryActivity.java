@@ -95,9 +95,7 @@ public class SummaryActivity extends AppCompatActivity implements ConnectivityRe
         public void onClick(View v) {
 
             if (v == btn_cancel){
-                intent = new Intent(SummaryActivity.this,LeaveActivity.class);
-                startActivity(intent);
-                finish();
+                PocketHr.startSpecificActivity(SummaryActivity.this,context,LeaveActivity.class);
             }
 
             if (v == btn_done){
@@ -105,7 +103,7 @@ public class SummaryActivity extends AppCompatActivity implements ConnectivityRe
                 if (checkConnection()) {
                     new ProcressAsyncTaskLeave(
                             SummaryActivity.this,
-                            constants.urls(1),
+                            constants.BASE_URL+"/human/api/v1/leave/store",
                             "",//epf
                             null,
                             "",//epf
@@ -117,7 +115,7 @@ public class SummaryActivity extends AppCompatActivity implements ConnectivityRe
                             "",//token
                             leave_reason.getText().toString(),
                             "" //language
-                    ).execute();
+                             ).execute();
                 }
             }
         }
@@ -134,10 +132,7 @@ public class SummaryActivity extends AppCompatActivity implements ConnectivityRe
                 boolean status = jsonObjectResult.getBoolean("status");
 
                 if (status){
-
-                    intent = new Intent(SummaryActivity.this, LeaveActivity.class);
-                    startActivity(intent);
-                    finish();
+                    PocketHr.startSpecificActivity(SummaryActivity.this,context,LeaveActivity.class);
                 }else{
                     Toast.makeText(context,"Error" ,Toast.LENGTH_SHORT).show();
                 }

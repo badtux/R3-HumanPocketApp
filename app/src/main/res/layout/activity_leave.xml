@@ -156,15 +156,15 @@
         android:textSize="18sp"
         android:padding="5dp" />
 
-    <RadioButton
-        android:id="@+id/cb_annual"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="ANNUAL"
-        android:tag="ANNUAL"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:padding="5dp" />
+        <RadioButton
+            android:id="@+id/cb_annual"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:tag="ANNUAL"
+            android:text="ANNUAL"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     <RadioButton
         android:id="@+id/cb_medical"

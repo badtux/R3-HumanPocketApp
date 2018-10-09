@@ -48,13 +48,14 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
+
 public class SearchActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         ConnectivityReceiver.ConnectivityReceiverListener,
         PlaceAutocompleteAdapter.PlaceAutoCompleteInterface,
         View.OnClickListener{
-
 
     private static final String LOG_TAG = "Search Activity";
 
@@ -71,9 +72,10 @@ public class SearchActivity extends BaseActivity implements
     private Location lastLocation;
     LocationManager locationManager;
     LinearLayout clear_layout;
+    private Realm myRealm;
     Intent intent;
+    private PocketHr pocketHr;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(new LatLng(6.0083849,80.3094838), new LatLng(9.8014351,80.2087608));
-
 
     @Override
     public void onStart() {
@@ -94,6 +96,10 @@ public class SearchActivity extends BaseActivity implements
 
         mContext = this.getApplicationContext();
         utils = new Utils(mContext);
+
+        myRealm = Realm.getDefaultInstance();
+
+        pocketHr = new PocketHr(mContext,utils);
 
         buildGoogleApiClient();
 
@@ -128,6 +134,14 @@ public class SearchActivity extends BaseActivity implements
                 utils.setSharedPreference(mContext, String.valueOf(lastLocation.getLatitude()), Constants.LAT);
                 utils.setSharedPreference(mContext, String.valueOf(lastLocation.getLongitude()), Constants.LONG);
 
+                pocketHr.DataSave(
+                        null,
+                        myRealm,
+                        utils.getSharedPreference(mContext, Constants.CHECKED_STATE),
+                        "location",
+                        true,
+                        utils.getSharedPreference(mContext, Constants.LOCATION));
+
             } else {
                 Log.e("TAG ", " null lat/long");
                 utils.setSharedPreference(mContext, String.valueOf(0), Constants.LAT);
@@ -140,7 +154,7 @@ public class SearchActivity extends BaseActivity implements
             mRecyclerView.setAdapter(mAdapter);
         }catch (Exception e){
             e.printStackTrace();
-            Toast.makeText(mContext,e.getMessage(),Toast.LENGTH_SHORT).show();
+            PocketHr.setToast(mContext,e.getMessage(),Toast.LENGTH_SHORT);
         }
 
         locationEditText.addTextChangedListener(new TextWatcher() {
@@ -238,11 +252,9 @@ public class SearchActivity extends BaseActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(LOG_TAG, "Google Places API connection failed with error code: "
-                + connectionResult.getErrorCode());
+        Log.e(LOG_TAG, "Google Places API connection failed with error code: " + connectionResult.getErrorCode());
 
-        Toast.makeText(this, "Google Places API connection failed with error code:"
-                + connectionResult.getErrorCode(), Toast.LENGTH_LONG).show();
+        PocketHr.setToast(getApplicationContext(),"Google Places API connection failed with error code : " + connectionResult.getErrorCode(),Toast.LENGTH_LONG);
     }
 
     @Override
@@ -298,7 +310,6 @@ public class SearchActivity extends BaseActivity implements
         mRecyclerView.setHasFixedSize(true);
         llm = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(llm);
-
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -312,8 +323,8 @@ public class SearchActivity extends BaseActivity implements
 
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(30 * 1000);
-            locationRequest.setFastestInterval(5 * 1000);
+            locationRequest.setInterval(30*1000);
+            locationRequest.setFastestInterval(5*1000);
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
 
             // **************************
@@ -358,7 +369,7 @@ public class SearchActivity extends BaseActivity implements
         if (isConnected) {
             return true;
         } else {
-            ViewMessage("You don't have internet connection", 0);
+            PocketHr.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
         }
         return false;
     }
@@ -385,39 +396,10 @@ public class SearchActivity extends BaseActivity implements
         }
     }
 
-    public void ViewMessage(String message, int position) {
-
-        switch (position) {
-            case 0:
-                Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView = snackbar.getView();
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) sbView.getLayoutParams();
-                params.gravity = Gravity.BOTTOM;
-                sbView.setLayoutParams(params);
-                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                textView.setTextColor(Color.RED);
-                snackbar.show();
-                break;
-
-            case 1:
-                snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView1 = snackbar.getView();
-                CoordinatorLayout.LayoutParams params1 = (CoordinatorLayout.LayoutParams) sbView1.getLayoutParams();
-                params1.gravity = Gravity.BOTTOM;
-                sbView1.setLayoutParams(params1);
-                TextView textView1 = (TextView) sbView1.findViewById(android.support.design.R.id.snackbar_text);
-                textView1.setTextColor(Color.GREEN);
-                snackbar.show();
-                break;
-        }
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            intent =  new Intent(SearchActivity.this,MainActivity.class);
-            startActivity(intent);
-            finish();
+            PocketHr.startSpecificActivity(SearchActivity.this,getApplicationContext(),MainActivity.class);
         }
         return super.onKeyDown(keyCode, event);
     }

@@ -39,7 +39,7 @@ public class BackServices extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        PocketHr.setToast(this,"Service started",Toast.LENGTH_LONG);
 
         startTimer();
         return START_STICKY;
@@ -52,7 +52,7 @@ public class BackServices extends Service {
         Intent broadcastIntent = new Intent("android.net.conn.CONNECTIVITY_CHANGE");
         sendBroadcast(broadcastIntent);
         stoptimertask();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        PocketHr.setToast(this,"Service destroyed",Toast.LENGTH_LONG);
     }
 
     private Timer timer;

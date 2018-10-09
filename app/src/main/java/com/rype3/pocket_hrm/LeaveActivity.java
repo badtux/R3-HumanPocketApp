@@ -3,7 +3,6 @@ package com.rype3.pocket_hrm;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,8 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -54,6 +51,8 @@ public class LeaveActivity extends AppCompatActivity {
     Context context;
     long todayTimestamp;
     Calendar calender;
+    private Constants constants;
+    Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +63,8 @@ public class LeaveActivity extends AppCompatActivity {
         toolbar();
 
         context = getApplicationContext();
+        constants = new Constants(context);
+        utils = new Utils(context);
         array_reason = getResources().getStringArray(R.array.e_reason);
 
         ArrayAdapter<String> driverNameAdapter = new ArrayAdapter<String>(LeaveActivity.this, R.layout.spinner_name, array_reason);
@@ -82,6 +83,14 @@ public class LeaveActivity extends AppCompatActivity {
 
             }
         });
+
+
+        if (PocketHr.checkConnection()){
+            registerDeviceForAttendance();
+        }
+
+        Log.e("Log Device_id : " , utils.getSharedPreference(context,Constants.DEVICE_ID));
+        Log.e("Log token : " , utils.getSharedPreference(context,Constants.TOKEN));
 
     }
 
@@ -203,6 +212,8 @@ public class LeaveActivity extends AppCompatActivity {
                    intent.putExtra("result" , String.valueOf(setData(leaveTypeArray[leaveType_position], leaveCategoryArray[leaveCategory_position], array_reason[p_reason], et_from.getText().toString(), et_to.getText().toString())));
                    startActivity(intent);
                    finish();
+
+
                }
                 Log.e ("TAG : " , String.valueOf(setData(leaveTypeArray[leaveType_position], leaveCategoryArray[leaveCategory_position], array_reason[p_reason], et_from.getText().toString(), et_to.getText().toString())));
             }
@@ -395,7 +406,7 @@ public class LeaveActivity extends AppCompatActivity {
     }
 
     private void message(Context context, String message){
-        Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
+        PocketHr.setToast(context,message,Toast.LENGTH_SHORT);
     }
 
 
@@ -410,9 +421,7 @@ public class LeaveActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_leave) {
-            intent = new Intent(getBaseContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
+            PocketHr.startSpecificActivity(LeaveActivity.this,context,MainActivity.class);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -433,5 +442,44 @@ public class LeaveActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+
+    public void registerDeviceForAttendance(){
+            new ProcressAsyncTask(null,
+                    LeaveActivity.this,utils,
+                    constants.BASE_URL+"/human/api/v1/me",
+                    null,
+                    null,
+                    null,
+                    "GET",7,"1.0",
+                    utils.getSharedPreference(context,Constants.TOKEN),
+                    utils.getSharedPreference(context,Constants.DEVICE_ID),
+                    null,
+                    null,null,null,null,0,null,null,null).execute();
+    }
+
+    public void parseJsonResponseLeave(final String result) {
+        if (result != null) {
+
+            Log.e("result : ", result);
+
+
+            try {
+                JSONObject jsonObjectResult = new JSONObject(result);
+                boolean status = jsonObjectResult.getBoolean("status");
+                String result_ = jsonObjectResult.getString("result");
+
+                JSONObject jsonObject = new JSONObject(result_);
+                String leave = jsonObject.getString("leave");
+
+                Log.e("Leave : ", leave);
+                if (status){
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

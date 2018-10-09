@@ -6,6 +6,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.rype3.pocket_hrm.realm.LocationDetails;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -25,20 +28,27 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
+import static com.rype3.pocket_hrm.PocketHr.timeStamp;
+
 class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
     private Activity activity;
-    private String url, email, pin, epf, HTTP_TYPE, version, token,deviceId,uid,checked_at,checkout_at,meta;
+    private String url, email, pin, epf, HTTP_TYPE, version, token,deviceId,uid,checked_at,checkout_at,meta,latitude,longtitude,CheckState,location;
     private ProgressDialog dialog;
     private final static String TAG = "Procress AsyncTask";
-    private int type;
+    private int type,locationId;
     private Context context;
+    private Realm realm;
+    private Utils utils;
 
-    public ProcressAsyncTask(Context context) {
+    public ProcressAsyncTask(Context context ) {
         this.context = context;
     }
 
-    ProcressAsyncTask(Activity activity,
+    ProcressAsyncTask(Realm realm,Activity activity,Utils utils,
                       String url,
                       String email,
                       String pin,
@@ -51,9 +61,16 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                       String uid,
                       String checked_at,
                       String checkout_at,
+                      String latitude,
+                      String longtitude,
+                      int locationId,
+                      String CheckState,
+                      String location,
                       String meta) {
         super();
+        this.realm = realm;
         this.activity = activity;
+        this.utils = utils;
         this.url = url;
         this.email = email;
         this.pin = pin;
@@ -66,6 +83,11 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
         this.uid = uid;
         this.checked_at = checked_at;
         this.checkout_at = checkout_at;
+        this.latitude = latitude;
+        this.longtitude = longtitude;
+        this.locationId = locationId;
+        this.CheckState = CheckState;
+        this.location = location;
         this.meta = meta;
     }
 
@@ -73,11 +95,13 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
     protected void onPreExecute() {
         super.onPreExecute();
-        dialog = new ProgressDialog(activity);
-        dialog.setTitle("Please wait...");
-        dialog.setCancelable(false);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        if (activity != null) {
+            dialog = new ProgressDialog(activity);
+            dialog.setTitle("Please wait...");
+            dialog.setCancelable(false);
+            dialog.setIndeterminate(false);
+            dialog.show();
+        }
     }
 
     @Override
@@ -96,6 +120,11 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                     this.uid,
                     this.checked_at,
                     this.checkout_at,
+                    this.latitude,
+                    this.longtitude,
+                    this.locationId,
+                    this.CheckState,
+                    this.location,
                     this.meta).toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,7 +134,9 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(final String result) {
-        dialog.dismiss();
+        if (activity != null) {
+            dialog.dismiss();
+        }
         switch (this.type) {
             case 0:
                 ((PINnumberActivity) activity).parseJsonResponse(result);//1567234
@@ -134,6 +165,40 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
             case 6:
                Log.e("RESULT : " , result);
                 break;
+
+            case 7:
+                ((LeaveActivity) activity).parseJsonResponseLeave(result);
+                break;
+
+            case 8:
+                    if (realm != null) {
+                        try {
+                            if (!result.equals("0")) {
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(result);
+                                    boolean status = jsonObject.getBoolean("status");
+                                    if (status){
+
+                                        LocationDetails updateLocationDetails = realm.where(LocationDetails.class).equalTo("id", this.locationId).findFirst();
+                                        if (updateLocationDetails != null) {
+                                            realm.beginTransaction();
+                                            updateLocationDetails.setState(false);
+                                            realm.commitTransaction();
+                                            deleteCache(this.locationId);
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.e("TAG : ", "Server not response");
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                break;
         }
     }
 
@@ -149,13 +214,29 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                                 String uid,
                                 String checked_at,
                                 String checkout_at,
+                                String latitude,
+                                String longtitude,
+                                int locationId,
+                                String CheckState,
+                                String location,
                                 String meta) {
         // Creating JSON Parser instance
         JSONParser jParser = new JSONParser();
 
         // getting JSON string from URL
 
-        return jParser.getJSONFromUrl(url, email, pin, epf, HTTP_TYPE, type, version, token,deviceId,uid,checked_at,checkout_at ,meta);
+        return jParser.getJSONFromUrl(url, email, pin, epf, HTTP_TYPE, type, version, token,deviceId,uid,checked_at,checkout_at ,latitude,longtitude,locationId,CheckState,location,meta);
+    }
+
+
+    public void deleteCache(final int id){
+        this.realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+               // RealmResults<LocationDetails> result = null;
+               realm.where(LocationDetails.class).equalTo("id",id).findAll().deleteAllFromRealm();
+            }
+        });
     }
 
     private class JSONParser {
@@ -177,11 +258,18 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                                   String token,
                                   String deviceId,
                                   String uid,
-                                  String checked_at, String checkout_at, String meta) {
-         //   Log.e("URL ", url);
+                                  String checked_at,
+                                  String checkout_at,
+                                  String latitude,
+                                  String longtitude,
+                                  int locationId,
+                                  String CheckState,
+                                  String location,
+                                  String meta) {
+
             switch (HTTP_TYPE) {
                 case "POST":
-                    Log.e("HTTP TYPE ", "POST");
+                 //   Log.e("HTTP TYPE ", "POST");
                     // Making HTTP POST request
                     try {
                         // defaultHttpClient
@@ -216,12 +304,30 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
                             if (checked_at != null) {
                                 nameValuePairs.add(new BasicNameValuePair("checked_at", checked_at));
-                             //   Log.e("checked_at LOG ", checked_at);
                             }
 
                             if (checkout_at != null) {
                                 nameValuePairs.add(new BasicNameValuePair("checkout_at", checkout_at));
-                           //     Log.e("checkout_at LOG ", checkout_at);
+                            }
+
+                            if (latitude != null) {
+                                nameValuePairs.add(new BasicNameValuePair("lat", latitude));
+                            }
+
+                            if (longtitude != null) {
+                                nameValuePairs.add(new BasicNameValuePair("lon", longtitude));
+                            }
+
+                            if (locationId != 0) {
+                                nameValuePairs.add(new BasicNameValuePair("ts", String.valueOf(locationId)));
+                            }
+
+                            if (CheckState != null) {
+                                nameValuePairs.add(new BasicNameValuePair("check_state", CheckState));
+                            }
+
+                            if (location != null) {
+                                nameValuePairs.add(new BasicNameValuePair("location", location));
                             }
 
                             if (deviceId != null) {
@@ -232,8 +338,6 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
 
                             if (meta != null){
                                 nameValuePairs.add(new BasicNameValuePair("meta", meta));
-
-                             //   Log.e("LOG ", meta);
                             }
 
                             nameValuePairs.add(new BasicNameValuePair("description", ""));
@@ -252,7 +356,7 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                         StatusLine statusLine = httpResponse.getStatusLine();
                         int statusCode = statusLine.getStatusCode();
 
-                    //    Log.e(TAG, " Status code : " + String.valueOf(statusCode));
+                      //  Log.e(TAG, " Status code : " + String.valueOf(statusCode));
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -283,7 +387,7 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                     break;
 
                 case "GET":
-                    Log.e("HTTP TYPE ", "GET");
+                  //  Log.e("HTTP TYPE ", "GET");
                     StringBuilder stringBuilder = new StringBuilder();
                     HttpClient httpClient = new DefaultHttpClient();
 
@@ -335,7 +439,7 @@ class ProcressAsyncTask extends AsyncTask<Void, Void, String> {
                         StatusLine statusLine = response.getStatusLine();
                         int statusCode = statusLine.getStatusCode();
 
-                        Log.e(TAG, " statusCode " + String.valueOf(statusCode));
+                   //     Log.e(TAG, " statusCode " + String.valueOf(statusCode));
 
                         if (statusCode == 200) {
                             HttpEntity entity = response.getEntity();

@@ -5,79 +5,32 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.rype3.pocket_hrm.Utils;
 import com.rype3.pocket_hrm.realm.LocationDetails;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.UnknownHostException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import io.realm.Realm;
 
-/**
- * Handle the transfer of data between a server and an
- * app, using the Android sync adapter framework.
- */
+import static com.rype3.pocket_hrm.PocketHr.timeStamp;
+
 class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = "Sync Adapter";
-    /**
-     * URL to fetch content from during a sync.
-     *
-     * <p>This points to the Android Developers Blog. (Side note: We highly recommend reading the
-     * Android Developer Blog to stay up to date on the latest Android platform developments!)
-     *
-     *
-     * Network connection timeout, in milliseconds.
-     *
-     */
-    private static final int NET_CONNECT_TIMEOUT_MILLIS = 15000;  // 15 seconds
-    /**
-     * Network read timeout, in milliseconds.
-     */
-    private static final int NET_READ_TIMEOUT_MILLIS = 10000;  // 10 seconds
-    // Global variables
-    // Define a variable to contain a content resolver instance
+
     ContentResolver mContentResolver;
-    //UploadToServer uploadToServerPatientDetails;
-    /**
-     * Set up the sync adapter
-     */
     private Realm myRealm;
     private LocationDetails getLocation;
     private Utils utils;
-    public DataSave dataSave;
+    public PocketHr pocketHr;
     public ArrayList<Integer> id_list;
     JSONArray jsonArray;
+    Context mContext;
 
     SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -90,7 +43,10 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         id_list = new ArrayList<>();
 
-        dataSave = new DataSave(context, utils);
+        mContext = context;
+
+        pocketHr = new PocketHr(context, utils);
+        ProcressAsyncTask procressAsyncTask = new ProcressAsyncTask(getContext());
     }
 
     @Override
@@ -99,21 +55,20 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         Handler h1 = new Handler(Looper.getMainLooper());
         h1.post(new Runnable() {
-
             public void run() {
 
-                if (!String.valueOf(DataSave.Ids(id_list,myRealm)).equals("[]")){
-
+                if (!String.valueOf(PocketHr.Ids(id_list,myRealm)).equals("[]")){
                     jsonArray = new JSONArray(id_list);
-
                     new ProcressTask2().execute(jsonArray.length());
-
                 }else{
-                    Log.e("TAG Id list : ", "not ready");
+                    BaseActivity.EnableSyncAutomatically(false);
+                    Log.e("SYNC : ", "OFF");
+                    utils.setSharedPreference(getContext(),timeStamp(),Constants.last_sync_time);
+                    utils.setSharedPreference(getContext(),null,Constants.SYNC_STATE);
                 }
             }
                });
-    }
+        }
 
 
     private class ProcressTask2 extends AsyncTask<Integer, Integer, String> {
@@ -127,7 +82,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             for (int count = 0; count < integers[0]; count++) {
 
                 try {
-                    Thread.sleep(30000); //30s
+                    Thread.sleep(10000); //10s
                     publishProgress(count);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -149,18 +104,47 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private void SyncItinerary(int index) {
 
         try {
-          //  Log.e("Id list : ", jsonArray.get(index).toString());
 
             getLocation = myRealm.where(LocationDetails.class).equalTo("id", Integer.parseInt(jsonArray.get(index).toString())).findFirst();
 
             if (getLocation != null) {
+                String did  = "";
+                String d_location = "";
+                String d_iso = "";
+                String d_name = "";
+                String location = "";
                 JSONObject jsonObject = new JSONObject(getLocation.getMeta());
                 if (jsonObject != null) {
-                    String did = jsonObject.getString("did");
-                    String d_location = jsonObject.getString("d_location");
-                    String d_iso = jsonObject.getString("d_iso");
-                    String d_name = jsonObject.getString("d_name");
-                    String location = jsonObject.getString("location");
+
+                    if (jsonObject.has("did")){
+                        did = jsonObject.getString("did");
+                    }else{
+                        did  = "";
+                    }
+
+                    if (jsonObject.has("d_location")){
+                        d_location = jsonObject.getString("d_location");
+                    }else{
+                        d_location = "";
+                    }
+
+                    if (jsonObject.has("d_iso")){
+                        d_iso = jsonObject.getString("d_iso");
+                    }else{
+                        d_iso = "";
+                    }
+
+                    if (jsonObject.has("d_name")){
+                        d_name = jsonObject.getString("d_name");
+                    }else{
+                        d_name = "";
+                    }
+
+                    if (jsonObject.has("location")){
+                        location = jsonObject.getString("location");
+                    }else{
+                        location = "";
+                    }
 
                     JSONObject locatio_json = new JSONObject(location);
 
@@ -177,12 +161,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                             switch (getLocation.getCheckState()) {
 
                                 case "in":
-                                    url = "http://wmmmendis.rype3.net/human/api/v1/check-in";
+                                    url =   Constants.BASE_URL+"/human/api/v1/check-in";
                                     in = d_iso;
                                     break;
 
                                 case "out":
-                                    url = "http://wmmmendis.rype3.net/human/api/v1/check-out";
+                                    url = Constants.BASE_URL+"/human/api/v1/check-out";
                                     out = d_iso;
                                     break;
                             }
@@ -190,23 +174,34 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                             break;
 
                         case "location":
-                            url = "http://wmmmendis.rype3.net/io/api/v1/device/track";
+                            url = Constants.BASE_URL+"/io/api/v1/device/track";
                             break;
                     }
-                    new ProcressAsyncTask1(
-                            url,
-                            latitude,
-                            longtitude,
-                            did,
-                            d_name,
-                            getLocation.getId(),
-                            getLocation.getCheckState(),
-                            d_location,
-                            getLocation.getMeta(),
-                            utils.getSharedPreference(getContext(), Constants.USER_ID), //  uid
-                            in, // checkIn
-                            out). //checkOut
-                            execute();
+
+               //     Log.e("URL : " , url);
+
+                    new ProcressAsyncTask(myRealm,
+                    null,
+                     utils,
+                     url,
+                    null,
+                    null,
+                    PocketHr.GetSharedPreference(Constants.EPF_NUMBER),
+                    "POST",
+                    8,
+                    PocketHr.Version(),
+                    PocketHr.GetSharedPreference(Constants.TOKEN),
+                    PocketHr.GetSharedPreference(Constants.DEVICE_ID),
+                    PocketHr.GetSharedPreference(Constants.USER_ID),
+                    in,
+                    out,
+                    latitude,
+                    longtitude,
+                    getLocation.getId(),
+                    getLocation.getCheckState(),
+                    d_location,
+                    getLocation.getMeta()).execute();
+
 //                    Log.e("TAG : ",
 //                            "Url : " + url +
 //                                    "\nId : " + getLocation.getId() +
@@ -217,232 +212,5 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    private class ProcressAsyncTask1 extends AsyncTask<Void, Void, String> {
-        private String url,lat,lon,device_id ,checkState,location ,meta,uid,checkedAt , checkedOutAt,device_name;
-        private int timeStamp;
-
-        ProcressAsyncTask1(
-                String url,
-                String lat,
-                String lon,
-                String device_id,
-                String device_name,
-                int timeStamp,
-                String checkState,
-                String location,
-                String meta,
-                String uid,
-                String checkedAt ,
-                String checkedOutAt) {
-            super();
-
-            this.url = url;
-            this.lat = lat;
-            this.lon = lon;
-            this.device_id = device_id;
-            this.device_name = device_name;
-            this.timeStamp = timeStamp;
-            this.checkState = checkState;
-            this.location = location;
-            this.meta = meta;
-            this.uid = uid;
-            this.checkedAt = checkedAt;
-            this.checkedOutAt = checkedOutAt;
-
-            //  Log.e("Proccess timeStamp : ", String.valueOf(this.timeStamp));
-        }
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                if (loadJSON(this.url, this.lat, this.lon, this.device_id, this.device_name,this.timeStamp, this.checkState, this.location, this.meta,this.uid,this.checkedAt,this.checkedOutAt) != null) {
-                    return loadJSON(this.url, this.lat, this.lon, this.device_id,this.device_name, this.timeStamp, this.checkState, this.location, this.meta,this.uid,this.checkedAt,this.checkedOutAt).toString();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final String result) {
-
-            if (result != null) {
-                try {
-                    //   Log.e("result : ", result);
-                    Log.e("Result offline :  ", result);
-
-                    if (!result.equals("0")) {
-                        LocationDetails updateLocationDetails = myRealm.where(LocationDetails.class).equalTo("id", this.timeStamp).findFirst();
-                        if (updateLocationDetails != null) {
-                            myRealm.beginTransaction();
-                            updateLocationDetails.setState(false);
-                            myRealm.commitTransaction();
-                        }
-                    } else {
-                        Log.e("TAG : ", "Server not response");
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private Integer loadJSON(String url, String lat, String lon, String device_id, String device_name,int timeStamp, String checkState, String location, String meta,String uid,String checkedAt ,String checkedOutAt) {
-        // Creating JSON Parser instance
-        JSONParser jParser = new JSONParser();
-
-        // getting JSON string from URL
-        int json = jParser.getJSONFromUrl(url ,lat,lon,device_id,device_name,timeStamp,checkState,location,meta , uid ,checkedAt,checkedOutAt);
-
-        return json;
-    }
-
-    private class JSONParser {
-
-        // constructor
-        JSONParser() {
-        }
-
-        int getJSONFromUrl(String url, String lat, String lon, String device_id, String device_name, int timeStamp, String checkState, String location, String meta, String uid , String checkedAt , String checkedOutAt) {
-            JSONObject jsonObject = null;
-            //      Create a new HttpClient and Post Header
-            //      Log.e("Check State : ", checkState);
-
-            try {
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httppost = new HttpPost(url);
-
-                List<BasicNameValuePair> nameValuePairs = new LinkedList<BasicNameValuePair>();
-
-                if (device_id != null) {
-                    nameValuePairs.add(new BasicNameValuePair("device_id", device_id));
-                    nameValuePairs.add(new BasicNameValuePair("imei", device_id));// attendance
-
-                }
-
-                if (device_name != null){
-                    nameValuePairs.add(new BasicNameValuePair("device_name", device_name));// attendance
-                }
-
-                if (lat != null) {
-                    nameValuePairs.add(new BasicNameValuePair("lat", lat));
-                }
-
-                if (lon != null) {
-                    nameValuePairs.add(new BasicNameValuePair("lon", lon));
-                }
-
-                if (checkState != null) {
-                    nameValuePairs.add(new BasicNameValuePair("check_state", checkState));
-                }
-
-                if (location != null) {
-                    nameValuePairs.add(new BasicNameValuePair("location", location));
-                }
-
-                if (timeStamp != 0) {
-                    nameValuePairs.add(new BasicNameValuePair("ts", String.valueOf(timeStamp)));
-                }
-
-                if (meta != null) {//tracker meta, Attendance
-                    nameValuePairs.add(new BasicNameValuePair("meta", meta));
-
-                    //  Log.e("LOG meta ", meta);
-                }
-
-                if (uid != null) {
-                    nameValuePairs.add(new BasicNameValuePair("uid", uid)); //need to add user id
-                }
-
-                if (checkedAt != null) {
-                    nameValuePairs.add(new BasicNameValuePair("checked_at", checkedAt));
-                    //  Log.e("checked_at LOG ", checkedAt);
-                }
-
-                if (checkedOutAt != null) {
-                    nameValuePairs.add(new BasicNameValuePair("checkout_at", checkedOutAt));
-                    //   Log.e("checkout_at LOG ", checkedOutAt);
-                }
-
-
-//                if ( metaAttendance != null){// in/out meta
-//                    nameValuePairs.add(new BasicNameValuePair("meta", metaAttendance));
-//
-//                    Log.e("LOG metaAttendance ", metaAttendance);
-//                }
-                nameValuePairs.add(new BasicNameValuePair("description", ""));
-                nameValuePairs.add(new BasicNameValuePair("client_version", dataSave.Version(getContext())));
-                nameValuePairs.add(new BasicNameValuePair("u_id", utils.getSharedPreference(getContext(),Constants.USER_EPF_NO)));
-
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                HttpResponse response = httpclient.execute(httppost);
-                StatusLine statusLine = response.getStatusLine();
-                int statusCode = statusLine.getStatusCode();
-
-                Log.e("statusCode : ", String.valueOf(statusCode));
-
-                StringBuilder stringBuilder = new StringBuilder();
-
-                if (statusCode == 200) {
-                    HttpEntity entity = response.getEntity();
-                    InputStream inputStream = entity.getContent();
-//                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//                    String line;
-//                    while ((line = reader.readLine()) != null) {
-//                        stringBuilder.append(line);
-//                        jsonObject = new JSONObject(stringBuilder.toString());
-//                        inputStream.close();
-//                        break;
-//                    }
-                    try {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"), 8);
-                        StringBuilder sb = new StringBuilder();
-                        String line = null;
-                        while ((line = reader.readLine()) != null) {
-                            sb.append(line + "\n");
-                        }
-                        inputStream.close();
-                        String json = sb.toString();
-                        jsonObject = new JSONObject(json);
-
-                        // Log.e("JSON : " , jsonObject.toString());
-
-                        Handler h = new Handler(Looper.getMainLooper());
-                        final JSONObject finalJsonObject = jsonObject;
-                        h.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-
-                                try {
-                                    Toast.makeText(getContext(), finalJsonObject.getString("message"),Toast.LENGTH_SHORT).show();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-
-                    } catch (Exception e) {
-                        Log.e("Buffer Error", "Error converting result " + e.toString());
-                    }
-                    return timeStamp;
-                }
-            } catch (ClientProtocolException | UnknownHostException ignored) {
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return 0;
-        }
-
     }
 }

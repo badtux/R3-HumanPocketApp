@@ -79,17 +79,19 @@
             android:layout_height="fill_parent"
             android:layout_weight="0.5">
 
-            <Button
+            <TextView
                 android:id="@+id/btn_send"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="2.5dp"
+                android:padding="5dp"
+                android:layout_margin="1dp"
                 android:layout_gravity="center"
                 android:text="SEND NOW"
-                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:background="@color/gray"
+                android:textSize="15sp"
                 android:textStyle="bold" />
-
 
         </LinearLayout>
     </LinearLayout>

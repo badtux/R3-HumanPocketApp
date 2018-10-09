@@ -13,11 +13,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -97,7 +94,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
                     resultIntent.putExtra("code", authCode);
                     authComplete = true;
                     setResult(Activity.RESULT_CANCELED, resultIntent);
-                    Toast.makeText(getApplicationContext(), "Error Occured", Toast.LENGTH_SHORT).show();
+                    PocketHr.setToast(context,"Error Occured",Toast.LENGTH_SHORT);
                 }
             }
         });
@@ -108,7 +105,8 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
         if (isConnected) {
             return true;
         } else {
-            ViewMessage("You don't have internet connection",0);
+            PocketHr.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
+            PocketHr.setToast(context,"You don't have internet connection",Toast.LENGTH_SHORT);
         }
         return false;
     }
@@ -116,9 +114,11 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if (isConnected) {
-            ViewMessage("Connection Success",1);
+            PocketHr.snackBarMessage(coordinatorLayout,"Connection success",Color.RED);
+            PocketHr.setToast(context,"Connection success",Toast.LENGTH_SHORT);
         } else {
-            ViewMessage("You don't have internet connection",0);
+            PocketHr.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
+            PocketHr.setToast(context,"You don't have internet connection",Toast.LENGTH_SHORT);
         }
     }
 
@@ -126,33 +126,7 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
     protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
-    }
 
-    public void ViewMessage(String message, int position){
-
-        switch (position){
-            case 0:
-                snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView = snackbar.getView();
-                CoordinatorLayout.LayoutParams params=(CoordinatorLayout.LayoutParams)sbView.getLayoutParams();
-                params.gravity = Gravity.TOP;
-                sbView.setLayoutParams(params);
-                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                textView.setGravity(1);
-                textView.setTextColor(Color.RED);
-                snackbar.show();
-                break;
-            case 1:
-                snackbar = Snackbar.make(coordinatorLayout,message , Snackbar.LENGTH_SHORT);
-                View sbView1 = snackbar.getView();
-                CoordinatorLayout.LayoutParams params1=(CoordinatorLayout.LayoutParams)sbView1.getLayoutParams();
-                params1.gravity = Gravity.TOP;
-                sbView1.setLayoutParams(params1);
-                TextView textView1 = (TextView) sbView1.findViewById(android.support.design.R.id.snackbar_text);
-                textView1.setTextColor(Color.GREEN);
-                snackbar.show();
-                break;
-        }
     }
 
     private class TokenGet extends AsyncTask<String, String, JSONObject> {
@@ -194,9 +168,10 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
         //        web.clearFormData();
 
                 if (checkConnection()) {
-                    new ProcressAsyncTask(
+                    new ProcressAsyncTask(null,
                             Sign_inActivity.this,
-                            constants.urls(2),
+                            utils,
+                            Constants.BASE_URL +"/io/api/v1/device/register",
                             null,
                             null,
                             null,
@@ -206,6 +181,11 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
                             null,
                             utils.getSharedPreference(context,Constants.DEVICE_ID),
                             null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            0,
                             null,
                             null,
                             null).execute();
@@ -240,15 +220,25 @@ public class Sign_inActivity extends AppCompatActivity implements ConnectivityRe
 
     public void registerDeviceForAttendance(){
         if (checkConnection()) {
-            new ProcressAsyncTask(
+            new ProcressAsyncTask(null,
                     Sign_inActivity.this,
-                    constants.urls(5),
+                    utils,
+                    Constants.BASE_URL +"/human/api/v1/me",
                     null,
                     null,
                     null,
                     "GET",4,"1.0",
-                    utils.getSharedPreference(context,Constants.TOKEN),
-                    utils.getSharedPreference(context,Constants.DEVICE_ID),null,null,null,null).execute();
+                     utils.getSharedPreference(context,Constants.TOKEN),
+                     utils.getSharedPreference(context,Constants.DEVICE_ID),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null).execute();
         }
     }
 

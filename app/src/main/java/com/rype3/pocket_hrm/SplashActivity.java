@@ -5,35 +5,21 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.location.places.Places;
 
-import static android.provider.ContactsContract.Directory.ACCOUNT_TYPE;
+import java.util.ArrayList;
+
+import io.realm.Realm;
 
 public class SplashActivity extends AppCompatActivity implements
         LocationListener,
@@ -56,55 +42,50 @@ public class SplashActivity extends AppCompatActivity implements
     private static final long SYNC_FREQUENCY = 5*60;  // 5 minuits (in seconds)
 
     Intent intent;
-    private DataSave dataSave;
     private Context context;
-    private Utils utils;
-    ContentResolver mResolver;
     Account account;
+    private Realm myRealm;
     AccountManager accountManager;
+    public ArrayList<Integer> id_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         context = this.getApplicationContext();
-        utils = new Utils(context);
-        dataSave = new DataSave(context, utils);
+        myRealm = Realm.getDefaultInstance();
 
 //        intent = new Intent(SplashActivity.this, MyLocationListner.class);
 //        intent.putExtra("name", "START SETVICE");
 //        startService(intent);
 
+        id_list = new ArrayList<>();
+
         account = AuthenticatorService.GetAccount();
         accountManager = (AccountManager) this.getSystemService(Context.ACCOUNT_SERVICE);
 
-
         if (syncMethod()) {
-            if (EnableSyncAutomatically()) {
-                intent = new Intent(this, OauthLogin.class);
-                startActivity(intent);
-                finish();
+            if (syncanable()){
+               PocketHr.startSpecificActivity(SplashActivity.this,context,OauthLogin.class);
             }else{
-               Toast.makeText(context,"SYNC ERROR" ,Toast.LENGTH_SHORT).show();
+               PocketHr.setToast(context,"AUTO SYNC ERROR",Toast.LENGTH_SHORT);
             }
         } else {
-            Toast.makeText(getApplicationContext(), "SYNC Error", Toast.LENGTH_SHORT).show();
-            intent = new Intent(this, OauthLogin.class);
-            startActivity(intent);
-            finish();
+            PocketHr.setToast(context,"SYNC ERROR",Toast.LENGTH_SHORT);
+            PocketHr.startSpecificActivity(SplashActivity.this,context,OauthLogin.class);
         }
     }
 
-    private boolean EnableSyncAutomatically(){
-        ContentResolver.setMasterSyncAutomatically(true);
-
-        return ContentResolver.getMasterSyncAutomatically();
+    private boolean syncanable(){
+//        if (!String.valueOf(PocketHr.Ids(id_list,myRealm)).equals("[]")){
+//            BaseActivity.EnableSyncAutomatically(true);
+//        }else{
+//            BaseActivity.EnableSyncAutomatically(false);
+//        }
+        return true;
     }
 
     private boolean syncMethod() {
         boolean setupComplete = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_SETUP_COMPLETE, false);
-
-
 
         if (accountManager.addAccountExplicitly(account, null, null)) {
             // Inform the system that this account supports sync
@@ -114,18 +95,13 @@ public class SplashActivity extends AppCompatActivity implements
             // Recommend a schedule for automatic synchronization. The system may modify this based
             // on other scheduled syncs and network utilization.
 
-
-
             Bundle bundle = new Bundle();
             ContentResolver.addPeriodicSync(account, AUTHORITY, bundle, SYNC_FREQUENCY);
             newAccount = true;
-
 //            if (newAccount || !setupComplete) {
-//                dataSave.TriggerRefresh("2" ,null);
+//                pocketHr.TriggerRefresh("2" ,null);
 //                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(PREF_SETUP_COMPLETE, true).apply();
 //            }
-
-
         }
         return true;
     }

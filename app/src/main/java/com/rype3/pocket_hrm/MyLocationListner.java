@@ -37,17 +37,18 @@ import java.util.List;
 
 import io.realm.Realm;
 
+import static com.rype3.pocket_hrm.PocketHr.Version;
+
 public class MyLocationListner extends Service implements ConnectivityReceiver.ConnectivityReceiverListener{
     public static final String BROADCAST_ACTION = "LOCATION_LISTNER";
-    private static final int TWO_MINUTES = 1000 * 60 * 20; //20 miniuts
+    private static final int TWO_MINUTES = 1000 * 60 * 10; //10 miniuts
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
     Intent intent;
     int counter = 0;
     private Realm myRealm;
-    private DataSave dataSave;
-    private DataSave getDataSave;
+    private PocketHr pocketHr;
 
    // private Utils utils;
     private Context context;
@@ -62,30 +63,27 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
         utils = new Utils(context);
 
         myRealm = Realm.getDefaultInstance();
-
-        getDataSave = new DataSave();
-
-        dataSave = new DataSave(context,utils);
+        pocketHr = new PocketHr(context,utils);
 
     }
 
     @Override
     public void onStart(Intent intent, int startId) {
-       // String name = intent.getStringExtra("name");
+        String name = intent.getStringExtra("name");
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
 
         try {
-         //   switch (name){
-            //    case "START SETVICE":
-                  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
-            //        break;
+            switch (name){
+                case "START SETVICE":
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+                    break;
 
-           //     case "STOP SETVICE":
-            //        onDestroy();
-           //         break;
-           // }
+                case "STOP SETVICE":
+                    onDestroy();
+                    break;
+            }
            // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
 
         } catch (SecurityException e) {
@@ -186,33 +184,23 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 
             if (isBetterLocation(loc, previousBestLocation)) {
 
-    // loc.getLatitude();
-                // loc.getLongitude();
-
                 utils.setSharedPreference(context, String.valueOf(loc.getLatitude()), Constants.LAT);
                 utils.setSharedPreference(context, String.valueOf(loc.getLongitude()), Constants.LONG);
 
-    //              Log.e("****Latitude", String.valueOf(loc.getLatitude()));
-    //             Log.e("****Longitude", String.valueOf(loc.getLongitude()));
+                Log.e("****Latitude", String.valueOf(loc.getLatitude()));
+                Log.e("****Longitude", String.valueOf(loc.getLongitude()));
 //                 Log.e("****Provider", loc.getProvider());
 //
 
                 if (validation()) {
-                     long id = System.currentTimeMillis();
-
-    //                    Long tsLong = System.currentTimeMillis() / 1000;
-    //                    String ts = tsLong.toString();
-                    dataSave.DataSave(
+                    pocketHr.DataSave(
                             null,
                             myRealm,
-                            id,
                             utils.getSharedPreference(context, Constants.CHECKED_STATE),
-                            utils.getSharedPreference(context, Constants.DEVICE_ID),
                             "location",
                             true,
-                            utils.getSharedPreference(context, Constants.LOCATION),
-                            utils.getSharedPreference(context,Constants.USER_EPF_NO),
-                            utils.getSharedPreference(context,Constants.USER_ID),dataSave.Version(context));
+                            utils.getSharedPreference(context, Constants.LOCATION)
+                            );
 //
 //                    if (checkConnection()) {
 //                        if (validation()) {
@@ -237,12 +225,12 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //                                    location,
 //                                    checkConnection(),
 //                                    String.valueOf(
-//                                            dataSave.meta(
+//                                            pocketHr.meta(
 //                                                    utils.getSharedPreference(context, Constants.DEVICE_ID),
-//                                                    String.valueOf(dataSave.getBatteryPercentage(context)),
+//                                                    String.valueOf(pocketHr.getBatteryPercentage(context)),
 //                                                    utils.getSharedPreference(context, Constants.DEVICE_NAME),
 //                                                    utils.getSharedPreference(context, Constants.LOCATION),
-//                                                    dataSave.IOStime()
+//                                                    pocketHr.IOStime()
 //                                            ))).execute();
 //                        }
 //                    }else {
@@ -309,6 +297,7 @@ public class MyLocationListner extends Service implements ConnectivityReceiver.C
 //            }
 //            return false;
 //        }
+
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }

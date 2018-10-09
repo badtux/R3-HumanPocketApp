@@ -19,14 +19,11 @@ import android.widget.TextView;
 
 public class EPFnumberActivity extends AppCompatActivity {
     Utils utils;
-    private Snackbar snackbar;
     Context context;
     Button one, two, three, four, five, six, seven, eight, nine, zero, clear;
     private EditText mPasswordField;
-    private MediaPlayer mediaPlayer_1 = null,mediaPlayer_2 = null,mediaPlayer = null;
     private Button next,exit_btn;
     private ImageView back;
-    private Intent intent = null;
     private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +39,7 @@ public class EPFnumberActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (validation()) {
                     utils.setSharedPreference(context, mPasswordField.getText().toString(), Constants.EPF_NUMBER);
-                    intent = new Intent(EPFnumberActivity.this, PINnumberActivity.class);
-                    startActivity(intent);
-                    finish();
+                    PocketHr.startSpecificActivity(EPFnumberActivity.this,context,PINnumberActivity.class);
                 }
             }
         });
@@ -138,37 +133,10 @@ public class EPFnumberActivity extends AppCompatActivity {
         String epfNo = mPasswordField.getText().toString();
 
         if(epfNo.isEmpty()){
-            ViewMessage("Please enter your EPF number", 0);
+            PocketHr.snackBarMessage(coordinatorLayout,"Please enter your EPF number",Color.RED);
             return false;
         }
 
         return true;
-    }
-
-    public void ViewMessage(String message, int position){
-
-        switch (position){
-            case 0:
-                snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView = snackbar.getView();
-                CoordinatorLayout.LayoutParams params=(CoordinatorLayout.LayoutParams)sbView.getLayoutParams();
-                params.gravity = Gravity.TOP;
-                sbView.setLayoutParams(params);
-                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                textView.setGravity(1);
-                textView.setTextColor(Color.RED);
-                snackbar.show();
-                break;
-            case 1:
-                snackbar = Snackbar.make(coordinatorLayout,message , Snackbar.LENGTH_SHORT);
-                View sbView1 = snackbar.getView();
-                CoordinatorLayout.LayoutParams params1=(CoordinatorLayout.LayoutParams)sbView1.getLayoutParams();
-                params1.gravity = Gravity.TOP;
-                sbView1.setLayoutParams(params1);
-                TextView textView1 = (TextView) sbView1.findViewById(android.support.design.R.id.snackbar_text);
-                textView1.setTextColor(Color.GREEN);
-                snackbar.show();
-                break;
-        }
     }
     }

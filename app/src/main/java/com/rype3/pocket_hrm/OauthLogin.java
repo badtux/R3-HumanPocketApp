@@ -57,7 +57,6 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
         String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         utils.setSharedPreference(context,android_id,Constants.DEVICE_ID);
 
-
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= Build.VERSION_CODES.M) {
 
@@ -83,6 +82,9 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
             intent.putExtra("number","1");
             startActivity(intent);
             finish();
+        }else {
+            BaseActivity.EnableSyncAutomatically(false);
+            utils.setSharedPreference(context, null, Constants.SYNC_STATE);
         }
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
@@ -108,9 +110,7 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
                 }
 
                 if (v == epf_no) {
-                    intent = new Intent(OauthLogin.this, EPFnumberActivity.class);
-                    startActivity(intent);
-                    finish();
+                    PocketHr.startSpecificActivity(OauthLogin.this,context,EPFnumberActivity.class);
                 }
 
             }
@@ -159,33 +159,8 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
           //  ViewMessage("Connection success", 1);
             return true;
         }
-        ViewMessage("You don't have internet connection", 0);
+        PocketHr.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
         return false;
-    }
-
-    public void ViewMessage(String message, int position) {
-
-        switch (position) {
-            case 0:
-                Snackbar snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView = snackbar.getView();
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) sbView.getLayoutParams();
-                sbView.setLayoutParams(params);
-                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                textView.setTextColor(Color.RED);
-                snackbar.show();
-                break;
-
-            case 1:
-                snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView1 = snackbar.getView();
-                CoordinatorLayout.LayoutParams params1 = (CoordinatorLayout.LayoutParams) sbView1.getLayoutParams();
-                sbView1.setLayoutParams(params1);
-                TextView textView1 = (TextView) sbView1.findViewById(android.support.design.R.id.snackbar_text);
-                textView1.setTextColor(Color.GREEN);
-                snackbar.show();
-                break;
-        }
     }
 
     @Override
@@ -254,14 +229,12 @@ public class OauthLogin extends AppCompatActivity implements ConnectivityReceive
         @Override
         protected void onPostExecute(final String result) {
             dialog.dismiss();
-            Log.e("RESULT : " , String.valueOf(result));
+            //Log.e("RESULT : " , String.valueOf(result));
 
             if (result.equals("200")){
-                intent = new Intent(OauthLogin.this, Sign_inActivity.class);
-                startActivity(intent);
-                finish();
+                PocketHr.startSpecificActivity(OauthLogin.this,context,Sign_inActivity.class);
             }else{
-                ViewMessage("Service unavailable. Try again in few minutes.", 0);
+                PocketHr.snackBarMessage(coordinatorLayout,"Service unavailable. Try again in few minutes.",Color.RED);
             }
         }
 

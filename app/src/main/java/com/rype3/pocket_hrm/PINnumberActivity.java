@@ -44,13 +44,26 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
         widget();
 
         if (checkConnection()) {
-            new ProcressAsyncTask(
+            new ProcressAsyncTask(null,
                     PINnumberActivity.this,
-                    constants.urls(2),
+                    utils,
+                    Constants.BASE_URL +"/io/api/v1/device/register",
                     null,
                     null,
                     null,
-                    "POST",1,"1.0",null,utils.getSharedPreference(context,Constants.DEVICE_ID),null,null,null,null).execute();
+                    "POST",
+                    1,
+                    PocketHr.Version(),
+                    null,PocketHr.GetSharedPreference(Constants.DEVICE_ID),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null).execute();
         }
 
         connect.setOnClickListener(new View.OnClickListener() {
@@ -59,13 +72,26 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
 
                 if (validation()) {
                     if (checkConnection()) {
-                            new ProcressAsyncTask(
-                                    PINnumberActivity.this,
-                                    constants.urls(0),
-                                    utils.getSharedPreference(context,Constants.EPF_NUMBER),
+                            new ProcressAsyncTask(null,
+                                    PINnumberActivity.this,utils,
+                                    Constants.BASE_URL +"/human/api/v1/login",
+                                    PocketHr.GetSharedPreference(Constants.EPF_NUMBER),
                                     mPasswordField.getText().toString(),
-                                    utils.getSharedPreference(context,Constants.EPF_NUMBER),
-                                    "POST",0,"1.0",null,null,null,null,null,null).execute();
+                                    PocketHr.GetSharedPreference(Constants.EPF_NUMBER),
+                                    "POST",
+                                    0,
+                                    PocketHr.Version(),
+                                    null,
+                                    PocketHr.GetSharedPreference(Constants.DEVICE_ID),
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    0,
+                                    null,
+                                    null,
+                                    null).execute();
                     }
                 }
             }
@@ -76,9 +102,7 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
             public void onClick(View v) {
                     utils.setSharedPreference(context,null,Constants.EPF_NUMBER);
                     utils.setSharedPreference(context,null,Constants.PIN);
-                    intent = new Intent(PINnumberActivity.this, EPFnumberActivity.class);
-                    startActivity(intent);
-                    finish();
+                    PocketHr.startSpecificActivity(PINnumberActivity.this,context,EPFnumberActivity.class);
             }
         });
     }
@@ -164,7 +188,7 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
         String epfNo = mPasswordField.getText().toString();
 
         if(epfNo.isEmpty()){
-            ViewMessage("Please enter your PIN number", 0);
+            PocketHr.snackBarMessage(coordinatorLayout,"Please enter your PIN number",Color.RED);
             return false;
         }
 
@@ -193,11 +217,7 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
 
                     utils.setSharedPreference(context,token,Constants.TOKEN);
                     utils.setSharedPreference(context,fullName,Constants.USERNAME);
-
-                    intent = new Intent(PINnumberActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-
+                    PocketHr.startSpecificActivity(PINnumberActivity.this,context,MainActivity.class);
 
                 }else{
 
@@ -230,7 +250,7 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
         if (isConnected) {
             return true;
         } else {
-            ViewMessage("You don't have internet connection",0);
+            PocketHr.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
         }
         return false;
     }
@@ -238,9 +258,9 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         if (isConnected) {
-            ViewMessage("Connection Success",1);
+            PocketHr.snackBarMessage(coordinatorLayout,"Connection success",Color.GREEN);
         } else {
-            ViewMessage("You don't have internet connection",0);
+            PocketHr.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
         }
     }
 
@@ -248,32 +268,5 @@ public class PINnumberActivity extends AppCompatActivity implements Connectivity
     protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
-    }
-
-    public void ViewMessage(String message, int position){
-
-        switch (position){
-            case 0:
-                snackbar = Snackbar.make(coordinatorLayout, message, Snackbar.LENGTH_SHORT);
-                View sbView = snackbar.getView();
-                CoordinatorLayout.LayoutParams params=(CoordinatorLayout.LayoutParams)sbView.getLayoutParams();
-                params.gravity = Gravity.TOP;
-                sbView.setLayoutParams(params);
-                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
-                textView.setGravity(1);
-                textView.setTextColor(Color.RED);
-                snackbar.show();
-                break;
-            case 1:
-                snackbar = Snackbar.make(coordinatorLayout,message , Snackbar.LENGTH_SHORT);
-                View sbView1 = snackbar.getView();
-                CoordinatorLayout.LayoutParams params1=(CoordinatorLayout.LayoutParams)sbView1.getLayoutParams();
-                params1.gravity = Gravity.TOP;
-                sbView1.setLayoutParams(params1);
-                TextView textView1 = (TextView) sbView1.findViewById(android.support.design.R.id.snackbar_text);
-                textView1.setTextColor(Color.GREEN);
-                snackbar.show();
-                break;
-        }
     }
 }

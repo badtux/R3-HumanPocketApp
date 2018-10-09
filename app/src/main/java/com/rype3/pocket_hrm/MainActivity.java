@@ -1,97 +1,77 @@
 package com.rype3.pocket_hrm;
 
-import android.content.ContentResolver;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.rype3.pocket_hrm.Sqldb.DatabaseHandler;
-import com.rype3.pocket_hrm.realm.LocationDetails;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import io.realm.Realm;
-import io.realm.RealmResults;
+import static com.rype3.pocket_hrm.PocketHr.Version;
+import static com.rype3.pocket_hrm.PocketHr.getDate;
+import static com.rype3.pocket_hrm.PocketHr.hideKeyBoard;
 
-
-public class MainActivity extends BaseActivity implements
-        ConnectivityReceiver.ConnectivityReceiverListener{
-    private TextView textView_count, version;
+public class MainActivity extends BaseActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
+    private TextView textView_count;
+    private TextView version,last_update_on;
     private EditText locationEditText;
 
-    private Button btn_in, btn_out;
-    long onDutyInMiliSeconds,
-            StartTime,
-            TimeBuff,
-            timestamp,
-            UpdateTime = 0L;
+    private Button btn_in;
+    private Button btn_out;
+    long onDutyInMiliSeconds;
+    long StartTime;
+    long TimeBuff;
+    long UpdateTime = 0L;
 
     Handler handler;
 
-    int hour,
-            Seconds,
-            Minutes,
-            MilliSeconds;
+    int hour;
+    int Seconds;
+    int Minutes;
+    int MilliSeconds;
 
     private Realm myRealm;
     private Context context;
     private Utils utils;
     protected GoogleApiClient googleApiClient;
     private CoordinatorLayout coordinatorLayout;
-    private ImageView image_in, image_out;
-    private RelativeLayout relativeLayout_checkout, relativeLayout_checkin;
+    private ImageView image_in;
+    private ImageView image_out;
+    private RelativeLayout relativeLayout_checkout;
+    private RelativeLayout relativeLayout_checkin;
     private DatabaseHandler databaseHandler;
 
-    private DataSave dataSave;
+    private PocketHr pocketHr;
     private Intent intent;
-    private String number,placeName;
-    private BackServices backServices;
-    // private DataSave getDataSave;
+    private String number;
+    private String placeName;
+
+    // private PocketHr getDataSave;
+
     // Constants
-    public ArrayList<Integer> id_list;
-
-    private static final long SYNC_FREQUENCY = 2;  // 1 hour (in seconds)
-    public static final String AUTHORITY = "com.rype3.pocket_hrm";
-
-
-    public static final long SECONDS_PER_MINUTE = 60L;
-  //  public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
-    public static final long SYNC_INTERVAL = SECONDS_PER_MINUTE;
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -102,7 +82,6 @@ public class MainActivity extends BaseActivity implements
 
         context = this.getApplicationContext();
         utils = new Utils(context);
-        timestamp = System.currentTimeMillis() / 1000;
 
         handler = new Handler();
 
@@ -110,12 +89,9 @@ public class MainActivity extends BaseActivity implements
 
         databaseHandler = new DatabaseHandler(this);
 
-        dataSave = new DataSave(context, utils);
-        dataSave. buildGoogleApiClient(MainActivity.this ,googleApiClient);
-
-        version.setText(dataSave.Version(context));
-
-        id_list = new ArrayList<>();
+        pocketHr = new PocketHr(context, utils);
+        pocketHr.buildGoogleApiClient(MainActivity.this,googleApiClient);
+        version.setText(Version());
 
         intent = getIntent();
         number = intent.getStringExtra("number");
@@ -131,8 +107,11 @@ public class MainActivity extends BaseActivity implements
         if (placeName != null) {
             locationEditText.setText(placeName);
         }
-    }
 
+        if (utils.getBoolean(context,Constants.last_sync_time)){
+            last_update_on.setText("Last sync : " +getDate(Long.parseLong(utils.getSharedPreference(context, Constants.last_sync_time))));
+        }
+    }
 
     @Override
     protected int getLayoutResource() {
@@ -168,6 +147,7 @@ public class MainActivity extends BaseActivity implements
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         textView_count = (TextView) findViewById(R.id.textView_count);
         version = (TextView) findViewById(R.id.app_version);
+        last_update_on = (TextView) findViewById(R.id.last_update_on);
         image_in = (ImageView) findViewById(R.id.iv_icon);
         image_out = (ImageView) findViewById(R.id.iv_icon_1);
 
@@ -183,52 +163,35 @@ public class MainActivity extends BaseActivity implements
         locationEditText = (EditText) findViewById(R.id.et_location);
         locationEditText.setOnClickListener(onclick);
         locationEditText.setInputType(InputType.TYPE_NULL);
-
     }
 
     public View.OnClickListener onclick = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void onClick(View v) {
 
             if (v == btn_in) {
                 if (validation()) {
-                    dataSave.hideKeyBoard(MainActivity.this);
+                    hideKeyBoard(MainActivity.this);
                     if (reset()) {
+                      //  BaseActivity.EnableSyncAutomatically(true);
 
-                        final int sdk = Build.VERSION.SDK_INT;
-                        if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                            relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
-                            relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
-                        } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
-                                relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
-                            }
-                        }
+                        PocketHr.setBackgroundDrawable(context,relativeLayout_checkin,null,null,R.drawable.button_background_2_click);
+                        PocketHr.setBackgroundDrawable(context,relativeLayout_checkout,null,null,R.drawable.button_background_3);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_check, getApplicationContext().getTheme()));
-                        } else {
-                            image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_check));
-                        }
+                       // Log.e("LOCATION : " , location(MainActivity.this));
 
-                        dataSave.blinkIcon(image_out, 0);
+                        PocketHr.setImageDrawable(context,image_in,null,R.drawable.ic_check);
 
-                        long id = System.currentTimeMillis();
+                        pocketHr.blinkIcon(image_out, 0);
 
-                        dataSave.DataSave(
+                        pocketHr.DataSave(
                                 databaseHandler,
                                 myRealm,
-                                id,
                                 "in",
-                                utils.getSharedPreference(context, Constants.DEVICE_ID),
                                 "attendance",
                                 true,
-                                locationEditText.getText().toString(),
-                                utils.getSharedPreference(context, Constants.USER_EPF_NO),
-                                utils.getSharedPreference(context, Constants.USER_ID),
-                                dataSave.Version(context));
-
+                                locationEditText.getText().toString());
 
                         utils.setSharedPreference(context, locationEditText.getText().toString(), Constants.LOCATION);
                         utils.setSharedPreference(context, "in", Constants.CHECKED_STATE);
@@ -238,29 +201,24 @@ public class MainActivity extends BaseActivity implements
                         utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
 
                         btn_in.setClickable(false);
-                       // dataSave.TriggerRefresh("1", dataSave.Ids(id_list,myRealm));
+
+//                      PocketHr.startService(MainActivity.this, context,MyLocationListner.class,"START SETVICE");
                     }
                 }
             }
 
             if (v == btn_out) {
                 if (!locationEditText.getText().toString().isEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_navigate_next, getApplicationContext().getTheme()));
-                    } else {
-                        image_in.setImageDrawable(getResources().getDrawable(R.drawable.ic_navigate_next));
-                    }
-                    dataSave.blinkIcon(image_out, 1);
+                    PocketHr.setImageDrawable(context,image_in,null,R.drawable.ic_navigate_next);
+                    pocketHr.blinkIcon(image_out, 1);
                     thankyouAlertMessageBox(utils.getSharedPreference(context, Constants.LAST_TIME));
                 }
             }
-
 //            if (v == btn_clear){
 //                locationEditText.setText("");
 //            }
-
             if (v == locationEditText){
-                dataSave.startSpecificActivity(MainActivity.this,context,SearchActivity.class);
+                PocketHr.startSpecificActivity(MainActivity.this,context,SearchActivity.class);
             }
         }
     };
@@ -270,30 +228,19 @@ public class MainActivity extends BaseActivity implements
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                final int sdk = Build.VERSION.SDK_INT;
-                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                    relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2));
-                    relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3_click));
-
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2));
-                        relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3_click));
-                    }
-                }
+                PocketHr.setBackgroundDrawable(context,relativeLayout_checkin,null,null,R.drawable.button_background_2);
+                PocketHr.setBackgroundDrawable(context,relativeLayout_checkout,null,null,R.drawable.button_background_3_click);
 
                 utils.setSharedPreference(context, "", Constants.CHECKED_STATE);
                 utils.setSharedPreference(context, null, Constants.LOCATION);
                 utils.setSharedPreference(context, "", Constants.START_TIMESTAMP);
                 utils.setSharedPreference(context, "00:00:00", Constants.LAST_TIME);
+
                 locationEditText.setText("");
                 textView_count.setText("00:00:00");
                 btn_in.setClickable(true);
                 locationEditText.setClickable(true);
-                dataSave.blinkIcon(image_out, 1);
-
-             //   dataSave.TriggerRefresh("1", dataSave.Ids(id_list,myRealm));
+                pocketHr.blinkIcon(image_out, 1);
             }
         }, 5000);
     }
@@ -316,10 +263,8 @@ public class MainActivity extends BaseActivity implements
 
             onDutyInMiliSeconds = System.currentTimeMillis() - (StartTime);
 
-            String time_spent = dataSave.getTimeSpentString(onDutyInMiliSeconds);
-
+            String time_spent = pocketHr.getTimeSpentString(onDutyInMiliSeconds);
             textView_count.setText(time_spent);
-
             utils.setSharedPreference(context, time_spent, Constants.LAST_TIME);
 
             handler.postDelayed(this, 0);
@@ -331,7 +276,7 @@ public class MainActivity extends BaseActivity implements
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (utils.getBoolean(context, Constants.CHECKED_STATE)) {
                 if (utils.getSharedPreference(context, Constants.CHECKED_STATE).equals("in")) {
-                    dataSave.alertMessage(
+                    pocketHr.alertMessage(
                             MainActivity.this,
                             "Exit?","",
                             "It's recommended to keep the APP running in the background. Do you really want to exit?",
@@ -352,25 +297,20 @@ public class MainActivity extends BaseActivity implements
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
-                        long id_ = System.currentTimeMillis();
-                        dataSave.DataSave(
-                                databaseHandler,
-                                myRealm,
-                                id_,
-                                "out",
-                                utils.getSharedPreference(context, Constants.DEVICE_ID),
-                                "attendance",
-                                true,
-                                locationEditText.getText().toString(),
-                                utils.getSharedPreference(context, Constants.USER_EPF_NO),
-                                utils.getSharedPreference(context, Constants.USER_ID), dataSave.Version(context));
+                            pocketHr.DataSave(
+                                    databaseHandler,
+                                    myRealm,
+                                    "out",
+                                    "attendance",
+                                    true,
+                                    locationEditText.getText().toString());
 
                         utils.setSharedPreference(context, "out", Constants.CHECKED_STATE);
                         utils.setSharedPreference(context, "false", Constants.EXIT_STATAUS);
-                 //    dataSave.TriggerRefresh("1", dataSave.Ids(id_list,myRealm));
+
+                     // PocketHr.startService(MainActivity.this, context,MyLocationListner.class,"STOP SETVICE");
+
                         resetData();
-                 //     TimeBuff += MillisecondTime;
                         handler.removeCallbacks(runnable);
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -396,7 +336,7 @@ public class MainActivity extends BaseActivity implements
     public boolean validation() {
         String String_location = locationEditText.getText().toString();
         if (String_location.isEmpty()) {
-            dataSave.snackBarMessage(coordinatorLayout,"Location is required",Color.RED);
+            PocketHr.snackBarMessage(coordinatorLayout,"Location is required",Color.RED);
             return false;
         }
         return true;
@@ -404,23 +344,12 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-        if (isConnected) {
-           // dataSave.TriggerRefresh(number, dataSave.Ids(id_list,myRealm));
-        } else {
-         //   dataSave.TriggerRefresh(null, null);
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         MyApplication.getInstance().setConnectivityListener(this);
-//        if (dataSave.checkConnection()) {
-//            dataSave.TriggerRefresh(number, dataSave.Ids(id_list,myRealm));
-//        } else {
-//            dataSave.TriggerRefresh(null, null);
-//            dataSave.snackBarMessage(coordinatorLayout,"You don't have internet connection",Color.RED);
-//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -428,22 +357,15 @@ public class MainActivity extends BaseActivity implements
         try {
             if (state) {
                 if (exitState()) {
-                    relativeLayout_checkin.setVisibility(View.VISIBLE);
-                    relativeLayout_checkout.setVisibility(View.VISIBLE);
-                    textView_count.setVisibility(View.VISIBLE);
-                }
-                final int sdk = Build.VERSION.SDK_INT;
-                if (sdk < Build.VERSION_CODES.JELLY_BEAN) {
-                    relativeLayout_checkin.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_2_click));
-                    relativeLayout_checkout.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_background_3));
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        relativeLayout_checkin.setBackground(getResources().getDrawable(R.drawable.button_background_2_click));
-                        relativeLayout_checkout.setBackground(getResources().getDrawable(R.drawable.button_background_3));
-                    }
+                    PocketHr.Visibility(relativeLayout_checkin,null,null ,View.VISIBLE);
+                    PocketHr.Visibility(relativeLayout_checkout,null,null ,View.VISIBLE);
+                    PocketHr.Visibility(null,textView_count,null ,View.VISIBLE);
                 }
 
-                dataSave.blinkIcon(image_out, 0);
+                PocketHr.setBackgroundDrawable(context,relativeLayout_checkin,null,null,R.drawable.button_background_2_click);
+                PocketHr.setBackgroundDrawable(context,relativeLayout_checkout,null,null,R.drawable.button_background_3);
+
+                pocketHr.blinkIcon(image_out, 0);
 
                 StartTime = Long.parseLong(utils.getSharedPreference(context, Constants.START_TIMESTAMP));
                 handler.postDelayed(runnable, 0);
@@ -461,8 +383,35 @@ public class MainActivity extends BaseActivity implements
             }
         } catch (Exception e) {
             e.printStackTrace();
-            btn_in.setBackground(getResources().getDrawable(R.drawable.button_background_2));
+            PocketHr.setImageDrawable(context,null,btn_in,R.drawable.button_background_2);
             utils.setSharedPreference(context, String.valueOf(StartTime), Constants.START_TIMESTAMP);
         }
+    }
+
+    public static String location(Activity activity){
+        JSONObject jsonObject = null;
+        if ( ActivityCompat.checkSelfPermission(activity,android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+             ActivityCompat.checkSelfPermission(activity,android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Criteria criteria = new Criteria();
+            LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+            String provider = locationManager.getBestProvider(criteria, false);
+            Location location = locationManager.getLastKnownLocation(provider);
+
+            if (location != null) {
+                double lat = location.getLatitude();
+                double lng = location.getLongitude();
+
+                jsonObject = new JSONObject();
+
+                try {
+                    jsonObject.put("lat", lat);
+                    jsonObject.put("lng", lng);
+                    return jsonObject.toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return "";
     }
 }

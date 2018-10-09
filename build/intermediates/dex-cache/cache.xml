@@ -3,6 +3,564 @@
 
     <item
         is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/31334527230373be1ad3178eb3e6234215c4cdcf/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9be5e957849eb82ad9addf9bdb2896de8bf5654b">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_46481bbed3f902cdffcc17ac6637fd4d1022fb1d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/4aa8d14bd550c02257d65005b93f94fa2f1a87b0/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ed87ccdcb70c17d71ba4e6e4ac16afa62d3c49fb">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b8a08c154842a0e35130b9f573b019e6f3b27cfe/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/21b53de7064f66b7cec5f56064d16722a664966d/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="fcae52a60bc07924d370b4d376116cd8f8581f54">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9b7d78263270ee0ad7d724ee6e4817ade20c302e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/09bab660bc50da956083294185628a83b3ce0cb7/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="43e9789bd3240271265ab30ce1be9f224843f5a8">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_862cde4412ecc9892f7d938a1add9b470b38c16f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/a275dd279a82fb572a315b1795d4b9676d957aec/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="364364bf77b4a71afc5930fc3ae57b3f0eea637c">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_90d8473334f39f436f8714873e68366ea9423d32/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/76e5ab5184aadfac3e933b127c70540f24b5b37a/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="63b03eaa1aa9b9431c7638841175f9842dcbf274">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_005ab8576c5b58c5863c6ab46b2491841aee9b0d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/046818fc35e714af936779f34e4b394a02c6b97d/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="eea424e61a0c85b93a0e477565314a58136abaea">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_d4f23dd7857193252c9d6aed0630de88d1a34159/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/29911a7411e3bdbb64f0901eb575b5fbe245d096/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="fc3036436defd3070337b7191c50a136ebca7f8f">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_c776b1498b91c0de3acb4e62f1c438a178ddc1d7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/f4c64ac73067f95577bf8161b535a239d024b745/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="dae0d68af4c87df40eca67069861e53b7cefaaa0">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_05f2e8ed99585ec4eca0a45e471796a0afae82d8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/680ae07dc73ad0d235cfc33f8e3afc788999d0de/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ffd0ddf5e57b4d60c4a3fbcd38fa20349a0cebd1">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_438c22b0b5ad1748c154608a87f8647e7515be6c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/0846638a71ecc144034455d0cff84a58b07079e6/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e7f890dd2539b7f2582f450f0721e2dea6ae510c">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_e98b71ade98a52d6b7dc94dd8f4a3a8cf4c07f42/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/6bf694ae4c057553f69108bcd159e27de014ce86/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f5ff5e3811e8c9485fd27f9052ae4d4d23a22d9d">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_4af89e43baed2763e4732178e81a01dcb94c3e86/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/9aa81d4982a47b5eb1bcac3cccf871fd78a935e4/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="70ffe00aaf049893f59d1dad57bd82992faa38ef">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_33e4c6fa85f47adc725d8ecd08ff13a2a52a5ac9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/437ff702c014243beff48ce3a0366a5438ceac99/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d8942ee348aaa9341f08f7e2437063893fe27542">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_857b14b0861b2ab61dda7f2f398465e251cfb36b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/d2107059f5245a7e729873b5c183a5edd8ce35fc/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4b685077cdb08cf7ae8b61afd1fe910e47d91b9a">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_6e9b77d106870a8b2f108a751bfbd03b9368381d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/89cb603647c9f2c2ecf2f99665a7735c7aba8126/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="af13a350b71b437ebf4be335d02a8f785c39b111">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9e12ac386be230b9b1890d3dc3aea09be5810d21/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/61cc23354c0bd50b9a6d0918f799ed52c3bcbf50/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4961be1437163ab598620a3c907c0f3432936f51">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_65ba28eacef4012d3f134128373ade9dea210b94/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/a96657508da247aa479ac9fa75b067480e97e350/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="34c23b5894b4f24d566bfc33e0e25462c6436b78">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_8aaf421f6e25f9b6497bebf2f8bbbe737f92b5b3/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/703d91accfcba79eb78c881430a0768daec91de6/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a64026daf4819a589aea776f5deb19b257a104d1">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9069030071b390d25fcb3a9e674539dd78159d1b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/bf6da64ffc3b5785b5538da501d0cdc695f40a82/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="05e3d15c623cd98f0eb43c8249fb6151fae0786c">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_5c588b9a6f824fb6eb5c3b05405548870e13a0c3/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/b92afea160a5d25bddd7eb99f5fe7304f1122fef/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c6706cc7c8c3093560edd55d322218afe7798aa9">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_393e438edaea1545af6cdf21ba184104bb7fd10c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/7490ab35109f69ce288c1447032599952306b883/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="057fb316bed8467398333f30926c2d5506e275b2">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_31eb628592e5f98bd5ff267d27a5503f01485958/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/af072219dbb4664b4460d768fcb41147d2bab977/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5594a368622908d89c47d9a391aa2724fe046c35">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_1cf84d24d058f9d82782d6a4dadafbb5f7dba400/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/809ea7fd5fd965ae02e07b6560067f3d99b214f3/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_5c6ba3ef33777513a8ccb14748c43f3b4390bb8b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/81be9241d647bf67d69c74986929f1bfba89e8ea/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3ac08c35419ab7cf9146969de471768dbe502f0f">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9e563fdd1b6f55ecb839f8728aa8a535cb33fe5c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/69f166d38a91f71e89a3288f46c0693bf65e351c/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="40a6b8f05124eb9e6012e18b80a6dbd13440e283">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9094e69b65490ab7e4fa3e5f7d06991d9969432c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/c7759de96226650418108df8b11fcb05e06fd74c/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a25b0b5aec89681b95d32780ad7904c1e1e4c679">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b6c940cf08c92fd0b60617c582e2adf0e09e7ebd/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/f4201518644240d647639316b5883485257e62b8/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e1625e48a836779b5fa141d22e5d05563aaccc9a">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_d01774100130bdaeb160e40ae190938783fc3b6d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.gradle/caches/modules-2/files-2.1/com.android.support/support-annotations/25.4.0/f6a2fc748ae3769633dea050563e1613e93c135e/support-annotations-25.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f6a2fc748ae3769633dea050563e1613e93c135e">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.4.0_5b4b23c8c96d28e8fe263c624f2187de718fd893/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/bfbd81f120b9e5ef3e3f8af0b95d309326befc33/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c6aa915c08cfd82780c10d4b957018bf819a48e2">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_124b0ce7fcc68297f1ce963d0654a866c0781bca/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/a8ebf39ae738d4513927a437bf5b4eb345a55374/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2430e711762a749feb00b3d64858ca4768251b9d">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b5b82c7b206238926f73c8b4b9c94c40f2a4d110/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/bb315c389e83f35cc5a59991ef8ebb7f3d4e28e1/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f15e20dd7bcde7c688cfda44d0c8320a5c1c24b8">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_83ae5476aa1622446c39cef3e6c1361ec3c5a2bb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/2c5b8ba5ccb9f17096194a534b540635f2603513/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c8bf878c09bf0df6ae76eb6c2df38c6a186b38b7">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_7a441e4c08922ff3e912501c7efd5adcc8f261c9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/74a1867253c5098ac59d291480c274a96d56c6fa/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="1b12397bc9f342b29d9e9108978828f99a6da579">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_f5e1d92f4dddd7bf04f2cc5d877c37bb972cb90e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/f3b2eaa419769bb360df4ba375b6ba42e84c6a32/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d29e451fd5bcc265989bf80afd4f149d95d72e7d">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ef3202aee746ca666597778daea59320f664311b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/229aa005725c2531808d5e7dfc2c6f2eeb622890/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2b12b18c5518021cc71577c83d1290f8ddaa3c98">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0fd596d9deaa68a3406cbc6b5343eeb505763972/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/ddac9ab66df8ca7dfaf6a3ba39dc84e5294a2f16/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="377c5f26ebf67f3fa6ef2f663a58cac7ce647dde">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_38aaa2519fbc9c4c1769461f22308b23e04ddd77/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/98f8edb431141b32115213379cd572de9e14b0cd/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="6b3430725095bd46b785e97bd34240826c27b4db">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0b70ee95f90c55e74c2e6f8aa24016f0f398c288/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/aa5ee39931e511bb66aab1af79b99eeaf7d3c135/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="0bffdc0bd4f7ca0e27c5bfeef39569f8da00aa26">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_7354d92aa7acc6ec24263ad84ddcdd0565313ef7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/ae1f87edff020e2abb2979be233a8c9110301e3a/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b5b6af36bacf1d812cd3dc45f9dcab9ea471ed91">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_f4e07e87635045acc91a977c1de36adcf9e0278d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/7cfdc4262b996b3e00e3f22ea5d82ebd78ab2c68/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="416fb9ee2fd6e7af0bba04b01d90cb475b1e2074">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_60d6dcd933cecb1b5d9692a2d74f72f664169406/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/e08f3adf6f2b720732131385835efdfc884be597/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c879101226d1b2aaf6edae3d7491de6fd56d2659">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_bcb2553c870e5d6e2d4114f744bff0d3a28906fb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/9ed3c0df0f7a363f992ca887ca00fd11b35aa8fe/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a5d52089bf4d31537232bb6bcb70cee817d8a374">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0ff1e5a41c09f468480705b4037ea2b10c244903/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/b45e478c190d2d5ce5de2144ec5af375ced4fa56/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c2deeac83ffa1304264bc755c2ddb84e7a7fa239">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0554b54cc58ed955ddc7ca87e684496d07a0c0e2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/1e84be94218004c55e7d8a55f5ccdac681713c65/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a7a0aa678c3bbadb67fb41df9e107f7ee9087902">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_89a82fb1c3046d6ff51407c6650393e22fbc820c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/9246cb151d71a30eb71ecca3439667fac9728254/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="bfba7cf662f7e3e2cfeb92226c6b84c08e590225">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_feaff65a39ceb4a90ef981a732348315d04b1be6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.gradle/caches/modules-2/files-2.1/io.realm/realm-annotations/2.3.0/5c43618ae2e514637c58474e9e9663c8f054b72f/realm-annotations-2.3.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5c43618ae2e514637c58474e9e9663c8f054b72f">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/realm-annotations-2.3.0_16dd5ab43ff18229725560b900e3998b59eef917/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/0b3c3448d677bbdd4957807ad773e75aacde4f13/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2c2f1b3f82c027e98f56bb0154de0acbcce42e6d">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_cfa644d9959a3044c1d6044ab5ac7982d429c829/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/a760c364d3559deb0aed4a10cd11ffade9282848/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c175c3009577fad8b433703f5d7ac2dc21d3871f">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_50e45234a79b300e404a80253631b72ad7a3fec3/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/0fccef4eaf2759c357bdd43f8c8187f8d07303b9/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2c379c235d7983201bb83edfc3c60bb0dafb5805">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_a540bcbf07069ad7426eaa57d9fa4f75a9e3f95e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/4e59a85bfac25f7802a4ff456489de68580e7a33/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c72b1515efbd8ad652e2d63582c8234a979b1e53">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_bf61a4521ab4536d3fec7dfb25946fa9b89168af/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/f11213f8d0a94def6c3618e08f282e06d9395107/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d483779dc728392fefecb9a9650d01bac9e04d3b">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_60c13e550c766cab95ee9082b84382150ee2173e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/93a9abdf58b96025f5d73d58fe8416430583c03e/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="41f47bbcd281fdb1e42e220220ab3bfa1da591e0">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_c8734ee7bce12f899ad9bf3bb1d6dd2ae07fbb3d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/51a8079dd5d860104cc276c1bb36862ba5ac5c13/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b1e0cd070d7cf659ece90e919bff76e7ddc32532">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_3244995ee9f56bb51aa9d5dc6245088bf2fdaec9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/1e3a3bafe4677070febd7a361f87c397f5066b80/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f47f4d5bdfd7d7bf330945b8a7ccce4ab437a710">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_e08c05a624af57f008ef454740b07857d301a681/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/f996673d3aeed4a8a7db34889d55c020c75bb16f/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="76ea35b41786082af23db898ca9e0fc07cc71fb9">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_1852eaf58dfbca31368f306c1e8d6fa845d6725d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/52d73064a22b4b2e103cba5889a15daddfbec5ad/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="02b91f8efa91dcdf5c555ee24b7f006f02cd0f8b">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_478baed0794043fc06bfd0da72b89348f4aa2b55/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/c18a5b47b63a616cbff390f75abf38c29c62c8b7/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="dd282bdeaa904c59d77e57dedd7e0a241c9b679d">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_73f369da170447b60003566b4bec408ae1081625/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/161474cf99c717f0c493ef1599c3489bdfaf6167/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8544f739799dd15db63927073a21312864ab0bfd">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_0d8dbf1dedb8690188648f0c97f0606d509e4678/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/07cb42d412d5c83d58b3e21b73cae79379eb05b3/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e5b429c146094a612134910688d169ec08deeefb">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_9f0e42b75502dfb99eae8011c8329d26245752f1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/4ac0aa5032988615854103b6302b37932a3ad3fc/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="2c73e2a93e00abd240e495c1e62217e53904a3f3">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_ef451ac015d8c13a9ec0df9b01f9a6e9921a2375/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/d148eeb1cf77b4ca887562fc478794de1ffc9e61/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c1b91bc7e480ab100d0397b16c93732e26fd10eb">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_c67b9a312d479591a441a5ec8aa4b68c28e1add0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
@@ -16,8 +574,71 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.0"
-        sha1="e003546db3ccd76c6ab9c443ec36f9cf2e243c28">
+        sha1="889ded6810df8b131db3a921c6347e0cbf0be83d">
         <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_f6297c3d6d3066fe88888eb9c67b6496d1374bd5/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/7ed25c408e5315aaedd5b6867eed9f29720d1c41/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="7c24e2e9773fb498e390ce973db382c3ddcf748e">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_685c6163a42c46fbcfeb8ef58c2385c4270c5a3c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/9a969d89debed620c7e217204490af28028cfd4a/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="cad1364721fc716a39bdc351d3637edb634c9aa5">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_d8dd5df2540f6701246b01b044fa5ce325821c30/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/eaf3464c7556f74bffd30eece1dd67f71a340f60/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="56d68d1174b9c1e368017a850b62b12429f39757">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_01b35117c8233b6a728da51341f78a86acda9179/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/2e2412b68657a77fc8575aee1fbcc518abaad24e/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e04f28ac2dd9bbe48ced6fc87fedf46c2586f5d6">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_690bfab91fa8b6c19f4108db882d5d10669f6357/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/c9d0a0b65c8478f750e65f1a81fc5b39fdd195a4/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b77e50b3c31d0fc64148530f7077f79ec114b5b9">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_913e3f71d6b75a0417d38bff383939adcf898c2d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/721c6716b2b853d83e71fd5b77e56e89b72f30a4/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="576570f46ff6ccc69a984af9e55ddd58d9549270">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_880c4d81a7c63015c24b880e2003ac5b9cf79e8c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Ruwan/.android/build-cache/ad61c5e6a3f5ec1c33a59a5ee7dc928d93e63c22/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f2cb88e7e28736d44e7e643deb80c9af1c3662c8">
+        <dex dex="/Users/Ruwan/Documents/Projects/Mendis/POCKET_HRM/pocket-hrm/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_356123010a040ef65a00714e4fa278e893e3799a/classes.dex" />
     </item>
 
 </items>

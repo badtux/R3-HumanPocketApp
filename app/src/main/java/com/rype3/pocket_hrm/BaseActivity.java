@@ -1,5 +1,6 @@
 package com.rype3.pocket_hrm;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-public abstract class BaseActivity extends AppCompatActivity{
+public abstract class BaseActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
 
     public Toolbar toolbar;
     private Utils utils;
@@ -23,7 +25,6 @@ public abstract class BaseActivity extends AppCompatActivity{
 
         context = getApplicationContext();
         utils = new Utils(context);
-
     }
 
     protected abstract int getLayoutResource();
@@ -52,8 +53,6 @@ public abstract class BaseActivity extends AppCompatActivity{
                 default:
 
             }
-
-
         }
     }
 
@@ -72,17 +71,27 @@ public abstract class BaseActivity extends AppCompatActivity{
 
             case R.menu.checkinout_main:
                 if (id == R.id.action_in_out) {
-                    Intent intent = new Intent(getBaseContext(), LeaveActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return true;
+                    if (PocketHr.checkConnection()) {
+                        PocketHr.startSpecificActivity(BaseActivity.this,context,LeaveActivity.class);
+                        return true;
+                    }else{
+                        PocketHr.setToast(context,"Network error..!" ,Toast.LENGTH_SHORT);
+                    }
                 }
 
                 if (id == R.id.action_in_out_history) {
-                    Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
-                    intent.putExtra("number","2");
-                    startActivity(intent);
-                    finish();
+                    PocketHr.startSpecificActivityWithExtra(
+                            BaseActivity.this,
+                            context,
+                            HistoryActivity.class,
+                            "number",
+                            "",
+                            "",
+                            "",
+                            "2",
+                            "",
+                            "",
+                            0);
                     return true;
                 }
                 break;
@@ -94,9 +103,7 @@ public abstract class BaseActivity extends AppCompatActivity{
         }
 
         if (id == android.R.id.home) {
-            intent = new Intent(BaseActivity.this,MainActivity.class);
-            startActivity(intent);
-            finish();
+            PocketHr.startSpecificActivity(BaseActivity.this,context,MainActivity.class);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -117,10 +124,25 @@ public abstract class BaseActivity extends AppCompatActivity{
     }
 
     public void addPlace(String place){
-        intent = new Intent(BaseActivity.this,MainActivity.class);
-        intent.putExtra("place" , place);
-        startActivity(intent);
-        finish();
+        PocketHr.startSpecificActivityWithExtra(
+                BaseActivity.this,
+                context,
+                MainActivity.class,
+                "place",
+                "",
+                "",
+                "",
+                place,
+                "",
+                "",
+                0);
 
+    }
+
+    public static boolean EnableSyncAutomatically(boolean status){
+        ContentResolver.setMasterSyncAutomatically(status);
+
+        ContentResolver.getMasterSyncAutomatically();
+        return true;
     }
 }

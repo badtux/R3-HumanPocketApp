@@ -31,8 +31,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
     private static Activity activity;
     private static Constants constants;
 
-    public HistoryAdapter(Activity activity ,Context context, List<LocationDetails> jdList){
+    public HistoryAdapter(MyClickListener ClickListener,Activity activity ,Context context, List<LocationDetails> jdList){
         this.LocatioDetailList = new ArrayList<LocationDetails>();
+        this.ClickListener = ClickListener;
         this.context = context;
         this.activity = activity;
         this.LocatioDetailList = jdList;
@@ -46,7 +47,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView location ,time,status;
-        Button btn_send;
+        TextView btn_send;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
@@ -57,7 +58,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
             location = (TextView) itemView.findViewById(R.id.tv_location);
             time = (TextView) itemView.findViewById(R.id.tv_time);
             status = (TextView) itemView.findViewById(R.id.tv_status);
-            btn_send = (Button) itemView.findViewById(R.id.btn_send);
+            btn_send = (TextView) itemView.findViewById(R.id.btn_send);
 
             Log.e(LOG_TAG, "Adding Listener");
             itemView.setOnClickListener(this);
@@ -65,7 +66,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
 
         @Override
         public void onClick(View v) {
-            ClickListener.onItemClick(getAdapterPosition(), v);
+            ClickListener.onItemClick(getAdapterPosition(), v,LocatioDetailList );
         }
     }
 
@@ -83,69 +84,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
 
     @Override
     public void onBindViewHolder(final HistoryAdapter.DataObjectHolder holder, final int position) {
-
-     //   holder.location.setText(LocatioDetailList.get(position).getMeta());
-     //   holder.time.setText(LocatioDetailList.get(position).getMeta());
-
         holder.status.setText(LocatioDetailList.get(position).getCheckState().toUpperCase());
-
         if (LocatioDetailList.get(position).isState()){
             holder.btn_send.setText("SEND NOW");
         }else{
             holder.btn_send.setText("SEND AGAIN");
         }
-
         PassedDetails(LocatioDetailList.get(position).getMeta(),  holder.location, holder.time);
-
-        holder.btn_send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (checkConnection()) {
-                    utils.setSharedPreference(context, String.valueOf(LocatioDetailList.get(position).getId()),Constants.TEMP_ID);
-                    switch (LocatioDetailList.get(position).getCheckState()) {
-                        case "in":
-                            new ProcressAsyncTask(
-                                    activity, //activity
-                                    constants.urls(3),// url
-                                    null,//email
-                                    null,//pin
-                                    null,//epf
-                                    "POST",//HTTP_TYPE
-                                    5,//type activity method
-                                    "1.0",//version
-                                    null,//token
-                                    null,//deviceId
-                                    utils.getSharedPreference(context, Constants.USER_ID),//uid
-                                    PassedDetails(LocatioDetailList.get(position).getMeta(),  holder.location, holder.time),// checked at time
-                                    null, // Check string ont use
-                                    LocatioDetailList.get(position).getMeta()).execute();
-                            break;
-
-                        case "out":
-
-                            new ProcressAsyncTask(
-                                    activity, //activity
-                                    constants.urls(4),// url
-                                    null,//email
-                                    null,//pin
-                                    null,//epf
-                                    "POST",//HTTP_TYPE
-                                    5,//type activity method
-                                    "1.0",//version
-                                    null,//token
-                                    null,//deviceId
-                                    utils.getSharedPreference(context, Constants.USER_ID),//uid
-                                    null, // Check string ont use
-                                    PassedDetails(LocatioDetailList.get(position).getMeta(),  holder.location, holder.time),// checked at time
-                                    LocatioDetailList.get(position).getMeta()).execute();
-
-                            break;
-
-                    }
-                }
-            }
-        });
     }
 
     public void addItem(LocationDetails locationDetails, int index) {
@@ -164,23 +109,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
         return LocatioDetailList.size();
     }
 
-    public interface MyClickListener {
-        public void onItemClick(int position, View v);
-    }
 
     private String PassedDetails(String meta, TextView location,TextView time) {
-
-        //       Log.e("URL : " , "http://wmmmendis.rype3.net/io/api/v1/device/track");
-//              new ProcressAsyncTask(
-//                      "http://wmmmendis.rype3.net/io/api/v1/device/track",
-//                      locationList.get(index).getLat(),
-//                      locationList.get(index).getLon(),
-//                      locationList.get(index).getDeviceId(),
-//                      locationList.get(index).getTimeStamp(),
-//                      locationList.get(index).getCheckStatus(),
-//                      locationList.get(index).getLocation(),
-//                      locationList.get(index).isInternetState()).
-//                      execute();
         String url = "";
         String d_iso = "";
 
@@ -207,7 +137,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return d_iso;
     }
 
@@ -216,8 +145,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.DataObje
         if (isConnected) {
             return true;
         } else {
-           Toast.makeText(context,"You don't have internet connection",Toast.LENGTH_SHORT).show();
+           PocketHr.setToast(context,"You don't have internet connection",Toast.LENGTH_SHORT);
         }
         return false;
+    }
+
+    public interface MyClickListener {
+        public void onItemClick(int position, View v,List<LocationDetails> LocatioDetailList);
     }
 }
